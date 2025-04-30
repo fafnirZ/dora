@@ -1,0 +1,6 @@
+[workspace]
+members = [
+    "dora",
+    "dora-tui",
+    "dora-pl",
+]
