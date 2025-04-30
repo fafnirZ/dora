@@ -4,13 +4,15 @@ use ratatui::{
 };
 
 use crate::app::{App, InputMode};
+use crate::widgets::button::Button;
 
 use super::traits::ScreenRenderer;
 
 pub struct MainScreen {
 }
 
-static WELCOME_MESSAGE: &str = "HELLO";
+static WELCOME_MESSAGE: &str = "Welcome To DORA\n \
+                                ready to explore?";
 
 impl ScreenRenderer for MainScreen {
     fn draw(&self, frame: &mut Frame, app_state: &App) {
@@ -87,17 +89,18 @@ impl MainScreen {
         let text_lines = WELCOME_MESSAGE.lines().count() as u16;
         // Calculate top padding for vertical centering (or adjust for top/bottom alignment)
         let padding_top = (area.height.saturating_sub(text_lines)) / 2;
-        let padding_bottom = area.height.saturating_sub(text_lines) - padding_top;
+        // let padding_bottom = area.height.saturating_sub(text_lines) - padding_top;
 
         let verticals = Layout::vertical([
             Constraint::Length(padding_top),
             Constraint::Min(text_lines),
-            Constraint::Length(padding_bottom),
+            // Constraint::Length(padding_bottom),
+            Constraint::Fill(1),
         ]);
         let [
             _,
             center_area,
-            _,
+            bottom_area,
         ] = verticals.areas(*area);
         
         let block = Block::new()
@@ -113,6 +116,12 @@ impl MainScreen {
             para,
             center_area,
         );
+
+        MainScreen::draw_selection_box(frame, &bottom_area);
+    }
+    fn draw_selection_box(frame: &mut Frame, area: &Rect) {
+
+        Button::render_button(frame, area, "select a file");
     }
 }
 
