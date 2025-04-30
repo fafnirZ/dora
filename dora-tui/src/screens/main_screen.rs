@@ -13,7 +13,7 @@ pub struct MainScreen {
 }
 
 impl MainScreen {
-    pub const fn new() -> Self {
+    pub fn new() -> Self {
         Self {}
     }
 }

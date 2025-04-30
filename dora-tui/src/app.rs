@@ -5,33 +5,36 @@ use ratatui::{
     layout::{Constraint, Layout}, style::{Color, Modifier, Style, Stylize}, 
     text::{Line, Span, Text}, widgets::{ListItem, Paragraph}, DefaultTerminal, Frame
 };
-use crate::screens::traits::Screen;
+
+use crate::screens::{main_screen::MainScreen, traits::ScreenRenderer};
 
 /// App holds the state of the application
 pub struct App {
     /// Current input mode
     pub input_mode: InputMode,
-    pub curr_screen: Screen,
+    pub curr_screen: Box<dyn ScreenRenderer>, // more interface like, instead of using enums
 }
 
 pub enum InputMode {
     Normal,
     Editing,
 }
-
+pub enum Screen {
+    MainScreen,
+}
 
 impl App {
-    pub const fn new() -> Self {
+    pub fn new() -> Self {
         Self {
             input_mode: InputMode::Normal,
-            curr_screen: Screen::MainScreen,
+            curr_screen: Box::new(MainScreen::new()),
         }
     }
     // main loop
     pub fn run(mut self, mut terminal: DefaultTerminal) -> Result<()> {
         loop {
             terminal.draw(|frame| 
-                self.curr_screen.draw(frame, &mut self)
+                self.curr_screen.draw(frame, &self)
             )?;
 
             if let Event::Key(key) = event::read()? {
@@ -54,6 +57,4 @@ impl App {
             }
         }
     }
-
-
 }
