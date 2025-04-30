@@ -1,9 +1,7 @@
 
 use color_eyre::Result;
 use ratatui::{
-    crossterm::event::{self, Event, KeyCode, KeyEventKind}, 
-    layout::{Constraint, Layout}, style::{Color, Modifier, Style, Stylize}, 
-    text::{Line, Span, Text}, widgets::{ListItem, Paragraph}, DefaultTerminal, Frame
+    crossterm::event::{self, Event, KeyCode, KeyEventKind}, DefaultTerminal
 };
 
 use crate::screens::{main_screen::MainScreen, traits::ScreenRenderer};

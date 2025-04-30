@@ -1,8 +1,6 @@
-use std::sync::Arc;
 
-use color_eyre::Result;
 use ratatui::{
-    crossterm::event::{self, Event, KeyCode, KeyEventKind}, layout::{Alignment, Constraint, Layout, Rect}, style::{Color, Modifier, Style, Stylize}, text::{Line, Span, Text}, widgets::{Block, Borders, ListItem, Paragraph, Wrap}, DefaultTerminal, Frame
+    layout::{Alignment, Constraint, Layout, Rect}, style::{Modifier, Style, Stylize}, text::{Line, Text}, widgets::{Block, Borders, Paragraph, Wrap}, Frame
 };
 
 use crate::app::{App, InputMode};
