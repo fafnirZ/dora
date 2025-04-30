@@ -57,4 +57,12 @@ impl App {
             }
         }
     }
+
+    pub fn set_curr_screen(mut self, new_screen: Screen) {
+        match new_screen {
+            Screen::MainScreen => {
+                self.curr_screen = Box::new(MainScreen::new());
+            },
+        }
+    }
 }
