@@ -1,5 +1,5 @@
 use ratatui::{
-    buffer::Buffer, layout::Rect, style::{Color, Modifier, Style}, widgets::{Block, Borders, Paragraph, StatefulWidget, Widget}, Frame
+    buffer::Buffer, layout::{Margin, Rect}, style::{Color, Modifier, Style}, widgets::{Block, Borders, Paragraph, StatefulWidget, Widget}, Frame
 };
 pub struct Button<'a> {
     label: &'a str,
@@ -15,12 +15,16 @@ enum ButtonState {
 }
 impl<'a> Button<'a> {
     pub fn new(label: &'a str) -> Self {
+        let block = Block::default()
+            .title("button")
+            .borders(Borders::ALL);
+
         Button {
             label,
-            state: ButtonState::Normal,
+            state: ButtonState::Highlighted,
             normal_style: Style::default(),
             highlighted_style: Style::default().bg(Color::Blue).add_modifier(Modifier::BOLD),
-            block: Block::default().borders(Borders::ALL),
+            block: block,
         }
     }
 }
@@ -29,7 +33,7 @@ impl<'a> Widget for Button<'a> {
     fn render(self, area: Rect, buf: &mut Buffer) {
         let block = self.block;
         let inner_area = block.inner(area);
-        block.render(area, buf);
+        block.render(inner_area, buf);
 
         if inner_area.height > 0 && inner_area.width > 0 {
             let label = self.label;
