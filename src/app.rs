@@ -38,28 +38,7 @@ impl App {
         let size = frame.area();
 
         let table_state = &mut self.table_state;
-        let df = &table_state.dataframe;
-
-        // get headers
-        let df_schema = df.schema();
-        let mut headers: Vec<Header> = vec![];
-        for (col_name, _dt) in df_schema.iter() {
-            headers.push(
-                Header{name: col_name.to_string()}
-            );
-        }
-
-        // get columns
-        let mut columns = vec![];
-        for col_name in &headers {
-            let col = df.column(&col_name.name).unwrap();
-            // let dt = series.dtype();
-            columns.push(
-                Column::new(col.clone()),
-            )
-        }
-
-        let table = TableUI::new(headers, columns);
+        let table = TableUI::new(table_state.get_headers(), table_state.get_columns());
         frame.render_stateful_widget(table, size, &mut self.table_state);
     }
 
