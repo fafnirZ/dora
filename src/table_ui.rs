@@ -1,17 +1,20 @@
-use polars::{frame::DataFrame, prelude::Column};
+use polars::frame::DataFrame;
+use polars::prelude::Column as PlColumn;
 
+use crate::header::Header;
+use crate::column::Column;
 
 
 pub struct TableUI<'a> {
     header: &'a [Header],
-    rows: &'a [Row],
+    columns: &'a [Column],
 }
 
 impl<'a> TableUI<'a> {
-    pub fn new(header: &'a[Header], rows: &'a[Row]) -> Self {
+    pub fn new(header: &'a[Header], columns: &'a[Column]) -> Self {
         Self {
             header,
-            rows,
+            columns,
         }
     }
 }
@@ -24,8 +27,8 @@ pub struct TableUIState {
 impl TableUIState {
     pub fn new() -> Self {
         // boilerplate df for now
-        let s0 = Column::new("days".into(), [0, 1, 2].as_ref());
-        let s1 = Column::new("temp".into(), [22.1, 19.9, 7.].as_ref());
+        let s0 = PlColumn::new("days".into(), [0, 1, 2].as_ref());
+        let s1 = PlColumn::new("temp".into(), [22.1, 19.9, 7.].as_ref());
         let df = DataFrame::new(vec![s0, s1]).unwrap();
         Self {
             dataframe: df,

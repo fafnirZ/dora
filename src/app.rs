@@ -1,6 +1,8 @@
+use std::any::Any;
+
 use ratatui::{prelude::Backend, Frame, Terminal};
 
-use crate::{errors::DoraResults, header::Header, input::{Control, InputHandler}, table_ui::{TableUI, TableUIState}};
+use crate::{column::Column, errors::DoraResults, header::Header, input::{Control, InputHandler}, table_ui::{TableUI, TableUIState}};
 
 pub struct App {
     // input_handler
@@ -47,9 +49,17 @@ impl App {
             );
         }
 
-        // get rows
-        
-        let table = TableUI::new(headers, );
+        // get columns
+        let mut columns = vec![];
+        for col_name in &headers {
+            let col = df.column(&col_name.name).unwrap();
+            // let dt = series.dtype();
+            columns.push(
+                Column::new(*col),
+            )
+        }
+
+        let table = TableUI::new(headers, columns);
         frame.render_stateful_widget(table, size, &mut self.table_state);
     }
 
