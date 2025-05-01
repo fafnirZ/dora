@@ -119,9 +119,15 @@ impl MainScreen {
 
         MainScreen::draw_selection_box(frame, &bottom_area);
     }
-    fn draw_selection_box(frame: &mut Frame, area: &Rect) {
 
-        Button::render_button(frame, area, "select a file");
+    
+    fn draw_selection_box(frame: &mut Frame, area: &Rect) {
+        // Button::new(frame, *area, "select a file");
+        let button = Button::new("select a file");
+        frame.render_widget(
+            button,
+            *area,
+        );
     }
 }
 
