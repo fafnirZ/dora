@@ -8,8 +8,9 @@ use crate::widgets::button::{Button, ButtonState};
 
 use super::traits::{CursorNavigator, ScreenRenderer};
 
+// #[derive()]
 pub struct MainScreen<'a> {
-    buttons: [Button<'a>;1],
+    file_explorer_button: Box<Button<'a>>
 }
 
 static WELCOME_MESSAGE: &str = "Welcome To DORA\n \
@@ -39,9 +40,9 @@ impl<'a> CursorNavigator for MainScreen<'a> {
 impl<'a> MainScreen<'a> {
     pub fn new() -> Self {
         Self {
-            buttons: [
-                Button::new_with_state("select a file", ButtonState::Normal),
-            ]
+            file_explorer_button: Box::new(
+                Button::new_with_state("select a file", ButtonState::Normal)
+            ),
         }
     }
 
@@ -134,8 +135,9 @@ impl<'a> MainScreen<'a> {
     
     fn draw_selection_box(&self, frame: &mut Frame, area: &Rect) {
         // Button::new(frame, *area, "select a file");
+        let btn = &mut *self.file_explorer_button;
         frame.render_widget(
-            self.buttons[0],
+            btn,
             *area,
         );
     }
