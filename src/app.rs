@@ -37,13 +37,13 @@ impl App {
     fn render_frame(&mut self, frame: &mut Frame) {
         let size = frame.area();
 
-        let table_state = self.table_state;
-        let df = table_state.dataframe;
+        let table_state = &mut self.table_state;
+        let df = &table_state.dataframe;
 
         // get headers
         let df_schema = df.schema();
         let mut headers: Vec<Header> = vec![];
-        for (col_name, dt) in df_schema.iter() {
+        for (col_name, _dt) in df_schema.iter() {
             headers.push(
                 Header{name: col_name.to_string()}
             );
@@ -55,7 +55,7 @@ impl App {
             let col = df.column(&col_name.name).unwrap();
             // let dt = series.dtype();
             columns.push(
-                Column::new(*col),
+                Column::new(col.clone()),
             )
         }
 
