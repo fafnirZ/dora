@@ -9,22 +9,35 @@ pub struct Button<'a> {
     block: Block<'a>,
 }
 
-enum ButtonState {
+pub enum ButtonState {
     Normal,
     Highlighted,
 }
 impl<'a> Button<'a> {
     pub fn new(label: &'a str) -> Self {
-        let block = Block::default()
-            .title("button")
-            .borders(Borders::ALL);
-
         Button {
             label,
+            ..Default::default()
+        }
+    }
+    pub fn new_with_state(label: &'a str, state: ButtonState) -> Self {
+        Button {
+            label,
+            state,
+            ..Default::default()
+        }
+    } 
+}
+
+impl<'a> Default for Button<'a> {
+    fn default() -> Self {
+        Self {
+            label: "",
             state: ButtonState::Highlighted,
             normal_style: Style::default(),
             highlighted_style: Style::default().bg(Color::Blue).add_modifier(Modifier::BOLD),
-            block: block,
+            block: Block::default()
+                .borders(Borders::ALL),
         }
     }
 }

@@ -4,37 +4,48 @@ use ratatui::{
 };
 
 use crate::app::{App, InputMode};
-use crate::widgets::button::Button;
+use crate::widgets::button::{Button, ButtonState};
 
-use super::traits::ScreenRenderer;
+use super::traits::{CursorNavigator, ScreenRenderer};
 
-pub struct MainScreen {
+pub struct MainScreen<'a> {
+    buttons: [Button<'a>;1],
 }
 
 static WELCOME_MESSAGE: &str = "Welcome To DORA\n \
                                 ready to explore?";
 
-impl ScreenRenderer for MainScreen {
+impl<'a> ScreenRenderer for MainScreen<'a> {
     fn draw(&self, frame: &mut Frame, app_state: &App) {
-        let [_banner_top, v_main, banner_bottom] = MainScreen::vbox_with_top_and_bottom_banners(frame);
+        let [_banner_top, v_main, banner_bottom] = self.vbox_with_top_and_bottom_banners(frame);
         
-        MainScreen::draw_bottom_banner(frame, app_state, &banner_bottom);
+        self.draw_bottom_banner(frame, app_state, &banner_bottom);
 
-        let [_pad_left, h_main, _pad_right] = MainScreen::hbox_with_left_and_right_padding(&v_main);
+        let [_pad_left, h_main, _pad_right] = self.hbox_with_left_and_right_padding(&v_main);
 
-        MainScreen::draw_boxed_centred_message(frame, &h_main);
+        self.draw_boxed_centred_message(frame, &h_main);
     }
 
 }
 
+impl<'a> CursorNavigator for MainScreen<'a> {
+    fn navigate(&self) {
+        
+    }
+}
 
 
-impl MainScreen {
+
+impl<'a> MainScreen<'a> {
     pub fn new() -> Self {
-        Self {}
+        Self {
+            buttons: [
+                Button::new_with_state("select a file", ButtonState::Normal),
+            ]
+        }
     }
 
-    fn vbox_with_top_and_bottom_banners(frame: &mut Frame) -> [Rect;3] {
+    fn vbox_with_top_and_bottom_banners(&self, frame: &mut Frame) -> [Rect;3] {
         let vertical = Layout::vertical([
             Constraint::Length(1),
             Constraint::Min(2),
@@ -44,7 +55,7 @@ impl MainScreen {
         return result;
     }
 
-    fn hbox_with_left_and_right_padding(vertical_area: &Rect) -> [Rect;3] {
+    fn hbox_with_left_and_right_padding(&self, vertical_area: &Rect) -> [Rect;3] {
         let horizontal = Layout::horizontal([
             Constraint::Percentage(30),
             Constraint::Percentage(40),
@@ -56,7 +67,7 @@ impl MainScreen {
     }
     
     
-    fn draw_bottom_banner(frame: &mut Frame, app_state: &App, area: &Rect) {
+    fn draw_bottom_banner(&self, frame: &mut Frame, app_state: &App, area: &Rect) {
         let (msg, style) = match app_state.input_mode {
             InputMode::Normal => (
                 vec![
@@ -85,7 +96,7 @@ impl MainScreen {
         frame.render_widget(banner_message, *area);
     }
     
-    fn draw_boxed_centred_message(frame: &mut Frame, area: &Rect) {
+    fn draw_boxed_centred_message(&self, frame: &mut Frame, area: &Rect) {
         let text_lines = WELCOME_MESSAGE.lines().count() as u16;
         // Calculate top padding for vertical centering (or adjust for top/bottom alignment)
         let padding_top = (area.height.saturating_sub(text_lines)) / 2;
@@ -117,15 +128,14 @@ impl MainScreen {
             center_area,
         );
 
-        MainScreen::draw_selection_box(frame, &bottom_area);
+        self.draw_selection_box(frame, &bottom_area);
     }
 
     
-    fn draw_selection_box(frame: &mut Frame, area: &Rect) {
+    fn draw_selection_box(&self, frame: &mut Frame, area: &Rect) {
         // Button::new(frame, *area, "select a file");
-        let button = Button::new("select a file");
         frame.render_widget(
-            button,
+            self.buttons[0],
             *area,
         );
     }
