@@ -35,6 +35,7 @@ impl InputHandler {
         match key_event.modifiers {
             KeyModifiers::NONE => match key_event.code {
                 KeyCode::Char('q') => Control::Quit,
+                KeyCode::Esc => Control::Quit, // for now
                 _ => Control::Nothing
             },
             KeyModifiers::SHIFT => match key_event.code {

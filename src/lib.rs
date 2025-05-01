@@ -1,7 +1,7 @@
 mod app;
 mod runner;
 mod input;
-mod table;
+mod table_ui;
 mod events;
 mod errors;
 
