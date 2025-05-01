@@ -18,7 +18,7 @@ impl<'a> TableUI<'a> {
 
 
 pub struct TableUIState {
-    dataframe: DataFrame
+    pub dataframe: DataFrame
 }
 
 impl TableUIState {

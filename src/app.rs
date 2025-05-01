@@ -1,6 +1,6 @@
 use ratatui::{prelude::Backend, Frame, Terminal};
 
-use crate::{errors::DoraResults, input::{Control, InputHandler}, table_ui::{TableUIState, TableUI}};
+use crate::{errors::DoraResults, header::Header, input::{Control, InputHandler}, table_ui::{TableUI, TableUIState}};
 
 pub struct App {
     // input_handler
@@ -35,7 +35,21 @@ impl App {
     fn render_frame(&mut self, frame: &mut Frame) {
         let size = frame.area();
 
-        let table = TableUI::new();
+        let table_state = self.table_state;
+        let df = table_state.dataframe;
+
+        // get headers
+        let df_schema = df.schema();
+        let mut headers: Vec<Header> = vec![];
+        for (col_name, dt) in df_schema.iter() {
+            headers.push(
+                Header{name: col_name.to_string()}
+            );
+        }
+
+        // get rows
+        
+        let table = TableUI::new(headers, );
         frame.render_stateful_widget(table, size, &mut self.table_state);
     }
 
