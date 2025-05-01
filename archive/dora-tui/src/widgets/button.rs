@@ -42,7 +42,7 @@ impl<'a> Default for Button<'a> {
     }
 }
 
-impl<'a> Widget for Button<'a> {
+impl<'a> StatefulWidget for Button<'a> {
     fn render(self, area: Rect, buf: &mut Buffer) {
         let block = self.block;
         let inner_area = block.inner(area);
