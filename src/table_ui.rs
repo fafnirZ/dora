@@ -42,8 +42,8 @@ impl TableUI {
         // hacking it for now
         let headers = state.get_headers();
         let header_str = headers.iter()
-            .map(|h| h.name)
-            .reduce(|a,b| a + " " + b)
+            .map(|h| h.name.to_string())
+            .reduce(|a, b| a + &b)
             .unwrap();
         buf.set_stringn(0,0, header_str, area.width as usize, Style::default());
 
