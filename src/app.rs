@@ -1,23 +1,27 @@
 
 use ratatui::{layout::{Constraint, Layout}, prelude::Backend, Frame, Terminal};
 
-use crate::{errors::DoraResults, input::{Control, InputHandler}, mode_banner::{self, AppModeState, ModeBanner}, table::table_ui::{TableUI, TableUIState}, utils::area::horizontal_pad_area};
+use crate::{df::state::DataFrameState, errors::DoraResults, input::{Control, InputHandler}, mode_banner::{self, AppModeState, ModeBanner}, table::table_ui::{TableUI, TableUIState}, utils::area::horizontal_pad_area};
 
 // global app state.
 pub struct App {
     // input_handler
     input_handler: InputHandler,
     // table_state
-    table_state: TableUIState,
+    // table_state: TableUIState, // thinking of deprecating this, maybe re-introduce it later as a view? who knows. theres probably many layers here.
+
+    pub dataframe_state: DataFrameState,
+
     // mode banner
-    mode_state: AppModeState,
+    pub mode_state: AppModeState,
 }
 
 impl App {
     pub fn new() -> Self {
         Self {
             input_handler: InputHandler::new(),
-            table_state: TableUIState::new(),
+            // table_state: TableUIState::new(),
+            dataframe_state: DataFrameState::new(),
             mode_state: AppModeState::new(),
         }
     }
@@ -34,6 +38,8 @@ impl App {
         }
     }
 
+    // the primary function for handling state conditionals
+    // and updating state.
     fn step(&mut self, control: &Control) {
     }
 
@@ -68,7 +74,7 @@ impl App {
         
         // restricting table area horizontally
         let table_area = horizontal_pad_area(main_area, [25,50,25]);
-        frame.render_stateful_widget(table, table_area, &mut self.table_state);
+        frame.render_stateful_widget(table, table_area, self);
         frame.render_stateful_widget(mode_banner, bottom_banner, &mut self.mode_state);
     }
 

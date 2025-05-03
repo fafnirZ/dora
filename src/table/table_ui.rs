@@ -5,6 +5,7 @@ use ratatui::layout::Rect;
 use ratatui::style::{Color, Style};
 use ratatui::widgets::{Block, Borders, StatefulWidget, Widget};
 
+use crate::app::App;
 use crate::header::Header;
 use crate::utils::cell::{get_cell_area, CELL_HEIGHT, CELL_WIDTH};
 use crate::utils::centered_text::render_text_centered_in_area;
@@ -43,7 +44,8 @@ impl TableUI {
 
 
         // rendering the column values.
-        let headers = state.get_headers();
+        let df_state = &state.dataframe_state;
+        let headers = df_state.get_headers();
         for (idx, header) in headers.iter().enumerate() {
             let y = start_y;
             let x = start_x + CELL_WIDTH * (idx as u16);
@@ -58,14 +60,17 @@ impl TableUI {
 }
 
 impl StatefulWidget for TableUI {
-    type State = TableUIState;
+    // only do this when u need access to more than 2 state objects
+    // since you can only assign 1 object to this trait.
+    type State = App; // cheat and assign to app state so we get access to everthing?
 
     fn render(self, area: ratatui::prelude::Rect, buf: &mut ratatui::prelude::Buffer, state: &mut Self::State) {
         let start_x = area.x;
         let start_y = area.y;
 
         let (y_header, y_first_record) = self.render_header(buf, area, state);
-        let columns = state.get_columns();
+        let df_state = &state.dataframe_state;
+        let columns = df_state.get_columns();
         for (idx, column) in columns.iter().enumerate() {
             let col_ui = ColumnUI::new(
                 column.clone(),
@@ -79,46 +84,10 @@ impl StatefulWidget for TableUI {
 }
 
 
-pub struct TableUIState {
-    pub dataframe: DataFrame
-}
+// pub struct TableUIState {
+//     pub dataframe: DataFrame
+// }
 
-impl TableUIState {
-    pub fn new() -> Self {
-        // boilerplate df for now
-        let s0 = Column::new("days".into(), [0, 1, 2,999].as_ref());
-        let s1 = Column::new("temp".into(), [22.1, 19.9, 7., 999999.9].as_ref());
-        let df = DataFrame::new(vec![s0, s1]).unwrap();
-        Self {
-            dataframe: df,
-        }
-    }
-
-    pub fn get_headers(&self) -> Vec<Header> {
-        let df = &self.dataframe;
-        
-        let df_schema = df.schema();
-        let mut headers: Vec<Header> = vec![];
-        for (col_name, _dt) in df_schema.iter() {
-            headers.push(
-                Header{name: col_name.to_string()}
-            );
-        }
-        headers
-    }
-
-    // polars column
-    pub fn get_columns(&self) -> Vec<Column> {
-        let df = &self.dataframe;
-        // get columns
-        let mut columns = vec![];
-        for col_name in self.get_headers().iter() {
-            let col = df.column(&col_name.name).unwrap();
-            // let dt = series.dtype();
-            columns.push(
-                col.clone(), // copy for now 
-            )
-        }
-        columns
-    }
-}
+// impl TableUIState {
+  
+// }
