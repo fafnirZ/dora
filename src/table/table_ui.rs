@@ -65,11 +65,22 @@ impl StatefulWidget for TableUI {
     type State = App; // cheat and assign to app state so we get access to everthing?
 
     fn render(self, area: ratatui::prelude::Rect, buf: &mut ratatui::prelude::Buffer, state: &mut Self::State) {
+        // render a block for table.
+        // give it a top & bottom border;
+        let block = Block::default()
+            .borders(Borders::TOP | Borders::BOTTOM)
+            .border_style(Style::default().fg(Color::Rgb(64, 64, 64)));
+        block.render(area, buf);
+
+        
+        // actual table rendering now.
         let start_x = area.x;
         let start_y = area.y;
-
+        // header
         let (y_header, y_first_record) = self.render_header(buf, area, state);
         let df_state = &state.dataframe_state;
+
+        // columns
         let columns = df_state.get_columns();
         for (idx, column) in columns.iter().enumerate() {
             let col_ui = ColumnUI::new(
