@@ -10,7 +10,6 @@ pub struct DataFrameState {
     dataframe: DataFrame,
 }
 
-
 impl DataFrameState {
     pub fn new() -> Self {
         // boilerplate df for now
@@ -18,7 +17,7 @@ impl DataFrameState {
         let s1 = Column::new("temp".into(), [22.1, 19.9, 7., 999999.9].as_ref());
         let df = DataFrame::new(vec![s0, s1]).unwrap();
         Self {
-            source_path: String::from("dummy_path.csv"),
+            source_path: String::from("path/to/dummy_path.csv"),
             dataframe: df,
         }
     }
@@ -49,5 +48,13 @@ impl DataFrameState {
             )
         }
         columns
+    }
+}
+
+impl DataFrameState {
+    pub fn get_file_name(&self) -> String {
+        let s = self.source_path.clone();
+        let last_element = s.rfind('/').map(|index| &s[index + 1..]).unwrap();
+        last_element.to_string()
     }
 }

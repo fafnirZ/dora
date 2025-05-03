@@ -1,7 +1,7 @@
 
 use ratatui::{layout::{Constraint, Layout}, prelude::Backend, Frame, Terminal};
 
-use crate::{df::state::DataFrameState, errors::DoraResults, input::{Control, InputHandler}, mode_banner::{self, AppModeState, ModeBanner}, table::table_ui::{TableUI, TableUIState}, utils::area::horizontal_pad_area};
+use crate::{df::state::DataFrameState, errors::DoraResults, input::{Control, InputHandler}, mode_banner::{AppModeState, ModeBanner}, table::{table_banner::TableBanner, table_ui::TableUI}, utils::area::horizontal_pad_area};
 
 // global app state.
 pub struct App {
@@ -70,11 +70,13 @@ impl App {
         
 
         let table = TableUI::new();
+        let table_banner = TableBanner::new();
         let mode_banner = ModeBanner::new();
         
         // restricting table area horizontally
         let table_area = horizontal_pad_area(main_area, [25,50,25]);
         frame.render_stateful_widget(table, table_area, self);
+        frame.render_stateful_widget(table_banner, main_bottom_banner, self);
         frame.render_stateful_widget(mode_banner, bottom_banner, &mut self.mode_state);
     }
 
