@@ -7,7 +7,8 @@ use ratatui::widgets::{Block, Borders, Paragraph, StatefulWidget, Widget};
 
 use crate::header::Header;
 use crate::column::Column;
-use crate::utils::cell::{CELL_HEIGHT, CELL_WIDTH};
+use crate::utils::cell::{get_cell_area, CELL_HEIGHT, CELL_WIDTH};
+use crate::utils::centered_text::render_text_centered_in_area;
 
 
 pub struct TableUI {
@@ -47,13 +48,22 @@ impl TableUI {
         //     .reduce(|a, b| a + &b)
         //     .unwrap();
         // buf.set_stringn(0,0, header_str, area.width as usize, Style::default());
+        // let headers = state.get_headers();
+        // for (idx, header) in headers.iter().enumerate() {
+        //     let para = Paragraph::new(header.name.clone())
+        //         .alignment(Alignment::Center);
+        //     let x = CELL_WIDTH * (idx as u16);
+        //     let area = Rect::new(x, 0, CELL_WIDTH, CELL_HEIGHT);
+        //     para.render(area, buf);
+        // }
+
         let headers = state.get_headers();
         for (idx, header) in headers.iter().enumerate() {
-            let para = Paragraph::new(header.name.clone())
-                .alignment(Alignment::Center);
+            let y = 0;
             let x = CELL_WIDTH * (idx as u16);
-            let area = Rect::new(x, 0, CELL_WIDTH, CELL_HEIGHT);
-            para.render(area, buf);
+            let cell_area = get_cell_area(x, y);
+            let header_name = header.name.clone();
+            render_text_centered_in_area(header_name, cell_area, buf);
         }
 
         // y pos of header text and next line
