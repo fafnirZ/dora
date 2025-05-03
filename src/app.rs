@@ -1,8 +1,7 @@
-use std::any::Any;
 
 use ratatui::{prelude::Backend, Frame, Terminal};
 
-use crate::{column_ui::ColumnUI, errors::DoraResults, header::Header, input::{Control, InputHandler}, table_ui::{TableUI, TableUIState}};
+use crate::{errors::DoraResults, input::{Control, InputHandler}, table_ui::{TableUI, TableUIState}};
 
 pub struct App {
     // input_handler

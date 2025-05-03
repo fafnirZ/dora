@@ -1,9 +1,9 @@
 use polars::frame::DataFrame;
 use polars::prelude::Column;
 use ratatui::buffer::Buffer;
-use ratatui::layout::{Alignment, Rect};
+use ratatui::layout::Rect;
 use ratatui::style::{Color, Style};
-use ratatui::widgets::{Block, Borders, Paragraph, StatefulWidget, Widget};
+use ratatui::widgets::{Block, Borders, StatefulWidget, Widget};
 
 use crate::header::Header;
 use crate::column_ui::ColumnUI;

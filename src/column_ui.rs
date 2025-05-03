@@ -1,7 +1,7 @@
 use polars::prelude::*;
 use ratatui::prelude::*;
 
-use crate::utils::{cell::{get_cell_area, CELL_HEIGHT, CELL_WIDTH}, centered_text::render_text_centered_in_area};
+use crate::utils::{cell::{get_cell_area, CELL_HEIGHT}, centered_text::render_text_centered_in_area};
 
 #[derive(Clone)]
 pub struct ColumnUI {
