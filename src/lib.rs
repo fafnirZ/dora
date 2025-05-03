@@ -6,5 +6,7 @@ mod events;
 mod errors;
 mod header;
 mod column;
+mod widgets;
+mod utils;
 
 pub use runner::run_app;

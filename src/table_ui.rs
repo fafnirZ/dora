@@ -1,12 +1,13 @@
 use polars::frame::DataFrame;
 use polars::prelude::Column as PlColumn;
 use ratatui::buffer::Buffer;
-use ratatui::layout::Rect;
+use ratatui::layout::{Alignment, Rect};
 use ratatui::style::{Color, Style};
-use ratatui::widgets::{Block, Borders, StatefulWidget, Widget};
+use ratatui::widgets::{Block, Borders, Paragraph, StatefulWidget, Widget};
 
 use crate::header::Header;
 use crate::column::Column;
+use crate::utils::cell::{CELL_HEIGHT, CELL_WIDTH};
 
 
 pub struct TableUI {
@@ -34,18 +35,26 @@ impl TableUI {
         let block = Block::default()
             .borders(Borders::TOP | Borders::BOTTOM)
             .border_style(Style::default().fg(Color::Rgb(64, 64, 64)));
-        let height = 3;
+        let height = CELL_HEIGHT;
         let area = Rect::new(0, 0, area.width, height);
         block.render(area, buf);
         
         // get headers
         // hacking it for now
+        // let headers = state.get_headers();
+        // let header_str = headers.iter()
+        //     .map(|h| h.name.to_string())
+        //     .reduce(|a, b| a + &b)
+        //     .unwrap();
+        // buf.set_stringn(0,0, header_str, area.width as usize, Style::default());
         let headers = state.get_headers();
-        let header_str = headers.iter()
-            .map(|h| h.name.to_string())
-            .reduce(|a, b| a + &b)
-            .unwrap();
-        buf.set_stringn(0,0, header_str, area.width as usize, Style::default());
+        for (idx, header) in headers.iter().enumerate() {
+            let para = Paragraph::new(header.name.clone())
+                .alignment(Alignment::Center);
+            let x = CELL_WIDTH * (idx as u16);
+            let area = Rect::new(x, 0, CELL_WIDTH, CELL_HEIGHT);
+            para.render(area, buf);
+        }
 
         // y pos of header text and next line
         (height.saturating_sub(2), height)
