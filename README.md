@@ -17,3 +17,6 @@ It is an terminal based, interactive dataframe explorer built ontop of:
 - [ ] filter
 - [ ] order by
 - [ ] display the current query expression
+
+## References
+Code structure and functionality heavily inspired from https://github.com/YS-L/csvlens
