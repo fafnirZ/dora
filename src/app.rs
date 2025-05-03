@@ -2,7 +2,7 @@ use std::any::Any;
 
 use ratatui::{prelude::Backend, Frame, Terminal};
 
-use crate::{column::Column, errors::DoraResults, header::Header, input::{Control, InputHandler}, table_ui::{TableUI, TableUIState}};
+use crate::{column_ui::ColumnUI, errors::DoraResults, header::Header, input::{Control, InputHandler}, table_ui::{TableUI, TableUIState}};
 
 pub struct App {
     // input_handler

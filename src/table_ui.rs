@@ -6,18 +6,18 @@ use ratatui::style::{Color, Style};
 use ratatui::widgets::{Block, Borders, Paragraph, StatefulWidget, Widget};
 
 use crate::header::Header;
-use crate::column::Column;
+use crate::column_ui::ColumnUI;
 use crate::utils::cell::{get_cell_area, CELL_HEIGHT, CELL_WIDTH};
 use crate::utils::centered_text::render_text_centered_in_area;
 
 
 pub struct TableUI {
     header: Vec<Header>,
-    columns: Vec<Column>,
+    columns: Vec<ColumnUI>,
 }
 
 impl TableUI {
-    pub fn new(header: Vec<Header>, columns: Vec<Column>) -> Self {
+    pub fn new(header: Vec<Header>, columns: Vec<ColumnUI>) -> Self {
         Self {
             header,
             columns,
@@ -59,6 +59,10 @@ impl StatefulWidget for TableUI {
 
     fn render(self, area: ratatui::prelude::Rect, buf: &mut ratatui::prelude::Buffer, state: &mut Self::State) {
         let (y_header, y_first_record) = self.render_header(buf, area, state);
+        let columns = self.columns;
+        for column in columns.iter() {
+            column.clone().render(area, buf);
+        }
     }
     
 }
@@ -91,7 +95,7 @@ impl TableUIState {
         }
         headers
     }
-    pub fn get_columns(&self) -> Vec<Column> {
+    pub fn get_columns(&self) -> Vec<ColumnUI> {
         let df = &self.dataframe;
         // get columns
         let mut columns = vec![];
@@ -99,7 +103,7 @@ impl TableUIState {
             let col = df.column(&col_name.name).unwrap();
             // let dt = series.dtype();
             columns.push(
-                Column::new(col.clone()),
+                ColumnUI::new(col.clone()), // copy for now 
             )
         }
         columns
