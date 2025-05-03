@@ -1,7 +1,7 @@
 
 use ratatui::{layout::{Constraint, Layout}, prelude::Backend, Frame, Terminal};
 
-use crate::{errors::DoraResults, input::{Control, InputHandler}, mode_banner::{self, AppModeState, ModeBanner}, table_ui::{TableUI, TableUIState}};
+use crate::{errors::DoraResults, input::{Control, InputHandler}, mode_banner::{self, AppModeState, ModeBanner}, table_ui::{TableUI, TableUIState}, utils::area::horizontal_pad_area};
 
 // global app state.
 pub struct App {
@@ -51,15 +51,20 @@ impl App {
             _,
             bottom_banner,
         ] = Layout::vertical([
-                Constraint::Percentage(20), // padding to center the app in middle.
+                Constraint::Percentage(35),     // padding to center the app in middle.
                 Constraint::Length(1),      // top banner
                 Constraint::Length(30),     // main app
-                Constraint::Percentage(20), // padding
+                Constraint::Percentage(35), // padding
                 Constraint::Length(1),      // bottom banner
             ]).areas(area);
+        
+
         let table = TableUI::new();
         let mode_banner = ModeBanner::new();
-        frame.render_stateful_widget(table, main_area, &mut self.table_state);
+        
+        // restricting table area horizontally
+        let table_area = horizontal_pad_area(main_area, [25,50,25]);
+        frame.render_stateful_widget(table, table_area, &mut self.table_state);
         frame.render_stateful_widget(mode_banner, bottom_banner, &mut self.mode_state);
     }
 
