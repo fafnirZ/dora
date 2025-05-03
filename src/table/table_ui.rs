@@ -1,7 +1,7 @@
 use polars::frame::DataFrame;
 use polars::prelude::Column;
 use ratatui::buffer::Buffer;
-use ratatui::layout::Rect;
+use ratatui::layout::{Constraint, Layout, Rect};
 use ratatui::style::{Color, Style};
 use ratatui::widgets::{Block, Borders, StatefulWidget, Widget};
 
@@ -11,6 +11,7 @@ use crate::utils::cell::{get_cell_area, CELL_HEIGHT, CELL_WIDTH};
 use crate::utils::centered_text::render_text_centered_in_area;
 
 use super::column_ui::ColumnUI;
+use super::table_banner::TableBanner;
 
 
 pub struct TableUI {
@@ -24,12 +25,26 @@ impl TableUI {
 
 // priv
 impl TableUI {
+
+    fn render_table_borders(
+        &self, 
+        area: Rect, 
+        buf: &mut Buffer, 
+    ) {
+        // render a block for table.
+        // give it a top & bottom border;
+        let block = Block::default()
+            .borders(Borders::TOP | Borders::BOTTOM)
+            .border_style(Style::default().fg(Color::Rgb(64, 64, 64)));
+        block.render(area, buf);
+    }
+
     fn render_header(
         &self, 
-        buf: &mut Buffer, 
         area: Rect, 
+        buf: &mut Buffer, 
         state: &mut <TableUI as StatefulWidget>::State
-    ) -> (u16, u16) {
+    ) {
 
         let start_x = area.x;
         let start_y = area.y;
@@ -55,7 +70,59 @@ impl TableUI {
         }
 
         // y pos of header text and next line
-        (height.saturating_sub(2), height)
+        // (height.saturating_sub(2), height)
+    }
+
+
+    fn render_columns(        
+        &self, 
+        area: Rect, 
+        buf: &mut Buffer, 
+        state: &mut <TableUI as StatefulWidget>::State
+    ) {
+        // respect the area assigned to the widget.
+        let start_x = area.x;
+        let start_y = area.y;
+
+        let df_state = &state.dataframe_state;
+        // columns
+        let columns = df_state.get_columns();
+        for (idx, column) in columns.iter().enumerate() {
+            let col_ui = ColumnUI::new(
+                column.clone(),
+                start_x + CELL_WIDTH * (idx as u16),
+                start_y + CELL_WIDTH * 1, // header
+            );
+            col_ui.render(area, buf);
+        }
+    }
+
+    // render banners
+    fn render_bottom_banner(
+        &self, 
+        area: Rect, 
+        buf: &mut Buffer, 
+        state: &mut <TableUI as StatefulWidget>::State
+    ) {
+        let table_banner = TableBanner::new();
+        
+        table_banner.render(
+            area,
+            buf,
+            state,
+        )
+    }
+
+    // vertically segment area into 3 section
+    // table_banner_top
+    // table_main
+    // table_banner_bottom
+    fn vertical_segment_area(area: Rect) -> [Rect;3] {
+        return Layout::vertical([
+            Constraint::Length(1),
+            Constraint::Fill(1),
+            Constraint::Length(1),
+        ]).areas(area)
     }
 }
 
@@ -65,31 +132,23 @@ impl StatefulWidget for TableUI {
     type State = App; // cheat and assign to app state so we get access to everthing?
 
     fn render(self, area: ratatui::prelude::Rect, buf: &mut ratatui::prelude::Buffer, state: &mut Self::State) {
-        // render a block for table.
-        // give it a top & bottom border;
-        let block = Block::default()
-            .borders(Borders::TOP | Borders::BOTTOM)
-            .border_style(Style::default().fg(Color::Rgb(64, 64, 64)));
-        block.render(area, buf);
+        let [
+            _table_banner_top,
+            table_main,
+            table_banner_bottom,
+        ] = TableUI::vertical_segment_area(area);
 
+        // render bottom banner
+        self.render_bottom_banner(table_banner_bottom, buf, state);
+
+        // render borders
+        self.render_table_borders(table_main, buf);
         
-        // actual table rendering now.
-        let start_x = area.x;
-        let start_y = area.y;
         // header
-        let (y_header, y_first_record) = self.render_header(buf, area, state);
-        let df_state = &state.dataframe_state;
+        self.render_header(table_main, buf, state);
 
         // columns
-        let columns = df_state.get_columns();
-        for (idx, column) in columns.iter().enumerate() {
-            let col_ui = ColumnUI::new(
-                column.clone(),
-                start_x + CELL_WIDTH * (idx as u16),
-                start_y + y_first_record,
-            );
-            col_ui.render(area, buf);
-        }
+        self.render_columns(table_main, buf, state);
     }
     
 }
