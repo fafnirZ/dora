@@ -28,17 +28,24 @@ impl TableUI {
         area: Rect, 
         state: &mut <TableUI as StatefulWidget>::State
     ) -> (u16, u16) {
+
+        let start_x = area.x;
+        let start_y = area.y;
+
+        // rendering the block
         let block = Block::default()
             .borders(Borders::TOP | Borders::BOTTOM)
             .border_style(Style::default().fg(Color::Rgb(64, 64, 64)));
         let height = CELL_HEIGHT;
-        let area = Rect::new(0, 0, area.width, height);
+        let area = Rect::new(start_x, start_y, area.width, height);
         block.render(area, buf);
-        
+
+
+        // rendering the column values.
         let headers = state.get_headers();
         for (idx, header) in headers.iter().enumerate() {
-            let y = 0;
-            let x = CELL_WIDTH * (idx as u16);
+            let y = start_y;
+            let x = start_x + CELL_WIDTH * (idx as u16);
             let cell_area = get_cell_area(x, y);
             let header_name = header.name.clone();
             render_text_centered_in_area(header_name, cell_area, buf);
@@ -53,19 +60,19 @@ impl StatefulWidget for TableUI {
     type State = TableUIState;
 
     fn render(self, area: ratatui::prelude::Rect, buf: &mut ratatui::prelude::Buffer, state: &mut Self::State) {
-        let (y_header, y_first_record) = self.render_header(buf, area, state);
+        let start_x = area.x;
+        let start_y = area.y;
 
+        let (y_header, y_first_record) = self.render_header(buf, area, state);
         let columns = state.get_columns();
         for (idx, column) in columns.iter().enumerate() {
-
             let col_ui = ColumnUI::new(
                 column.clone(),
-                CELL_WIDTH * (idx as u16),
-                y_first_record,
+                start_x + CELL_WIDTH * (idx as u16),
+                start_y + y_first_record,
             );
             col_ui.render(area, buf);
         }
-
     }
     
 }
