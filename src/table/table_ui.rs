@@ -82,16 +82,24 @@ impl TableUI {
     ) {
         // respect the area assigned to the widget.
         let start_x = area.x;
+        let end_x = start_x + area.width;
         let start_y = area.y;
 
         let df_state = &state.dataframe_state;
         // columns
         let columns = df_state.get_columns();
         for (idx, column) in columns.iter().enumerate() {
+            let x_offset = start_x + CELL_WIDTH * (idx as u16);
+            let y_offset = start_y + CELL_WIDTH * 1; // header\
+
+            // do not render beyond bounds
+            if x_offset+CELL_WIDTH > end_x {break;}
+
+
             let col_ui = ColumnUI::new(
                 column.clone(),
-                start_x + CELL_WIDTH * (idx as u16),
-                start_y + CELL_WIDTH * 1, // header
+                x_offset,
+                y_offset,
             );
             col_ui.render(area, buf);
         }

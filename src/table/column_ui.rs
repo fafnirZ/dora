@@ -1,7 +1,7 @@
 use polars::prelude::*;
 use ratatui::prelude::*;
 
-use crate::utils::{cell::{get_cell_area, CELL_HEIGHT}, centered_text::render_text_centered_in_area};
+use crate::utils::{cell::{get_cell_area, CELL_HEIGHT, CELL_WIDTH}, centered_text::render_text_centered_in_area};
 
 #[derive(Clone)]
 pub struct ColumnUI {
@@ -24,7 +24,10 @@ impl ColumnUI {
 
 impl Widget for ColumnUI {
 
-    fn render(self, _area: Rect, buf: &mut Buffer) {
+    fn render(self, area: Rect, buf: &mut Buffer) {
+
+        let start_y= area.y;
+        let end_y = start_y + area.height;
 
         // render columns
         // TODO limit the number of values which are being rendered
@@ -38,7 +41,7 @@ impl Widget for ColumnUI {
         //     .min(total_length_of_series-1); // bind by total length of series
 
         let start_offset = 0 as i64;
-        let total_len_taken = 50 as usize;
+        let total_len_taken = 10 as usize;
 
         let binding = self
             .values
@@ -48,9 +51,14 @@ impl Widget for ColumnUI {
         let values_iter = binding_2.iter();
 
         for (idx, value) in values_iter.enumerate() {
+            
             let x = self.x_offset; // WELL depends on what the x_offset is for this column.
             // TODO: explore making the header part of the column so its truely columnar.
             let y = CELL_HEIGHT * (idx as u16) + (self.y_offset as u16);
+
+            // do not render if y is outside of area bound
+            if y + CELL_HEIGHT > end_y {break;}
+
             let cell_area = get_cell_area(x, y);
             let val_str = value.to_string();
             render_text_centered_in_area(val_str, cell_area, buf);
