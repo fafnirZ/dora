@@ -37,8 +37,7 @@ impl App {
     fn render_frame(&mut self, frame: &mut Frame) {
         let size = frame.area();
 
-        let table_state = &mut self.table_state;
-        let table = TableUI::new(table_state.get_headers(), table_state.get_columns());
+        let table = TableUI::new();
         frame.render_stateful_widget(table, size, &mut self.table_state);
     }
 

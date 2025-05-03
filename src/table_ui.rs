@@ -1,5 +1,5 @@
 use polars::frame::DataFrame;
-use polars::prelude::Column as PlColumn;
+use polars::prelude::Column;
 use ratatui::buffer::Buffer;
 use ratatui::layout::{Alignment, Rect};
 use ratatui::style::{Color, Style};
@@ -12,16 +12,11 @@ use crate::utils::centered_text::render_text_centered_in_area;
 
 
 pub struct TableUI {
-    header: Vec<Header>,
-    columns: Vec<ColumnUI>,
 }
 
 impl TableUI {
-    pub fn new(header: Vec<Header>, columns: Vec<ColumnUI>) -> Self {
-        Self {
-            header,
-            columns,
-        }
+    pub fn new() -> Self {
+        Self {}
     }
 }
 
@@ -59,10 +54,18 @@ impl StatefulWidget for TableUI {
 
     fn render(self, area: ratatui::prelude::Rect, buf: &mut ratatui::prelude::Buffer, state: &mut Self::State) {
         let (y_header, y_first_record) = self.render_header(buf, area, state);
-        let columns = self.columns;
-        for column in columns.iter() {
-            column.clone().render(area, buf);
+
+        let columns = state.get_columns();
+        for (idx, column) in columns.iter().enumerate() {
+
+            let col_ui = ColumnUI::new(
+                column.clone(),
+                CELL_WIDTH * (idx as u16),
+                y_first_record,
+            );
+            col_ui.render(area, buf);
         }
+
     }
     
 }
@@ -75,8 +78,8 @@ pub struct TableUIState {
 impl TableUIState {
     pub fn new() -> Self {
         // boilerplate df for now
-        let s0 = PlColumn::new("days".into(), [0, 1, 2].as_ref());
-        let s1 = PlColumn::new("temp".into(), [22.1, 19.9, 7.].as_ref());
+        let s0 = Column::new("days".into(), [0, 1, 2].as_ref());
+        let s1 = Column::new("temp".into(), [22.1, 19.9, 7.].as_ref());
         let df = DataFrame::new(vec![s0, s1]).unwrap();
         Self {
             dataframe: df,
@@ -95,15 +98,17 @@ impl TableUIState {
         }
         headers
     }
-    pub fn get_columns(&self) -> Vec<ColumnUI> {
+
+    // polars column
+    pub fn get_columns(&self) -> Vec<Column> {
         let df = &self.dataframe;
         // get columns
         let mut columns = vec![];
-        for col_name in self.get_headers() {
+        for col_name in self.get_headers().iter() {
             let col = df.column(&col_name.name).unwrap();
             // let dt = series.dtype();
             columns.push(
-                ColumnUI::new(col.clone()), // copy for now 
+                col.clone(), // copy for now 
             )
         }
         columns
