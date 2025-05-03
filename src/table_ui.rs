@@ -78,8 +78,8 @@ pub struct TableUIState {
 impl TableUIState {
     pub fn new() -> Self {
         // boilerplate df for now
-        let s0 = Column::new("days".into(), [0, 1, 2].as_ref());
-        let s1 = Column::new("temp".into(), [22.1, 19.9, 7.].as_ref());
+        let s0 = Column::new("days".into(), [0, 1, 2,999].as_ref());
+        let s1 = Column::new("temp".into(), [22.1, 19.9, 7., 999999.9].as_ref());
         let df = DataFrame::new(vec![s0, s1]).unwrap();
         Self {
             dataframe: df,
