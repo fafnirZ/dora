@@ -37,16 +37,25 @@ impl App {
     fn step(&mut self, control: &Control) {
     }
 
+
+    ///////////////
+    // rendering //
+    ///////////////
+
     fn render_frame(&mut self, frame: &mut Frame) {
         let area = frame.area();
         let [
+            _,
             top_banner,
             main_area,
+            _,
             bottom_banner,
         ] = Layout::vertical([
-                Constraint::Length(1),
-                Constraint::Fill(1),
-                Constraint::Length(1),
+                Constraint::Percentage(20), // padding to center the app in middle.
+                Constraint::Length(1),      // top banner
+                Constraint::Length(30),     // main app
+                Constraint::Percentage(20), // padding
+                Constraint::Length(1),      // bottom banner
             ]).areas(area);
         let table = TableUI::new();
         let mode_banner = ModeBanner::new();
