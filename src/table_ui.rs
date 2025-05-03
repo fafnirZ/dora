@@ -40,23 +40,6 @@ impl TableUI {
         let area = Rect::new(0, 0, area.width, height);
         block.render(area, buf);
         
-        // get headers
-        // hacking it for now
-        // let headers = state.get_headers();
-        // let header_str = headers.iter()
-        //     .map(|h| h.name.to_string())
-        //     .reduce(|a, b| a + &b)
-        //     .unwrap();
-        // buf.set_stringn(0,0, header_str, area.width as usize, Style::default());
-        // let headers = state.get_headers();
-        // for (idx, header) in headers.iter().enumerate() {
-        //     let para = Paragraph::new(header.name.clone())
-        //         .alignment(Alignment::Center);
-        //     let x = CELL_WIDTH * (idx as u16);
-        //     let area = Rect::new(x, 0, CELL_WIDTH, CELL_HEIGHT);
-        //     para.render(area, buf);
-        // }
-
         let headers = state.get_headers();
         for (idx, header) in headers.iter().enumerate() {
             let y = 0;
