@@ -30,22 +30,19 @@ impl Widget for ColumnUI {
         // TODO limit the number of values which are being rendered
         // based on rendering rules...
         // this is for paginating
-        let start_offset = 0 as u32;
-        let num_values_rendered = 50;
-        let total_length_of_series = self.values.len() as u32;
-        let end_offset = (start_offset + num_values_rendered)
-            .min(total_length_of_series-1); // bind by total length of series
 
-        // let binding = self
-        //     .values
-        //     .take_slice(&[start_offset, end_offset]).unwrap()
-        //     .as_series().unwrap()
-        //     .as_list();
-        // let values_iter = binding.iter();
+        // let start_offset = 0 as u32;
+        // let num_values_rendered = 50;
+        // let total_length_of_series = self.values.len() as u32;
+        // let end_offset = (start_offset + num_values_rendered)
+        //     .min(total_length_of_series-1); // bind by total length of series
+
+        let start_offset = 0 as i64;
+        let total_len_taken = 50 as usize;
 
         let binding = self
             .values
-            .take_slice(&[start_offset, end_offset]).unwrap();
+            .slice(start_offset, total_len_taken);
         let binding_2 = binding
             .as_series().unwrap();
         let values_iter = binding_2.iter();
