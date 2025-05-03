@@ -17,11 +17,13 @@ pub struct App {
 }
 
 impl App {
-    pub fn new() -> Self {
+    pub fn new(file_path: &str) -> Self {
         Self {
             input_handler: InputHandler::new(),
             // table_state: TableUIState::new(),
-            dataframe_state: DataFrameState::new(),
+            dataframe_state: DataFrameState::new(
+                file_path,
+            ),
             mode_state: AppModeState::new(),
         }
     }

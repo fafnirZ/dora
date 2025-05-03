@@ -11,13 +11,20 @@ pub struct DataFrameState {
 }
 
 impl DataFrameState {
-    pub fn new() -> Self {
+    pub fn new(file_path: &str) -> Self {
         // boilerplate df for now
-        let s0 = Column::new("days".into(), [0, 1, 2,999].as_ref());
-        let s1 = Column::new("temp".into(), [22.1, 19.9, 7., 999999.9].as_ref());
-        let df = DataFrame::new(vec![s0, s1]).unwrap();
+        // let s0 = Column::new("days".into(), [0, 1, 2,999].as_ref());
+        // let s1 = Column::new("temp".into(), [22.1, 19.9, 7., 999999.9].as_ref());
+        // let df = DataFrame::new(vec![s0, s1]).unwrap();
+        
+        let df = CsvReadOptions::default()
+            .try_into_reader_with_file_path(Some(file_path.into()))
+            .unwrap()
+            .finish()
+            .unwrap();
+
         Self {
-            source_path: String::from("path/to/dummy_path.csv"),
+            source_path: String::from(file_path),
             dataframe: df,
         }
     }

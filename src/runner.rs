@@ -28,7 +28,7 @@ fn drop() {
 }
 
 
-pub fn run_app() {
+pub fn run_app(file_name: &str) {
     // cleanup on panic hook
     restore_terminal_on_close_hook();
     
@@ -41,7 +41,9 @@ pub fn run_app() {
     execute!(output, EnterAlternateScreen).unwrap();
     let backend = CrosstermBackend::new(LineWriter::new(output));
     let mut terminal = Terminal::new(backend).unwrap();
-    App::new().main_loop(&mut terminal).unwrap();
+    App::new(file_name)
+        .main_loop(&mut terminal)
+        .unwrap();
 
     // cleanup 
     // in normal end
