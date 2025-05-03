@@ -6,9 +6,10 @@ use ratatui::style::{Color, Style};
 use ratatui::widgets::{Block, Borders, StatefulWidget, Widget};
 
 use crate::header::Header;
-use crate::column_ui::ColumnUI;
 use crate::utils::cell::{get_cell_area, CELL_HEIGHT, CELL_WIDTH};
 use crate::utils::centered_text::render_text_centered_in_area;
+
+use super::column_ui::ColumnUI;
 
 
 pub struct TableUI {

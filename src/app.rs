@@ -1,7 +1,7 @@
 
 use ratatui::{layout::{Constraint, Layout}, prelude::Backend, Frame, Terminal};
 
-use crate::{errors::DoraResults, input::{Control, InputHandler}, mode_banner::{self, AppModeState, ModeBanner}, table_ui::{TableUI, TableUIState}, utils::area::horizontal_pad_area};
+use crate::{errors::DoraResults, input::{Control, InputHandler}, mode_banner::{self, AppModeState, ModeBanner}, table::table_ui::{TableUI, TableUIState}, utils::area::horizontal_pad_area};
 
 // global app state.
 pub struct App {
@@ -45,17 +45,21 @@ impl App {
     fn render_frame(&mut self, frame: &mut Frame) {
         let area = frame.area();
         let [
+            _top_banner,
             _,
-            top_banner,
+            _main_top_banner,
             main_area,
+            main_bottom_banner,
             _,
             bottom_banner,
         ] = Layout::vertical([
+                Constraint::Length(1),          // top banner
                 Constraint::Percentage(35),     // padding to center the app in middle.
-                Constraint::Length(1),      // top banner
-                Constraint::Length(30),     // main app
-                Constraint::Percentage(35), // padding
-                Constraint::Length(1),      // bottom banner
+                Constraint::Length(1),          // main app top banner
+                Constraint::Length(30),         // main app
+                Constraint::Length(1),          // main app bottom banner
+                Constraint::Percentage(35),     // padding
+                Constraint::Length(1),          // bottom banner
             ]).areas(area);
         
 
