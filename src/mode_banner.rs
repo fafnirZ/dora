@@ -3,6 +3,14 @@ use ratatui::{buffer::Buffer, layout::Rect, widgets::StatefulWidget};
 use crate::{app::App, utils::centered_text::render_text_centered_in_area};
 
 
+pub enum AppMode {
+    Normal,
+    Filter, // `&`
+    Search, // `/`
+    Help,   // `?`
+}
+
+
 pub struct ModeBanner {}
 
 impl ModeBanner {
@@ -13,10 +21,10 @@ impl ModeBanner {
     ) -> String {
         let state = state;
         match state.state {
-            AppMode::NORMAL => String::from("--normal--"),
-            AppMode::FILTER => String::from("--filter--"),
-            AppMode::SEARCH => String::from("--search--"),
-            AppMode::HELP => String::from("--help--"),
+            AppMode::Normal => String::from("--normal--"),
+            AppMode::Filter => String::from("--filter--"),
+            AppMode::Search => String::from("--search--"),
+            AppMode::Help => String::from("--help--"),
         }
     }
 }
@@ -33,15 +41,8 @@ impl StatefulWidget for ModeBanner {
 
 // state class
 
-pub enum AppMode {
-    NORMAL,
-    FILTER,
-    SEARCH,
-    HELP,
-}
-
 pub struct AppModeState {
-    state: AppMode,
+    pub state: AppMode,
 }
 
 impl AppModeState {
@@ -63,7 +64,7 @@ impl AppModeState {
 impl Default for AppModeState {
     fn default() -> Self {
         return Self {
-            state: AppMode::NORMAL,
+            state: AppMode::Normal,
         }
     }
 }

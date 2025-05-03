@@ -3,8 +3,12 @@ use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
 use crate::events::{Event, Events};
 
 pub enum Control {
+    Help,
+    Filter,
+    Search,
     Quit,
     Nothing,
+    Esc,
 }
 
 
@@ -35,7 +39,10 @@ impl InputHandler {
         match key_event.modifiers {
             KeyModifiers::NONE => match key_event.code {
                 KeyCode::Char('q') => Control::Quit,
-                KeyCode::Esc => Control::Quit, // for now
+                KeyCode::Esc => Control::Esc, // depends on context for esc handling
+                KeyCode::Char('&') => Control::Filter,
+                KeyCode::Char('/') => Control::Search,
+                KeyCode::Char('?') => Control::Help,
                 _ => Control::Nothing
             },
             KeyModifiers::SHIFT => match key_event.code {

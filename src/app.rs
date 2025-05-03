@@ -1,7 +1,7 @@
 
 use ratatui::{layout::{Constraint, Layout}, prelude::Backend, Frame, Terminal};
 
-use crate::{df::state::DataFrameState, errors::DoraResults, input::{Control, InputHandler}, mode_banner::{AppModeState, ModeBanner}, table::{table_banner::TableBanner, table_ui::TableUI}, utils::area::horizontal_pad_area};
+use crate::{controller::Controller, df::state::DataFrameState, errors::DoraResults, input::{Control, InputHandler}, mode_banner::{AppModeState, ModeBanner}, table::{table_banner::TableBanner, table_ui::TableUI}, utils::area::horizontal_pad_area};
 
 // global app state.
 pub struct App {
@@ -41,6 +41,7 @@ impl App {
     // the primary function for handling state conditionals
     // and updating state.
     fn step(&mut self, control: &Control) {
+        Controller::perform_actions(control, self);
     }
 
 
