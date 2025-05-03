@@ -1,13 +1,16 @@
 
-use ratatui::{prelude::Backend, Frame, Terminal};
+use ratatui::{layout::{Constraint, Layout}, prelude::Backend, Frame, Terminal};
 
-use crate::{errors::DoraResults, input::{Control, InputHandler}, table_ui::{TableUI, TableUIState}};
+use crate::{errors::DoraResults, input::{Control, InputHandler}, mode_banner::{self, AppModeState, ModeBanner}, table_ui::{TableUI, TableUIState}};
 
+// global app state.
 pub struct App {
     // input_handler
     input_handler: InputHandler,
     // table_state
     table_state: TableUIState,
+    // mode banner
+    mode_state: AppModeState,
 }
 
 impl App {
@@ -15,6 +18,7 @@ impl App {
         Self {
             input_handler: InputHandler::new(),
             table_state: TableUIState::new(),
+            mode_state: AppModeState::new(),
         }
     }
 
@@ -34,10 +38,20 @@ impl App {
     }
 
     fn render_frame(&mut self, frame: &mut Frame) {
-        let size = frame.area();
-
+        let area = frame.area();
+        let [
+            top_banner,
+            main_area,
+            bottom_banner,
+        ] = Layout::vertical([
+                Constraint::Length(1),
+                Constraint::Fill(1),
+                Constraint::Length(1),
+            ]).areas(area);
         let table = TableUI::new();
-        frame.render_stateful_widget(table, size, &mut self.table_state);
+        let mode_banner = ModeBanner::new();
+        frame.render_stateful_widget(table, main_area, &mut self.table_state);
+        frame.render_stateful_widget(mode_banner, bottom_banner, &mut self.mode_state);
     }
 
     fn draw<B: Backend>(&mut self, terminal: &mut Terminal<B>) {
@@ -45,6 +59,5 @@ impl App {
         terminal.draw(|f| {
             self.render_frame(f);
         }).unwrap();
-
     }
 }
