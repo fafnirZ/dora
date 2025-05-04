@@ -41,8 +41,8 @@ impl Controller {
             Control::ScrollDown => {
                 df_state.set_cursor_focus(CursorFocus::Row);
                 let cursor_y = df_state.get_cursor_y();
-                let view_slice = df_state.get_view_slice();
-                let slice_length = view_slice[1] - view_slice[0];
+                let row_view_slice = df_state.get_row_view_slice();
+                let slice_length = row_view_slice[1] - row_view_slice[0];
                 if cursor_y == &slice_length {
                     shift_displayed_df_value_slice_down(app_state);
                 } else {

@@ -93,7 +93,7 @@ impl StatefulWidget for ColumnUI {
         let column = df_state
             .get_column(&self.column_name);
 
-        let [val_offset_start, val_offset_end] = df_state.get_view_slice();
+        let [val_offset_start, val_offset_end] = df_state.get_row_view_slice();
         let length_taken = (val_offset_end-val_offset_start) as usize;
         let series = column
             .as_series()

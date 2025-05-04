@@ -27,7 +27,7 @@ pub struct DataFrameState {
     // not sure if it should be owned here
     // but we figure it out later.
     ///////////////////////////////////////
-    view_slice: [i64;2],    // the current viewable slice.
+    row_view_slice: [i64;2],    // the current viewable slice.
     cursor_x: i64,          // dataframe cursor for col NOTE: is limited by the number of columns renderable
     cursor_y: i64,          // dataframe cursor for row NOTE: is limited by the number of rows renderable
     cursor_focus: CursorFocus,   // dataframe cursor focus on row or column (renders different highlights)
@@ -46,7 +46,7 @@ impl DataFrameState {
         Self {
             source_path: String::from(file_path),
             dataframe: df,
-            view_slice: [0, SLICE_SIZE],
+            row_view_slice: [0, SLICE_SIZE],
             cursor_x: 0,
             cursor_y: 0,
             cursor_focus: CursorFocus::Row,
@@ -93,11 +93,11 @@ impl DataFrameState {
     }
 
     // setter getters
-    pub fn get_view_slice(&self) -> &[i64;2] {
-        &self.view_slice
+    pub fn get_row_view_slice(&self) -> &[i64;2] {
+        &self.row_view_slice
     }
-    pub fn set_view_slice(&mut self, new_indices: [i64;2]) {
-        self.view_slice = new_indices;
+    pub fn set_row_view_slice(&mut self, new_indices: [i64;2]) {
+        self.row_view_slice = new_indices;
     }
 
     pub fn get_cursor_x(&self) -> &i64 {

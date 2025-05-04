@@ -15,14 +15,12 @@ use super::column_ui::ColumnUI;
 use super::table_banner::TableBanner;
 
 
-pub struct TableUI {
-}
+pub struct TableUI {}
 
 impl TableUI {
-    pub fn new() -> Self {
-        Self {}
-    }
+    pub fn new() -> Self { Self {} } 
 }
+
 
 // priv
 impl TableUI {

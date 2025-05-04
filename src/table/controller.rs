@@ -15,12 +15,12 @@ pub fn shift_displayed_df_value_slice_down(
     // TODO: handle out of bounds
     // NOTE: oob doesnt matter, polars.slice wraps around YAY!
     let df_state = &mut app_state.dataframe_state;
-    let curr_view = df_state.get_view_slice();
+    let curr_view = df_state.get_row_view_slice();
     let sliding_window_increment = [
         curr_view[0]+increment_value,
         curr_view[1]+increment_value,
     ];
-    df_state.set_view_slice(sliding_window_increment);
+    df_state.set_row_view_slice(sliding_window_increment);
 }
 
 pub fn shift_displayed_df_value_slice_up(
@@ -30,12 +30,12 @@ pub fn shift_displayed_df_value_slice_up(
     // TODO: handle out of bounds
     // NOTE: oob doesnt matter, polars.slice wraps around YAY!
     let df_state = &mut app_state.dataframe_state;
-    let curr_view = df_state.get_view_slice();
+    let curr_view = df_state.get_row_view_slice();
     let sliding_window_increment = [
         curr_view[0]+increment_value,
         curr_view[1]+increment_value,
     ];
-    df_state.set_view_slice(sliding_window_increment);
+    df_state.set_row_view_slice(sliding_window_increment);
 }
 
 
