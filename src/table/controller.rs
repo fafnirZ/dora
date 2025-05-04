@@ -62,3 +62,25 @@ pub fn shift_row_cursor_up(
     let curr_y = df_state.get_cursor_y();
     df_state.set_cursor_y(curr_y+increment_value);
 }
+
+
+pub fn shift_column_cursor_left(
+    app_state: &mut App,
+) {
+    let increment_value = -1;
+    // TODO: handle out of bounds
+    let df_state = &mut app_state.dataframe_state;
+    
+    let curr_x = df_state.get_cursor_x();
+    df_state.set_cursor_x(curr_x+increment_value);
+}
+pub fn shift_column_cursor_right(
+    app_state: &mut App,
+) {
+    let increment_value = 1;
+    // TODO: handle out of bounds
+    let df_state = &mut app_state.dataframe_state;
+    
+    let curr_x = df_state.get_cursor_x();
+    df_state.set_cursor_x(curr_x+increment_value);
+}
