@@ -66,6 +66,7 @@ impl TableUI {
         for (idx, header) in headers.iter().enumerate() {
             let y = start_y;
             let x = start_x + CELL_WIDTH * (idx as u16);
+            if x+CELL_WIDTH > area.x+area.width {break;} // do not render beyond bounds
             let cell_area = get_header_area(x, y);
             let header_name = header.name.clone();
             render_text_centered_in_area(header_name, cell_area, buf);
