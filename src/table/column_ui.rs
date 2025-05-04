@@ -8,23 +8,16 @@ pub struct ColumnUI {
     // values: Column, // pl.column
 
     column_name: String,
-
-    // NOTE: y_offset might not be necessary
-    // because we can just separate the areas in the TableUI
-    // for header and column.
-
-    x_offset: u16, // visual offset in pixels (i.e. its not the place offset but the actual pixel offset, can be changed later)
-    y_offset: u16, // visual offset
+    column_index: u16, 
     // TODO: handle state such as highlighted cells etc.
     // might need to introduce another layer of objects? who knows.
 }
 
 impl ColumnUI {
-    pub fn new(column_name: String, x_offset: u16, y_offset: u16) -> Self {
+    pub fn new(column_name: String, column_index: u16) -> Self {
         Self{
             column_name: column_name,
-            x_offset: x_offset,
-            y_offset: y_offset,
+            column_index: column_index,
         } 
     }
 }
@@ -41,27 +34,16 @@ impl StatefulWidget for ColumnUI {
     type State = App;
     
     fn render(self, area: Rect, buf: &mut Buffer, state: &mut Self::State) {
-
+        // NOTE: always do co-ordinate 
+        // arithmetic respecting 
+        // the provided area's starting positions
+        // it will mean you can write code which segments the area
+        // and widgets rendered within the area will automatically respect the new segmentation.
+        // this is just good practice imo, otherwise its like if you decided not to use
+        // flexbox in html and wanted to do position: absolute for everything...
+        let start_x = area.x;
         let start_y= area.y;
         let end_y = start_y + area.height;
-
-        // render columns
-        // TODO limit the number of values which are being rendered
-        // based on rendering rules...
-        // this is for paginating
-
-        // let start_offset = 0 as u32;
-        // let num_values_rendered = 50;
-        // let total_length_of_series = self.values.len() as u32;
-        // let end_offset = (start_offset + num_values_rendered)
-        //     .min(total_length_of_series-1); // bind by total length of series
-
-        // let start_offset = 0 as i64;
-        // // maybe hardcode this for now since 
-        // // i dont know how to detect viewport changes
-        // // this calculation probably needs to be owned somewhere else
-        // // such that i can update the table banner too
-        // let total_len_taken = ColumnUI::calculate_num_rows_renderable(area) as usize; 
 
         let df_state = &state
             .dataframe_state;
@@ -77,9 +59,9 @@ impl StatefulWidget for ColumnUI {
             .rechunk(); // added because of bug: https://github.com/fafnirZ/dora/issues/1
          
         for (idx, value) in series.iter().enumerate() {
-            let x = self.x_offset; // WELL depends on what the x_offset is for this column.
+            let x = start_x + self.column_index * CELL_WIDTH; // WELL depends on what the x_offset is for this column.
             // TODO: explore making the header part of the column so its truely columnar.
-            let y = CELL_HEIGHT * (idx as u16) + (self.y_offset as u16);
+            let y = start_y + CELL_HEIGHT * (idx as u16); // respects the area bounds.
 
             // do not render if y is outside of area bound
             if y + CELL_HEIGHT > end_y {break;}

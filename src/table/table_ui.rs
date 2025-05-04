@@ -96,17 +96,13 @@ impl TableUI {
         for (idx, column) in columns.iter().enumerate() {
             let x_offset = start_x + CELL_WIDTH * (idx as u16);
             let y_offset = start_y + CELL_HEIGHT * 1; // header
-
             // do not render beyond bounds
             if x_offset+CELL_WIDTH > end_x {break;}
             
             let col_name = column.name().to_string();
-
-            let col_ui = ColumnUI::new(
-                col_name,
-                x_offset,
-                y_offset,
-            );
+            
+            let col_index = idx as u16;
+            let col_ui = ColumnUI::new(col_name,col_index);
             col_ui.render(area, buf, state);
         }
     }
