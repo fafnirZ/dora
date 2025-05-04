@@ -1,0 +1,152 @@
+date,temp,suburb,postcode,city,random_values
+2025-05-03,22.5,Paddington,2021,Sydney,3544
+2025-05-03,20.1,Carlton,3053,Melbourne,1579
+2025-05-03,25.8,Fortitude Valley,4006,Brisbane,4537
+2025-05-03,18.7,North Adelaide,5006,Adelaide,3838
+2025-05-03,23.3,Fremantle,6160,Perth,7799
+2025-05-03,16.4,Hobart,7000,Hobart,8310
+2025-05-03,26.9,Darwin City,800,Darwin,3398
+2025-05-03,19.5,Kingston,2604,Canberra,1228
+2025-05-03,21.8,Surry Hills,2010,Sydney,656
+2025-05-03,19.2,Fitzroy,3065,Melbourne,2899
+2025-05-03,24.5,New Farm,4005,Brisbane,8245
+2025-05-03,17.9,Unley,5061,Adelaide,5038
+2025-05-03,22.1,Subiaco,6008,Perth,3732
+2025-05-03,15.5,Sandy Bay,7005,Hobart,9745
+2025-05-03,25.3,Parap,820,Darwin,8343
+2025-05-03,18.1,Manuka,2603,Canberra,7396
+2025-05-03,23.1,Bondi,2026,Sydney,1818
+2025-05-03,20.9,Collingwood,3066,Melbourne,3235
+2025-05-03,26.2,West End,4101,Brisbane,636
+2025-05-03,19.4,Norwood,5067,Adelaide,8034
+2025-05-03,24.0,Cottesloe,6011,Perth,3744
+2025-05-03,17.2,Battery Point,7004,Hobart,8550
+2025-05-03,27.5,Nightcliff,810,Darwin,1891
+2025-05-03,20.0,Civic,2601,Canberra,5254
+2025-05-03,22.8,Newtown,2042,Sydney,3891
+2025-05-03,21.5,Richmond,3121,Melbourne,180
+2025-05-03,25.1,South Bank,4101,Brisbane,9891
+2025-05-03,18.3,Glenelg,5045,Adelaide,838
+2025-05-03,23.7,Scarborough,6019,Perth,7653
+2025-05-03,16.8,Bellerive,7018,Hobart,8743
+2025-05-03,26.0,Rapid Creek,810,Darwin,9284
+2025-05-03,19.1,Deakin,2600,Canberra,7256
+2025-05-03,21.1,Glebe,2037,Sydney,9381
+2025-05-03,19.8,Brunswick,3056,Melbourne,3396
+2025-05-03,24.8,Kangaroo Point,4169,Brisbane,6123
+2025-05-03,17.5,Semaphore,5019,Adelaide,2203
+2025-05-03,22.5,Claremont,6010,Perth,4510
+2025-05-03,15.9,Rosny,7018,Hobart,4957
+2025-05-03,27.1,Fannie Bay,820,Darwin,3607
+2025-05-03,20.5,Yarralumla,2600,Canberra,7434
+2025-05-03,23.5,Coogee,2034,Sydney,6359
+2025-05-03,20.5,Northcote,3070,Melbourne,7893
+2025-05-03,25.5,Paddington,4064,Brisbane,1984
+2025-05-03,18.9,Hyde Park,5061,Adelaide,4076
+2025-05-03,23.0,Nedlands,6009,Perth,4359
+2025-05-03,16.1,Lindisfarne,7015,Hobart,5484
+2025-05-03,26.5,Stuart Park,820,Darwin,1878
+2025-05-03,19.8,O'Malley,2606,Canberra,9038
+2025-05-03,22.0,Marrickville,2204,Sydney,5301
+2025-05-03,21.2,St Kilda,3182,Melbourne,7599
+2025-05-03,24.1,Milton,4064,Brisbane,2933
+2025-05-03,17.1,Parkside,5063,Adelaide,4536
+2025-05-03,21.7,Mosman Park,6012,Perth,8504
+2025-05-03,15.2,Moonah,7009,Hobart,86
+2025-05-03,25.8,Coconut Grove,810,Darwin,3204
+2025-05-03,18.5,Forrest,2603,Canberra,8582
+2025-05-03,21.6,Balmain,2041,Sydney,8669
+2025-05-03,19.5,Footscray,3011,Melbourne,9264
+2025-05-03,26.7,Teneriffe,4005,Brisbane,3344
+2025-05-03,19.2,Eastwood,5063,Adelaide,9899
+2025-05-03,24.3,Peppermint Grove,6011,Perth,7892
+2025-05-03,17.8,New Town,7008,Hobart,9353
+2025-05-03,27.8,Wulagi,812,Darwin,5724
+2025-05-03,20.2,Griffith,2603,Canberra,5085
+2025-05-03,23.9,Neutral Bay,2089,Sydney,5432
+2025-05-03,20.8,Prahran,3181,Melbourne,8387
+2025-05-03,23.5,Toowong,4066,Brisbane,4384
+2025-05-03,18.0,Norwood,5067,Adelaide,3520
+2025-05-03,22.8,Dalkeith,6009,Perth,2855
+2025-05-03,16.5,Lenah Valley,7008,Hobart,6096
+2025-05-03,25.1,Tiwi,810,Darwin,6438
+2025-05-03,19.0,Red Hill,2603,Canberra,1709
+2025-05-03,22.2,Chatswood,2067,Sydney,786
+2025-05-03,21.9,South Yarra,3141,Melbourne,6108
+2025-05-03,25.9,Bulimba,4171,Brisbane,3770
+2025-05-03,17.3,Kensington,5068,Adelaide,4000
+2025-05-03,23.3,Floreat,6014,Perth,1587
+2025-05-03,15.7,West Hobart,7000,Hobart,8516
+2025-05-03,26.3,Marrara,812,Darwin,1717
+2025-05-03,20.8,Ainslie,2602,Canberra,5633
+2025-05-03,21.4,Mosman,2088,Sydney,582
+2025-05-03,19.1,Windsor,3181,Melbourne,6677
+2025-05-03,24.7,Ascot,4007,Brisbane,5072
+2025-05-03,18.6,Malvern,5061,Adelaide,8039
+2025-05-03,22.1,City Beach,6015,Perth,9171
+2025-05-03,16.9,Dynnyrne,7005,Hobart,353
+2025-05-03,27.0,Alawa,810,Darwin,87
+2025-05-03,19.7,Campbell,2612,Canberra,2094
+2025-05-03,23.7,Manly,2095,Sydney,4211
+2025-05-03,20.3,Hawthorn,3122,Melbourne,2424
+2025-05-03,25.2,Hamilton,4007,Brisbane,5053
+2025-05-03,17.8,Unley Park,5061,Adelaide,5717
+2025-05-03,23.9,Swanbourne,6010,Perth,21
+2025-05-03,15.0,Mount Stuart,7000,Hobart,8703
+2025-05-03,25.5,Moil,810,Darwin,1032
+2025-05-03,18.3,Turner,2601,Canberra,6867
+2025-05-03,21.9,Lane Cove,2066,Sydney,270
+2025-05-03,21.6,Toorak,3142,Melbourne,7028
+2025-05-03,26.1,Clayfield,4011,Brisbane,3771
+2025-05-03,19.9,Medindie,5081,Adelaide,2538
+2025-05-03,24.5,Cottesloe,6011,Perth,152
+2025-05-03,17.1,Taroona,7053,Hobart,7748
+2025-05-03,26.8,Leanyer,812,Darwin,6636
+2025-05-03,20.1,Dickson,2602,Canberra,9414
+2025-05-03,22.6,North Sydney,2060,Sydney,2823
+2025-05-03,19.7,Armadale,3143,Melbourne,1654
+2025-05-03,24.3,Yeronga,4104,Brisbane,834
+2025-05-03,18.2,Toorak Gardens,5065,Adelaide,4661
+2025-05-03,23.1,West Perth,6005,Perth,8960
+2025-05-03,16.3,Kingston Beach,7050,Hobart,4431
+2025-05-03,25.0,Nakara,810,Darwin,8490
+2025-05-03,18.8,Lyneham,2602,Canberra,7714
+2025-05-03,21.3,Cremorne,2090,Sydney,573
+2025-05-03,20.4,Malvern,3144,Melbourne,1817
+2025-05-03,25.7,Indooroopilly,4068,Brisbane,454
+2025-05-03,17.6,Dulwich,5065,Adelaide,6406
+2025-05-03,22.4,Mount Claremont,6010,Perth,3487
+2025-05-03,15.4,Bellerive,7018,Hobart,2874
+2025-05-03,27.3,Karama,812,Darwin,162
+2025-05-03,19.4,Watson,2602,Canberra,9196
+2025-05-03,23.0,Rose Bay,2029,Sydney,3270
+2025-05-03,21.1,Kew,3101,Melbourne,8193
+2025-05-03,24.9,St Lucia,4067,Brisbane,6591
+2025-05-03,19.5,Burnside,5066,Adelaide,1006
+2025-05-03,23.6,Peppermint Grove,6011,Perth,4699
+2025-05-03,17.0,Dynnyrne,7005,Hobart,5718
+2025-05-03,26.1,Anula,812,Darwin,6645
+2025-05-03,20.6,Hackett,2602,Canberra,3593
+2025-05-03,22.7,Vaucluse,2030,Sydney,7574
+2025-05-03,19.9,Camberwell,3124,Melbourne,2513
+2025-05-03,23.8,Chelmer,4068,Brisbane,4208
+2025-05-03,18.4,Hazelwood Park,5066,Adelaide,3521
+2025-05-03,21.9,Dalkeith,6009,Perth,3176
+2025-05-03,16.7,Sandy Bay,7005,Hobart,8091
+2025-05-03,25.4,Wagaman,810,Darwin,5449
+2025-05-03,19.2,Downer,2602,Canberra,7347
+2025-05-03,21.5,Double Bay,2028,Sydney,404
+2025-05-03,20.7,Balwyn,3103,Melbourne,9601
+2025-05-03,26.5,Hawthorne,4171,Brisbane,7635
+2025-05-03,17.7,Erindale,5066,Adelaide,8551
+2025-05-03,24.1,Nedlands,6009,Perth,2457
+2025-05-03,15.8,West Hobart,7000,Hobart,2435
+2025-05-03,27.6,Driver,832,Darwin,9033
+2025-05-03,20.3,O'Connor,2602,Canberra,8499
+2025-05-03,23.3,Bellevue Hill,2023,Sydney,7820
+2025-05-03,21.4,Canterbury,3126,Melbourne,864
+2025-05-03,24.6,Graceville,4075,Brisbane,5277
+2025-05-03,19.1,St Peters,5069,Adelaide,5412
+2025-05-03,22.6,Subiaco,6008,Perth,3927
+2025-05-03,16.0,Lenah Valley,7008,Hobart,8833
+2025-05-03,25.9,Malak,812,Darwin,8187
