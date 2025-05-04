@@ -5,6 +5,10 @@ use super::super::header::Header;
 
 const SLICE_SIZE: i64 = 8;
 
+pub enum CursorFocus {
+    Row,
+    Column,
+}
 // for now its the all encompasing state object
 // will figure out how to break it up later.
 pub struct DataFrameState {
@@ -22,6 +26,7 @@ pub struct DataFrameState {
     view_slice: [i64;2],    // the current viewable slice.
     cursor_x: i64,          // dataframe cursor for col
     cursor_y: i64,          // dataframe cursor for row 
+    cursor_focus: CursorFocus,   // dataframe cursor focus on row or column (renders different highlights)
 }
 
 impl DataFrameState {
@@ -40,6 +45,7 @@ impl DataFrameState {
             view_slice: [0, SLICE_SIZE],
             cursor_x: 0,
             cursor_y: 0,
+            cursor_focus: CursorFocus::Row,
         }
     }
 
@@ -101,5 +107,12 @@ impl DataFrameState {
     }
     pub fn set_cursor_y(&mut self, cursor_y: i64) {
         self.cursor_y = cursor_y;
+    }
+
+    pub fn get_cursor_focus(&self) -> &CursorFocus {
+        &self.cursor_focus
+    }
+    pub fn set_cursor_focus(&mut self, cursor_focus: CursorFocus) {
+        self.cursor_focus = cursor_focus;
     }
 }
