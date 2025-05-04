@@ -195,6 +195,17 @@ impl StatefulWidget for TableUI {
         self.render_header(header_area, buf, state);
 
         // columns
+        let [
+            line_number_area,
+            values_area,
+        ] = Layout::horizontal([
+            Constraint::Length(CELL_WIDTH/2),
+            Constraint::Fill(1),
+        ]).areas(values_area);
+        // render line numbers
+        
+
+        // render column ui values;
         let column_ui_widgets = self.get_column_uis_for_rendering(values_area, state);
         for column_ui in column_ui_widgets.into_iter() {
             column_ui.render(values_area, buf, state);
