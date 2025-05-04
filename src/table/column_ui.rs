@@ -1,7 +1,7 @@
 use polars::prelude::*;
 use ratatui::prelude::*;
 
-use crate::{any_float, any_int, any_string, any_uint, app::App, utils::{cell::{get_cell_area, CELL_HEIGHT, CELL_WIDTH}, centered_text::{center_text_in_given_area, render_text_centered_in_area}}};
+use crate::{any_float, any_int, any_string, any_uint, app::App, df::state::CursorFocus, utils::{cell::{get_cell_area, CELL_HEIGHT, CELL_WIDTH}, centered_text::{center_text_in_given_area, render_text_centered_in_area}}};
 // NOTE: will never add the header to column, since I dont want to be able to navigate to 
 // the header? or maybe treat the header completely differently from a datastructure perspective.
 // imean either way works, its just a choice I gotta deal with in implementation.
@@ -45,6 +45,31 @@ impl ColumnUI {
             text_area,
             buf,
         );
+    }
+
+    fn is_selected(
+        curr_row: u16,
+        curr_col: u16,
+        state: &mut <ColumnUI as StatefulWidget>::State,
+    ) -> bool {
+        let df_state = &state.dataframe_state;
+
+        return match df_state.get_cursor_focus() {
+            CursorFocus::Column => {
+                let cursor_x = *df_state.get_cursor_x() as u16;
+                if curr_col == cursor_x {
+                    return true;
+                }
+                false
+            }
+            CursorFocus::Row => {
+                let cursor_y = *df_state.get_cursor_y() as u16;
+                if curr_row == cursor_y {
+                    return true;
+                }
+                false
+            }
+        }
     }
 }
 
@@ -95,7 +120,11 @@ impl StatefulWidget for ColumnUI {
                 }
             };
             let cell_area = get_cell_area(x, y);
-            let is_selected = true;
+            let is_selected = ColumnUI::is_selected(
+                idx as u16,
+                self.column_index,
+                state,
+            );
             ColumnUI::render_cell(
                val_str,
                cell_area,
