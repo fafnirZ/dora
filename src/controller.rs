@@ -37,6 +37,18 @@ impl Controller {
         app_state: &mut App,
     ) {
         match control {
+            Control::ScrollDown => {
+                // TODO: handle out of bounds
+                let df_state = &mut app_state.dataframe_state;
+                let curr_view = df_state.get_view_slice();
+                let increment_value = 1;
+                let sliding_window_increment = [
+                    curr_view[0]+increment_value,
+                    curr_view[1]+increment_value,
+                ];
+                df_state.set_view_slice(sliding_window_increment);
+            }
+
             Control::Filter => {
                 app_state.mode_state.state = AppMode::Filter;
             },
