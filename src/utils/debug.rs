@@ -1,4 +1,4 @@
-use ratatui::{buffer::Buffer, layout::Rect, style::Color};
+use ratatui::{buffer::Buffer, layout::Rect, style::{Color, Stylize}, widgets::{Paragraph, Widget}};
 
 
 // colors an area to a particular color

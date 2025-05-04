@@ -95,7 +95,7 @@ impl TableUI {
         let columns = df_state.get_columns();
         for (idx, column) in columns.iter().enumerate() {
             let x_offset = start_x + CELL_WIDTH * (idx as u16);
-            let y_offset = start_y + CELL_WIDTH * 1; // header\
+            let y_offset = start_y + CELL_HEIGHT * 1; // header
 
             // do not render beyond bounds
             if x_offset+CELL_WIDTH > end_x {break;}
