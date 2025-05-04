@@ -26,7 +26,7 @@ pub fn shift_displayed_df_value_slice_down(
 pub fn shift_displayed_df_value_slice_up(
     app_state: &mut App,
 ) {
-    let increment_value = 1;
+    let increment_value = -1;
     // TODO: handle out of bounds
     // NOTE: oob doesnt matter, polars.slice wraps around YAY!
     let df_state = &mut app_state.dataframe_state;
