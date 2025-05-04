@@ -46,8 +46,9 @@ impl Widget for ColumnUI {
         let series = self
             .values
             .as_series()
-            .unwrap();
-
+            .unwrap()
+            .rechunk(); // added because of bug: https://github.com/fafnirZ/dora/issues/1
+        
         for (idx, value) in series.iter().enumerate() {
             let x = self.x_offset; // WELL depends on what the x_offset is for this column.
             // TODO: explore making the header part of the column so its truely columnar.
