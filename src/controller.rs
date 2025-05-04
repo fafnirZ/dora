@@ -1,4 +1,4 @@
-use crate::{app::{self, App}, df::state::CursorFocus, input::Control, mode_banner::AppMode, table::controller::{shift_displayed_df_value_slice_down, shift_row_cursor_down, shift_row_cursor_up}};
+use crate::{app::{self, App}, df::state::CursorFocus, input::Control, mode_banner::AppMode, table::controller::{shift_displayed_df_value_slice_down, shift_displayed_df_value_slice_up, shift_row_cursor_down, shift_row_cursor_up}};
 
 
 // given input,
@@ -52,7 +52,12 @@ impl Controller {
             }
             Control::ScrollUp => {
                 df_state.set_cursor_focus(CursorFocus::Row);
-                shift_row_cursor_up(app_state);
+                let cursor_y = df_state.get_cursor_y();
+                if *cursor_y == 0 {
+                    shift_displayed_df_value_slice_up(app_state);
+                } else {
+                    shift_row_cursor_up(app_state);
+                }
             }
 
             Control::Filter => {
