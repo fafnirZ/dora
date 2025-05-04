@@ -1,8 +1,12 @@
+use std::u16::MAX;
+
 // use polars::frame::DataFrame;
 use polars::prelude::*;
 use super::super::header::Header;
 
 
+// only use these as initialisation values
+// we will update dynamically later.
 const SLICE_SIZE: i64 = 24;
 const MAX_ROWS_RENDERED: i64 = SLICE_SIZE;
 const MAX_COLS_RENDERED: i64 = 5;
@@ -32,6 +36,12 @@ pub struct DataFrameState {
     cursor_x: i64,          // dataframe cursor for col NOTE: is limited by the number of columns renderable
     cursor_y: i64,          // dataframe cursor for row NOTE: is limited by the number of rows renderable
     cursor_focus: CursorFocus,   // dataframe cursor focus on row or column (renders different highlights)
+
+    // other UI state
+    // when this changes we need to re-calculate how many rows and cols we are allowed to render.
+    table_area: [u16;2], // height, width 
+    rows_rendered: u16, // number of rows rendered
+    cols_rendered: u16, // number of columns rendered
 }
 
 impl DataFrameState {
@@ -52,6 +62,9 @@ impl DataFrameState {
             cursor_x: 0,
             cursor_y: 0,
             cursor_focus: CursorFocus::Row,
+            table_area: [0,0], // height, width
+            rows_rendered: MAX_ROWS_RENDERED as u16,
+            cols_rendered: MAX_COLS_RENDERED as u16,
         }
     }
 
