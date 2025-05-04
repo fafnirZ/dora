@@ -41,14 +41,15 @@ impl Widget for ColumnUI {
             .min(total_length_of_series-1); // bind by total length of series
 
         let start_offset = 0 as i64;
-        let total_len_taken = 10 as usize;
+        let total_len_taken = 5 as usize;
 
         let series = self
             .values
             .as_series()
             .unwrap()
+            .slice(start_offset, total_len_taken)
             .rechunk(); // added because of bug: https://github.com/fafnirZ/dora/issues/1
-        
+         
         for (idx, value) in series.iter().enumerate() {
             let x = self.x_offset; // WELL depends on what the x_offset is for this column.
             // TODO: explore making the header part of the column so its truely columnar.
