@@ -1,11 +1,13 @@
 use polars::prelude::*;
 use ratatui::prelude::*;
 
-use crate::{any_float, any_int, any_string, any_uint, utils::{cell::{get_cell_area, CELL_HEIGHT, CELL_WIDTH}, centered_text::render_text_centered_in_area}};
+use crate::{any_float, any_int, any_string, any_uint, app::App, utils::{cell::{get_cell_area, CELL_HEIGHT, CELL_WIDTH}, centered_text::render_text_centered_in_area}};
 
 #[derive(Clone)]
 pub struct ColumnUI {
-    values: Column, // pl.column
+    // values: Column, // pl.column
+
+    column_name: String,
 
     // NOTE: y_offset might not be necessary
     // because we can just separate the areas in the TableUI
@@ -18,9 +20,9 @@ pub struct ColumnUI {
 }
 
 impl ColumnUI {
-    pub fn new(values: Column, x_offset: u16, y_offset: u16) -> Self {
+    pub fn new(column_name: String, x_offset: u16, y_offset: u16) -> Self {
         Self{
-            values: values,
+            column_name: column_name,
             x_offset: x_offset,
             y_offset: y_offset,
         } 
@@ -35,9 +37,10 @@ impl ColumnUI {
     }
 }
 
-impl Widget for ColumnUI {
-
-    fn render(self, area: Rect, buf: &mut Buffer) {
+impl StatefulWidget for ColumnUI {
+    type State = App;
+    
+    fn render(self, area: Rect, buf: &mut Buffer, state: &mut Self::State) {
 
         let start_y= area.y;
         let end_y = start_y + area.height;
@@ -47,24 +50,30 @@ impl Widget for ColumnUI {
         // based on rendering rules...
         // this is for paginating
 
-        let start_offset = 0 as u32;
-        let num_values_rendered = 50;
-        let total_length_of_series = self.values.len() as u32;
-        let end_offset = (start_offset + num_values_rendered)
-            .min(total_length_of_series-1); // bind by total length of series
+        // let start_offset = 0 as u32;
+        // let num_values_rendered = 50;
+        // let total_length_of_series = self.values.len() as u32;
+        // let end_offset = (start_offset + num_values_rendered)
+        //     .min(total_length_of_series-1); // bind by total length of series
 
-        let start_offset = 0 as i64;
-        // maybe hardcode this for now since 
-        // i dont know how to detect viewport changes
-        // this calculation probably needs to be owned somewhere else
-        // such that i can update the table banner too
-        let total_len_taken = ColumnUI::calculate_num_rows_renderable(area) as usize; 
+        // let start_offset = 0 as i64;
+        // // maybe hardcode this for now since 
+        // // i dont know how to detect viewport changes
+        // // this calculation probably needs to be owned somewhere else
+        // // such that i can update the table banner too
+        // let total_len_taken = ColumnUI::calculate_num_rows_renderable(area) as usize; 
 
-        let series = self
-            .values
+        let df_state = &state
+            .dataframe_state;
+        let column = df_state
+            .get_column(&self.column_name);
+
+        let [val_offset_start, val_offset_end] = df_state.get_view_slice();
+        let length_taken = (val_offset_end-val_offset_start) as usize;
+        let series = column
             .as_series()
             .unwrap()
-            .slice(start_offset, total_len_taken)
+            .slice(*val_offset_start, length_taken)
             .rechunk(); // added because of bug: https://github.com/fafnirZ/dora/issues/1
          
         for (idx, value) in series.iter().enumerate() {
@@ -90,5 +99,6 @@ impl Widget for ColumnUI {
 
         }
     }
+    
 }
 

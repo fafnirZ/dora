@@ -99,14 +99,15 @@ impl TableUI {
 
             // do not render beyond bounds
             if x_offset+CELL_WIDTH > end_x {break;}
-
+            
+            let col_name = column.name().to_string();
 
             let col_ui = ColumnUI::new(
-                column.clone(),
+                col_name,
                 x_offset,
                 y_offset,
             );
-            col_ui.render(area, buf);
+            col_ui.render(area, buf, state);
         }
     }
 

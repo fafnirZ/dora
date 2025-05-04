@@ -3,7 +3,7 @@ use polars::prelude::*;
 use super::super::header::Header;
 
 
-const SLICE_SIZE: u32 = 8;
+const SLICE_SIZE: i64 = 8;
 
 // for now its the all encompasing state object
 // will figure out how to break it up later.
@@ -15,7 +15,7 @@ pub struct DataFrameState {
 
     // not sure if it should be owned here
     // but we figure it out later.
-    view_slice: [u32;2],    // the current viewable slice.
+    view_slice: [i64;2],    // the current viewable slice.
 }
 
 impl DataFrameState {
@@ -67,6 +67,10 @@ impl DataFrameState {
         }
         columns
     }
+
+    pub fn get_column(&self, name: &String) -> &Column {
+        self.dataframe.column(name).unwrap()
+    }
 }
 
 impl DataFrameState {
@@ -76,10 +80,10 @@ impl DataFrameState {
         last_element.to_string()
     }
 
-    pub fn get_view_slice(&self) -> &[u32;2] {
+    pub fn get_view_slice(&self) -> &[i64;2] {
         &self.view_slice
     }
-    pub fn set_view_slice(&mut self, new_indices: [u32;2]) {
+    pub fn set_view_slice(&mut self, new_indices: [i64;2]) {
         self.view_slice = new_indices;
     }
 }
