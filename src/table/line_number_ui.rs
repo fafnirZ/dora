@@ -22,6 +22,8 @@ impl StatefulWidget for LineNumberUI {
     type State = App;
     
     fn render(self, area: Rect, buf: &mut Buffer, state: &mut Self::State) {
+        let df_state = &state.dataframe_state;
+
         // NOTE: always do co-ordinate 
         // arithmetic respecting 
         // the provided area's starting positions
@@ -32,52 +34,20 @@ impl StatefulWidget for LineNumberUI {
         let start_x = area.x;
         let start_y= area.y;
         let end_y = start_y + area.height;
-
-        let df_state = &state
-            .dataframe_state;
-        let column = df_state
-            .get_column(&self.column_name);
-
+        
         let [val_offset_start, val_offset_end] = df_state.get_row_view_slice();
-        let length_taken = (val_offset_end-val_offset_start) as usize;
-        let series = column
-            .as_series()
-            .unwrap()
-            .slice(*val_offset_start, length_taken)
-            .rechunk(); // added because of bug: https://github.com/fafnirZ/dora/issues/1
-         
-        for (idx, value) in series.iter().enumerate() {
-            let x = start_x + self.column_index * CELL_WIDTH; // WELL depends on what the x_offset is for this column.
 
-            let y = start_y + CELL_HEIGHT * (idx as u16); // respects the area bounds.
-
-            // do not render if y is outside of area bound
-            if y + CELL_HEIGHT > end_y {break;}
-
-            
-            let val_str = match value {
-                any_int!() => value.to_string(),
-                any_float!() => value.to_string(),
-                any_uint!() => value.to_string(),
-                any_string!() => value.to_string(),
-                _ => {
-                    panic!("Invalid type.")
-                }
-            };
-            let cell_area = get_cell_area(x, y);
-            let is_selected = LineNumberUI::is_selected(
-                idx as u16,
-                self.column_index,
-                state,
+        for i in *val_offset_start..*val_offset_end {
+            let curr_row = i as usize;
+            let text = curr_row.to_string();
+    
+            let (para, text_area) = center_text_in_given_area(text, area);
+            para.render(
+                text_area,
+                buf,
             );
-            LineNumberUI::render_cell(
-               val_str,
-               cell_area,
-               buf,
-               is_selected,
-            )
         }
-    }
+} 
     
 }
 

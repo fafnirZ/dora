@@ -8,11 +8,12 @@ use ratatui::widgets::{Block, Borders, Paragraph, StatefulWidget, Widget};
 use crate::app::App;
 use crate::df::state;
 use crate::header::{self, Header};
-use crate::cell::{get_cell_area, get_header_area, CELL_HEIGHT, CELL_WIDTH, HEADER_HEIGHT};
+use crate::cell::{get_cell_area, get_header_area, CELL_HEIGHT, CELL_WIDTH, HEADER_HEIGHT, LINE_NUMBER_CELL_WIDTH};
 use crate::utils::centered_text::render_text_centered_in_area;
 use crate::utils::debug::debug_render_area_bg;
 
 use super::column_ui::ColumnUI;
+use super::line_number_ui::{self, LineNumberUI};
 use super::table_banner::TableBanner;
 
 
@@ -199,11 +200,12 @@ impl StatefulWidget for TableUI {
             line_number_area,
             values_area,
         ] = Layout::horizontal([
-            Constraint::Length(CELL_WIDTH/2),
+            Constraint::Length(LINE_NUMBER_CELL_WIDTH),
             Constraint::Fill(1),
         ]).areas(values_area);
         // render line numbers
-        
+        let line_number_ui = LineNumberUI::new();
+        line_number_ui.render(line_number_area, buf, state);
 
         // render column ui values;
         let column_ui_widgets = self.get_column_uis_for_rendering(values_area, state);
