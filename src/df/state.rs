@@ -55,6 +55,13 @@ impl DataFrameState {
         }
     }
 
+    // height, width
+    pub fn get_df_shape(&self) -> (i64, i64) {
+        let df = &self.dataframe;
+        let shape = df.shape();
+        (shape.0 as i64, shape.1 as i64)
+    }
+    
     pub fn get_headers(&self) -> Vec<Header> {
         let df = &self.dataframe;
         

@@ -42,7 +42,7 @@ pub fn shift_displayed_df_value_slice_up(
 pub fn shift_displayed_df_value_slice_left(
     app_state: &mut App,
 ) {
-    let increment_value = 1;
+    let increment_value = -1;
     // TODO: handle out of bounds
     let df_state = &mut app_state.dataframe_state;
     let curr_view = df_state.get_col_view_slice();

@@ -45,8 +45,11 @@ impl Controller {
                 let cursor_y = df_state.get_cursor_y();
                 let row_view_slice = df_state.get_row_view_slice();
                 let slice_length = row_view_slice[1] - row_view_slice[0];
-                if cursor_y == &slice_length {
-                    shift_displayed_df_value_slice_down(app_state);
+                if *cursor_y == (slice_length-1) {
+                    if row_view_slice[0] < 0 {} // reached the very beginning of the table
+                    else {
+                        shift_displayed_df_value_slice_down(app_state);
+                    }
                 } else {
                     shift_row_cursor_down(app_state);
                 }
@@ -54,8 +57,13 @@ impl Controller {
             Control::ScrollUp => {
                 df_state.set_cursor_focus(CursorFocus::Row);
                 let cursor_y = df_state.get_cursor_y();
+                let row_view_slice = df_state.get_row_view_slice();
+                let df_max_rows = df_state.get_df_shape().0;
                 if *cursor_y == 0 {
-                    shift_displayed_df_value_slice_up(app_state);
+                    if row_view_slice[1] > df_max_rows {} // reached the very beginning of the table
+                    else {
+                        shift_displayed_df_value_slice_up(app_state);
+                    }
                 } else {
                     shift_row_cursor_up(app_state);
                 }
@@ -63,8 +71,12 @@ impl Controller {
             Control::ScrollLeft => {
                 df_state.set_cursor_focus(CursorFocus::Column);
                 let cursor_x = df_state.get_cursor_x();
+                let col_view_slice = df_state.get_col_view_slice();
                 if *cursor_x == 0 {
-                    shift_displayed_df_value_slice_left(app_state);
+                    if col_view_slice[0] == 0 {} // reached the very beginning of the table 
+                    else {
+                        shift_displayed_df_value_slice_left(app_state);
+                    }
                 } else {
                     shift_column_cursor_left(app_state); 
                 }
@@ -74,8 +86,12 @@ impl Controller {
                 let cursor_x = df_state.get_cursor_x();
                 let col_view_slice = df_state.get_col_view_slice();
                 let slice_length = col_view_slice[1] - col_view_slice[0];
-                if cursor_x == &slice_length {
-                    shift_displayed_df_value_slice_right(app_state);
+                let df_max_cols = df_state.get_df_shape().1;
+                if *cursor_x == (slice_length-1) {
+                    if col_view_slice[1] > df_max_cols {} // reached the very end of the table
+                    else {
+                        shift_displayed_df_value_slice_right(app_state);
+                    }
                 } else {
                     shift_column_cursor_right(app_state); 
                 }
