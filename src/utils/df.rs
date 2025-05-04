@@ -1,33 +1,5 @@
 use polars::prelude::*;
 
-// // downcast_ref is important
-// pub fn vec_from_column(
-//     column: Column,
-// ) -> Vec<DataType>{
-//         let series = column.as_series().unwrap();
-//         // let chunk_iterator = series.into_chunks();
-//         let dtype = series.dtype();
-//         let mut result_vec: Vec<DataType> = Vec::with_capacity(series.len()); // Pre-allocate
-
-//         // manually call casting functions.
-//         match dtype {
-//             DataType::Float32 => {
-//                 let typed_series = series.f32().unwrap();
-//                 for a in typed_series.iter() {
-
-//                 }
-//             }
-
-//         }
-
-// }
-
-// return a chunk array which you can iterate over via a for loop
-// pub fn iterable_chunk_array_from_column(
-//     column: Column
-// ) -> ChunkedArray<dyn PolarsDataType> {
-
-// }
 
 // NOTE: this test is just 
 // to record me playing around with

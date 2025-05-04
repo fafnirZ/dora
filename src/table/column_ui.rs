@@ -1,7 +1,7 @@
 use polars::prelude::*;
 use ratatui::prelude::*;
 
-use crate::utils::{cell::{get_cell_area, CELL_HEIGHT, CELL_WIDTH}, centered_text::render_text_centered_in_area};
+use crate::{any_float, any_int, any_string, any_uint, utils::{cell::{get_cell_area, CELL_HEIGHT, CELL_WIDTH}, centered_text::render_text_centered_in_area}};
 
 #[derive(Clone)]
 pub struct ColumnUI {
@@ -34,39 +34,41 @@ impl Widget for ColumnUI {
         // based on rendering rules...
         // this is for paginating
 
-        // let start_offset = 0 as u32;
-        // let num_values_rendered = 50;
-        // let total_length_of_series = self.values.len() as u32;
-        // let end_offset = (start_offset + num_values_rendered)
-        //     .min(total_length_of_series-1); // bind by total length of series
+        let start_offset = 0 as u32;
+        let num_values_rendered = 50;
+        let total_length_of_series = self.values.len() as u32;
+        let end_offset = (start_offset + num_values_rendered)
+            .min(total_length_of_series-1); // bind by total length of series
 
         let start_offset = 0 as i64;
         let total_len_taken = 10 as usize;
 
-        let chunked_arr = self
+        let series = self
             .values
             .as_series()
-            .unwrap()
-            .into_chunks();
+            .unwrap();
 
-        let mut idx = 0;
-        for chunk in chunked_arr.into_iter() {
-            for i in 0..chunk.len() {
-                let value = chunk.get_any_value(i);
-                
-                let x = self.x_offset; // WELL depends on what the x_offset is for this column.
-                // TODO: explore making the header part of the column so its truely columnar.
-                let y = CELL_HEIGHT * (idx as u16) + (self.y_offset as u16);
-    
-                // do not render if y is outside of area bound
-                if y + CELL_HEIGHT > end_y {break;}
-    
-                let cell_area = get_cell_area(x, y);
-                let val_str = value.to_string();
-                render_text_centered_in_area(val_str, cell_area, buf);
-    
-                idx+=1;
-            } 
+        for (idx, value) in series.iter().enumerate() {
+            let x = self.x_offset; // WELL depends on what the x_offset is for this column.
+            // TODO: explore making the header part of the column so its truely columnar.
+            let y = CELL_HEIGHT * (idx as u16) + (self.y_offset as u16);
+
+            // do not render if y is outside of area bound
+            if y + CELL_HEIGHT > end_y {break;}
+
+            let cell_area = get_cell_area(x, y);
+
+            let val_str = match value {
+                any_int!() => value.to_string(),
+                any_float!() => value.to_string(),
+                any_uint!() => value.to_string(),
+                any_string!() => value.to_string(),
+                _ => {
+                    panic!("Invalid type.")
+                }
+            };
+            render_text_centered_in_area(val_str, cell_area, buf);
+
         }
     }
 }
