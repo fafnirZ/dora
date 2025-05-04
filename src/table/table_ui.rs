@@ -165,11 +165,20 @@ impl StatefulWidget for TableUI {
     type State = App; // cheat and assign to app state so we get access to everthing?
 
     fn render(self, area: ratatui::prelude::Rect, buf: &mut ratatui::prelude::Buffer, state: &mut Self::State) {
+
         let [
             _table_banner_top,
             table_main,
             table_banner_bottom,
         ] = TableUI::vertical_segment_area(area);
+
+        let [
+            line_number_area,
+            table_main,
+        ] = Layout::horizontal([
+            Constraint::Length(LINE_NUMBER_CELL_WIDTH),
+            Constraint::Fill(1),
+        ]).areas(table_main);
 
         // update the table area if needed
         TableUI::try_update_table_area(table_main, state);
@@ -195,14 +204,6 @@ impl StatefulWidget for TableUI {
         // header
         self.render_header(header_area, buf, state);
 
-        // columns
-        let [
-            line_number_area,
-            values_area,
-        ] = Layout::horizontal([
-            Constraint::Length(LINE_NUMBER_CELL_WIDTH),
-            Constraint::Fill(1),
-        ]).areas(values_area);
         // render line numbers
         let line_number_ui = LineNumberUI::new();
         line_number_ui.render(line_number_area, buf, state);
