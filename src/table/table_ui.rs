@@ -60,7 +60,7 @@ impl TableUI {
 
         // rendering the column values.
         let df_state = &state.dataframe_state;
-        let headers = df_state.get_headers();
+        let headers = df_state.get_headers_in_col_slice();
         for (idx, header) in headers.iter().enumerate() {
             let y = start_y;
             let x = start_x + CELL_WIDTH * (idx as u16);

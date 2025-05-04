@@ -68,6 +68,26 @@ impl DataFrameState {
         headers
     }
 
+    // get headers which fall within the current viewable slice
+    // the columns are NOT done this way, the columns are given
+    // to the table UI as the entire series (due to filtering and querying)
+    // requirements.
+    pub fn get_headers_in_col_slice(&self) -> Vec<Header> {
+        let df = &self.dataframe;
+        
+        let df_schema = df.schema();
+        let mut headers: Vec<Header> = vec![];
+        for (idx, (col_name, _dt)) in df_schema.iter().enumerate() {
+            if idx < self.col_view_slice[0] as usize || idx > self.col_view_slice[1] as usize {
+                continue;
+            }
+            headers.push(
+                Header{name: col_name.to_string()}
+            );
+        }
+        headers
+    }
+
     // polars column
     pub fn get_columns(&self) -> Vec<Column> {
         let df = &self.dataframe;
