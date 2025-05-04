@@ -83,7 +83,7 @@ impl TableUI {
         state: &mut <TableUI as StatefulWidget>::State
     ) {
 
-        debug_render_area_bg(area, buf, Color::Cyan);
+        // debug_render_area_bg(area, buf, Color::Cyan);
 
         // respect the area assigned to the widget.
         let start_x = area.x;

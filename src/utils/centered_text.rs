@@ -12,6 +12,24 @@ pub fn render_text_centered_in_area(
     buf: &mut Buffer,
 ) {
 
+    let (para, text_area) = center_text_in_given_area(text, area);
+    para.render(
+        text_area,
+        buf,
+    )
+}
+
+
+// given an area
+// center text horizontally 
+// and vertically in area.
+// using a paragraph
+// this function renders.
+pub fn center_text_in_given_area(
+    text: String,
+    area: Rect,
+) -> (Paragraph<'static>, Rect) { // <'static> is a heap allocation i believe.
+
     let [
         _a,
         text_area,
@@ -24,10 +42,5 @@ pub fn render_text_centered_in_area(
 
     let para = Paragraph::new(text)
         .alignment(Alignment::Center);
-    para.render(
-        text_area,
-        buf,
-    )
+    return (para, text_area);
 }
-
-

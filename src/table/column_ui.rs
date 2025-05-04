@@ -1,16 +1,15 @@
 use polars::prelude::*;
 use ratatui::prelude::*;
 
-use crate::{any_float, any_int, any_string, any_uint, app::App, utils::{cell::{get_cell_area, CELL_HEIGHT, CELL_WIDTH}, centered_text::render_text_centered_in_area}};
+use crate::{any_float, any_int, any_string, any_uint, app::App, utils::{cell::{get_cell_area, CELL_HEIGHT, CELL_WIDTH}, centered_text::{center_text_in_given_area, render_text_centered_in_area}}};
+// NOTE: will never add the header to column, since I dont want to be able to navigate to 
+// the header? or maybe treat the header completely differently from a datastructure perspective.
+// imean either way works, its just a choice I gotta deal with in implementation.
 
 #[derive(Clone)]
 pub struct ColumnUI {
-    // values: Column, // pl.column
-
     column_name: String,
     column_index: u16, 
-    // TODO: handle state such as highlighted cells etc.
-    // might need to introduce another layer of objects? who knows.
 }
 
 impl ColumnUI {
@@ -27,6 +26,25 @@ impl ColumnUI {
         area: Rect,
     ) -> u16 {
         return ((area.height / CELL_HEIGHT) as f64).floor() as u16;
+    }
+
+    fn render_cell(
+        text: String,
+        area: Rect,
+        buf: &mut Buffer,
+        is_selected: bool
+    ) {
+
+        let (para, text_area) = center_text_in_given_area(text, area);
+        let mut para = para; // makes it mutable, so I can code in a certain way avoiding ownership problems.
+        if is_selected {
+            para = para
+                .bg(Color::DarkGray);
+        }
+        para.render(
+            text_area,
+            buf,
+        );
     }
 }
 
@@ -60,14 +78,13 @@ impl StatefulWidget for ColumnUI {
          
         for (idx, value) in series.iter().enumerate() {
             let x = start_x + self.column_index * CELL_WIDTH; // WELL depends on what the x_offset is for this column.
-            // TODO: explore making the header part of the column so its truely columnar.
+
             let y = start_y + CELL_HEIGHT * (idx as u16); // respects the area bounds.
 
             // do not render if y is outside of area bound
             if y + CELL_HEIGHT > end_y {break;}
 
-            let cell_area = get_cell_area(x, y);
-
+            
             let val_str = match value {
                 any_int!() => value.to_string(),
                 any_float!() => value.to_string(),
@@ -77,8 +94,14 @@ impl StatefulWidget for ColumnUI {
                     panic!("Invalid type.")
                 }
             };
-            render_text_centered_in_area(val_str, cell_area, buf);
-
+            let cell_area = get_cell_area(x, y);
+            let is_selected = true;
+            ColumnUI::render_cell(
+               val_str,
+               cell_area,
+               buf,
+               is_selected,
+            )
         }
     }
     
