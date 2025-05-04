@@ -4,6 +4,10 @@ use super::super::header::Header;
 
 
 const SLICE_SIZE: i64 = 8;
+const MAX_ROWS_RENDERED: i64 = SLICE_SIZE;
+const MAX_COLS_RENDERED: i64 = 5;
+
+
 
 pub enum CursorFocus {
     Row,
@@ -24,8 +28,8 @@ pub struct DataFrameState {
     // but we figure it out later.
     ///////////////////////////////////////
     view_slice: [i64;2],    // the current viewable slice.
-    cursor_x: i64,          // dataframe cursor for col
-    cursor_y: i64,          // dataframe cursor for row 
+    cursor_x: i64,          // dataframe cursor for col NOTE: is limited by the number of columns renderable
+    cursor_y: i64,          // dataframe cursor for row NOTE: is limited by the number of rows renderable
     cursor_focus: CursorFocus,   // dataframe cursor focus on row or column (renders different highlights)
 }
 
@@ -100,12 +104,21 @@ impl DataFrameState {
         &self.cursor_x
     }
     pub fn set_cursor_x(&mut self, cursor_x: i64) {
+        if cursor_x > MAX_COLS_RENDERED {
+            self.cursor_x = MAX_COLS_RENDERED;
+            return;
+        }
         self.cursor_x = cursor_x;
     }
     pub fn get_cursor_y(&self) -> &i64 {
         &self.cursor_y
     }
     pub fn set_cursor_y(&mut self, cursor_y: i64) {
+        // limit the max y to be MAX_ROWS Rendered
+        if cursor_y > MAX_ROWS_RENDERED {
+            self.cursor_y = MAX_ROWS_RENDERED;
+            return;
+        }
         self.cursor_y = cursor_y;
     }
 

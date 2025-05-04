@@ -43,9 +43,9 @@ impl Controller {
 
                 let cursor_y = df_state.get_cursor_y();
                 let view_slice = df_state.get_view_slice();
-                if cursor_y == &view_slice[1] {
+                let slice_length = view_slice[1] - view_slice[0];
+                if cursor_y == &slice_length {
                     shift_displayed_df_value_slice_down(app_state);
-                    shift_row_cursor_down(app_state);
                 } else {
                     shift_row_cursor_down(app_state);
                 }
