@@ -5,7 +5,7 @@
 use crate::app::App;
 
 
-// the following 2 functions does the following:
+// the following 4 functions does the following:
 // update the data slice for dataframe rows being
 // displayed.
 pub fn shift_displayed_df_value_slice_down(
@@ -39,7 +39,37 @@ pub fn shift_displayed_df_value_slice_up(
 }
 
 
-// the following two functions update the table cursors
+pub fn shift_displayed_df_value_slice_left(
+    app_state: &mut App,
+) {
+    let increment_value = 1;
+    // TODO: handle out of bounds
+    let df_state = &mut app_state.dataframe_state;
+    let curr_view = df_state.get_col_view_slice();
+    let sliding_window_increment = [
+        curr_view[0]+increment_value,
+        curr_view[1]+increment_value,
+    ];
+    df_state.set_col_view_slice(sliding_window_increment);
+}
+
+pub fn shift_displayed_df_value_slice_right(
+    app_state: &mut App,
+) {
+    let increment_value = 1;
+    // TODO: handle out of bounds
+    let df_state = &mut app_state.dataframe_state;
+    let curr_view = df_state.get_col_view_slice();
+    let sliding_window_increment = [
+        curr_view[0]+increment_value,
+        curr_view[1]+increment_value,
+    ];
+    df_state.set_col_view_slice(sliding_window_increment);
+}
+
+
+
+// the following four functions update the table cursors
 
 pub fn shift_row_cursor_down(
     app_state: &mut App,
