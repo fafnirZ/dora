@@ -38,10 +38,22 @@ impl Controller {
     ) {
         match control {
             Control::ScrollDown => {
+                let increment_value = 1;
+                // TODO: handle out of bounds
+                // NOTE: oob doesnt matter, polars.slice wraps around YAY!
+                let df_state = &mut app_state.dataframe_state;
+                let curr_view = df_state.get_view_slice();
+                let sliding_window_increment = [
+                    curr_view[0]+increment_value,
+                    curr_view[1]+increment_value,
+                ];
+                df_state.set_view_slice(sliding_window_increment);
+            }
+            Control::ScrollUp => {
+                let increment_value = -1;
                 // TODO: handle out of bounds
                 let df_state = &mut app_state.dataframe_state;
                 let curr_view = df_state.get_view_slice();
-                let increment_value = 1;
                 let sliding_window_increment = [
                     curr_view[0]+increment_value,
                     curr_view[1]+increment_value,
