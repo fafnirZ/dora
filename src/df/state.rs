@@ -2,6 +2,8 @@ use std::u16::MAX;
 
 // use polars::frame::DataFrame;
 use polars::prelude::*;
+use crate::cell::{CELL_HEIGHT, CELL_WIDTH, HEADER_HEIGHT};
+
 use super::super::header::Header;
 
 
@@ -39,9 +41,9 @@ pub struct DataFrameState {
 
     // other UI state
     // when this changes we need to re-calculate how many rows and cols we are allowed to render.
-    table_area: [u16;2], // height, width 
-    rows_rendered: u16, // number of rows rendered
-    cols_rendered: u16, // number of columns rendered
+    pub table_area: [u16;2], // height, width 
+    pub rows_rendered: u16, // number of rows rendered
+    pub cols_rendered: u16, // number of columns rendered
 }
 
 impl DataFrameState {
@@ -148,6 +150,22 @@ impl DataFrameState {
         let last_element = s.rfind('/').map(|index| &s[index + 1..]).unwrap();
         last_element.to_string()
     }
+
+    // refresh renderable table size
+    pub fn refresh_renderable_table_size(&mut self) {
+        // get the current table area
+        let table_area = self.table_area;
+        // calculate the number of rows and columns we can render
+        let rows_rendered = 
+            (table_area[0] - HEADER_HEIGHT)/ CELL_HEIGHT
+            .min(MAX_ROWS_RENDERED as u16);
+        let cols_rendered = 
+            (table_area[1] / CELL_WIDTH)
+            .min(MAX_COLS_RENDERED as u16);
+        self.rows_rendered = rows_rendered;
+        self.cols_rendered = cols_rendered;
+    }
+
 
     // setter getters
     pub fn get_row_view_slice(&self) -> &[i64;2] {

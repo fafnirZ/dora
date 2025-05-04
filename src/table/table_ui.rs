@@ -6,6 +6,7 @@ use ratatui::style::{Color, Style, Stylize};
 use ratatui::widgets::{Block, Borders, Paragraph, StatefulWidget, Widget};
 
 use crate::app::App;
+use crate::df::state;
 use crate::header::{self, Header};
 use crate::cell::{get_cell_area, get_header_area, CELL_HEIGHT, CELL_WIDTH, HEADER_HEIGHT};
 use crate::utils::centered_text::render_text_centered_in_area;
@@ -134,6 +135,26 @@ impl TableUI {
             Constraint::Length(1),
         ]).areas(area)
     }
+    
+    fn try_update_table_area(
+        main_table_area: Rect, // new table area
+        app_state: &mut <TableUI as StatefulWidget>::State,
+    ) {
+        let df_state = &mut app_state.dataframe_state;
+        let [curr_height, curr_width] = df_state.table_area;
+        
+        if !(
+            main_table_area.height == curr_height 
+            && main_table_area.width == curr_width
+        ) {
+            // update the table area
+            df_state.table_area = [
+                main_table_area.height,
+                main_table_area.width,
+            ];
+            df_state.refresh_renderable_table_size();
+        }
+    }
 
 }
 
@@ -148,6 +169,9 @@ impl StatefulWidget for TableUI {
             table_main,
             table_banner_bottom,
         ] = TableUI::vertical_segment_area(area);
+
+        // update the table area if needed
+        TableUI::try_update_table_area(table_main, state);
 
         // render bottom banner
         self.render_bottom_banner(table_banner_bottom, buf, state);
