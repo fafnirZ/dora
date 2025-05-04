@@ -50,8 +50,9 @@ impl StatefulWidget for LineNumberUI {
             );
             let (para, text_area) = center_text_in_given_area(text, cell_area);
             para
-                .fg(Color::Black)
-                .bg(Color::Gray)
+                .fg(Color::White)
+                // .bg(Color::Rgb(235, 233, 233)) // #EBE9E9
+                .bg(Color::Rgb(77, 80, 97)) // #4D5061
                 .render(
                     text_area,
                     buf,
