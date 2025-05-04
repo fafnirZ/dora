@@ -13,19 +13,20 @@ pub struct DataFrameState {
     // query: Option<Expr>,
     dataframe: DataFrame,
 
+    ///////////////////////////////////////
+    // the following are for UI purposes
+    //
     // not sure if it should be owned here
     // but we figure it out later.
+    ///////////////////////////////////////
     view_slice: [i64;2],    // the current viewable slice.
+    cursor_x: i64,          // dataframe cursor for col
+    cursor_y: i64,          // dataframe cursor for row 
 }
 
 impl DataFrameState {
     pub fn new(file_path: &str) -> Self {
-        // boilerplate df for now
-        // let s0 = Column::new("days".into(), [0, 1, 2,999].as_ref());
-        // let s1 = Column::new("temp".into(), [22.1, 19.9, 7., 999999.9].as_ref());
-        // let df = DataFrame::new(vec![s0, s1]).unwrap();
         
-
         // only supports csv right now
         let df = CsvReadOptions::default()
             .try_into_reader_with_file_path(Some(file_path.into()))
@@ -37,6 +38,8 @@ impl DataFrameState {
             source_path: String::from(file_path),
             dataframe: df,
             view_slice: [0, SLICE_SIZE],
+            cursor_x: 0,
+            cursor_y: 0,
         }
     }
 
@@ -60,7 +63,6 @@ impl DataFrameState {
         let mut columns = vec![];
         for col_name in self.get_headers().iter() {
             let col = df.column(&col_name.name).unwrap();
-            // let dt = series.dtype();
             columns.push(
                 col.clone(), // copy for now 
             )
@@ -80,10 +82,24 @@ impl DataFrameState {
         last_element.to_string()
     }
 
+    // setter getters
     pub fn get_view_slice(&self) -> &[i64;2] {
         &self.view_slice
     }
     pub fn set_view_slice(&mut self, new_indices: [i64;2]) {
         self.view_slice = new_indices;
+    }
+
+    pub fn get_cursor_x(&self) -> &i64 {
+        &self.cursor_x
+    }
+    pub fn set_cursor_x(&mut self, cursor_x: i64) {
+        self.cursor_x = cursor_x;
+    }
+    pub fn get_cursor_y(&self) -> &i64 {
+        &self.cursor_y
+    }
+    pub fn set_cursor_y(&mut self, cursor_y: i64) {
+        self.cursor_y = cursor_y;
     }
 }
