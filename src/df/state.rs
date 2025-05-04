@@ -3,7 +3,7 @@ use polars::prelude::*;
 use super::super::header::Header;
 
 
-const SLICE_SIZE: i64 = 8;
+const SLICE_SIZE: i64 = 24;
 const MAX_ROWS_RENDERED: i64 = SLICE_SIZE;
 const MAX_COLS_RENDERED: i64 = 5;
 
