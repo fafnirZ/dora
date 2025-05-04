@@ -160,22 +160,24 @@ impl DataFrameState {
         // calculate the number of rows  //
         // and columns we can render     //
         ///////////////////////////////////
-        let rows_rendered = 
-            (table_area[0] - HEADER_HEIGHT)/ CELL_HEIGHT
+        let minus_one_for_good_luck_because_it_needs_padding = 1;
+        let rows_renderable = 
+            ((table_area[0] - HEADER_HEIGHT)
+            / CELL_HEIGHT - minus_one_for_good_luck_because_it_needs_padding)
             .min(MAX_ROWS_RENDERED as u16);
-        let cols_rendered = 
+        let cols_renderable = 
             (table_area[1] / CELL_WIDTH)
             .min(MAX_COLS_RENDERED as u16);
-        self.rows_rendered = rows_rendered;
-        self.cols_rendered = cols_rendered;
+        self.rows_rendered = rows_renderable;
+        self.cols_rendered = cols_renderable;
 
         ////////////////////////////////////
         // update row and col view slices //
         ////////////////////////////////////
         self.row_view_slice[0] = self.cursor_y;
-        self.row_view_slice[1] = self.cursor_y + rows_rendered as i64;
+        self.row_view_slice[1] = self.cursor_y + self.rows_rendered as i64;
         self.col_view_slice[0] = self.cursor_x;
-        self.col_view_slice[1] = self.cursor_x + cols_rendered as i64;
+        self.col_view_slice[1] = self.cursor_x + self.cols_rendered as i64;
     }
 
 
