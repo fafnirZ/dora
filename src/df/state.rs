@@ -3,11 +3,19 @@ use polars::prelude::*;
 use super::super::header::Header;
 
 
+const SLICE_SIZE: u32 = 8;
+
+// for now its the all encompasing state object
+// will figure out how to break it up later.
 pub struct DataFrameState {
     source_path: String, // source file path to file
     // df: LazyFrame, // dataframe object itself
     // query: Option<Expr>,
     dataframe: DataFrame,
+
+    // not sure if it should be owned here
+    // but we figure it out later.
+    view_slice: [u32;2],    // the current viewable slice.
 }
 
 impl DataFrameState {
@@ -17,6 +25,8 @@ impl DataFrameState {
         // let s1 = Column::new("temp".into(), [22.1, 19.9, 7., 999999.9].as_ref());
         // let df = DataFrame::new(vec![s0, s1]).unwrap();
         
+
+        // only supports csv right now
         let df = CsvReadOptions::default()
             .try_into_reader_with_file_path(Some(file_path.into()))
             .unwrap()
@@ -26,6 +36,7 @@ impl DataFrameState {
         Self {
             source_path: String::from(file_path),
             dataframe: df,
+            view_slice: [0, SLICE_SIZE],
         }
     }
 
@@ -63,5 +74,12 @@ impl DataFrameState {
         let s = self.source_path.clone();
         let last_element = s.rfind('/').map(|index| &s[index + 1..]).unwrap();
         last_element.to_string()
+    }
+
+    pub fn get_view_slice(&self) -> &[u32;2] {
+        &self.view_slice
+    }
+    pub fn set_view_slice(&mut self, new_indices: [u32;2]) {
+        self.view_slice = new_indices;
     }
 }

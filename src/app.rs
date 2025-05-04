@@ -12,7 +12,7 @@ pub struct App {
 
     pub dataframe_state: DataFrameState,
 
-    // mode banner
+    // app mode banner
     pub mode_state: AppModeState,
 }
 
