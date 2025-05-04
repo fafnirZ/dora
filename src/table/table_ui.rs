@@ -7,7 +7,7 @@ use ratatui::widgets::{Block, Borders, Paragraph, StatefulWidget, Widget};
 
 use crate::app::App;
 use crate::header::{self, Header};
-use crate::cell::{get_cell_area, CELL_HEIGHT, CELL_WIDTH};
+use crate::cell::{get_cell_area, get_header_area, CELL_HEIGHT, CELL_WIDTH, HEADER_HEIGHT};
 use crate::utils::centered_text::render_text_centered_in_area;
 use crate::utils::debug::debug_render_area_bg;
 
@@ -55,7 +55,7 @@ impl TableUI {
         let block = Block::default()
             .borders(Borders::TOP | Borders::BOTTOM)
             .border_style(Style::default().fg(Color::Rgb(64, 64, 64)));
-        let height = CELL_HEIGHT;
+        let height = HEADER_HEIGHT;
         let area = Rect::new(start_x, start_y, area.width, height);
         block.render(area, buf);
 
@@ -66,7 +66,7 @@ impl TableUI {
         for (idx, header) in headers.iter().enumerate() {
             let y = start_y;
             let x = start_x + CELL_WIDTH * (idx as u16);
-            let cell_area = get_cell_area(x, y);
+            let cell_area = get_header_area(x, y);
             let header_name = header.name.clone();
             render_text_centered_in_area(header_name, cell_area, buf);
         }
@@ -163,7 +163,7 @@ impl StatefulWidget for TableUI {
             header_area,
             values_area,
         ] = Layout::vertical([
-            Constraint::Length(CELL_HEIGHT),
+            Constraint::Length(HEADER_HEIGHT),
             Constraint::Fill(1),
         ]).areas(table_main);
         
