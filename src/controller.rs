@@ -1,4 +1,4 @@
-use crate::{app::App, input::Control, mode_banner::AppMode};
+use crate::{app::{self, App}, df::state::CursorFocus, input::Control, mode_banner::AppMode, table::controller::{shift_row_cursor_down, shift_row_cursor_up}};
 
 
 // given input,
@@ -36,29 +36,15 @@ impl Controller {
         control: &Control,
         app_state: &mut App,
     ) {
+        let df_state = &mut app_state.dataframe_state;
         match control {
             Control::ScrollDown => {
-                let increment_value = 1;
-                // TODO: handle out of bounds
-                // NOTE: oob doesnt matter, polars.slice wraps around YAY!
-                let df_state = &mut app_state.dataframe_state;
-                let curr_view = df_state.get_view_slice();
-                let sliding_window_increment = [
-                    curr_view[0]+increment_value,
-                    curr_view[1]+increment_value,
-                ];
-                df_state.set_view_slice(sliding_window_increment);
+                df_state.set_cursor_focus(CursorFocus::Row);
+                shift_row_cursor_down(app_state);
             }
             Control::ScrollUp => {
-                let increment_value = -1;
-                // TODO: handle out of bounds
-                let df_state = &mut app_state.dataframe_state;
-                let curr_view = df_state.get_view_slice();
-                let sliding_window_increment = [
-                    curr_view[0]+increment_value,
-                    curr_view[1]+increment_value,
-                ];
-                df_state.set_view_slice(sliding_window_increment);
+                df_state.set_cursor_focus(CursorFocus::Row);
+                shift_row_cursor_up(app_state);
             }
 
             Control::Filter => {
