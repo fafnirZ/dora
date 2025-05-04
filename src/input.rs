@@ -3,6 +3,10 @@ use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
 use crate::events::{Event, Events};
 
 pub enum Control {
+    ScrollUp,
+    ScrollDown,
+    ScrollLeft,
+    ScrollRight,
     Help,
     Filter,
     Search,
@@ -39,6 +43,10 @@ impl InputHandler {
         match key_event.modifiers {
             KeyModifiers::NONE => match key_event.code {
                 KeyCode::Char('q') => Control::Quit,
+                KeyCode::Char('k') | KeyCode::Up=> Control::ScrollUp,
+                KeyCode::Char('j') | KeyCode::Down => Control::ScrollDown,
+                KeyCode::Char('h') | KeyCode::Left => Control::ScrollLeft,
+                KeyCode::Char('l') | KeyCode::Right => Control::ScrollRight,
                 KeyCode::Esc => Control::Esc, // depends on context for esc handling
                 KeyCode::Char('&') => Control::Filter,
                 KeyCode::Char('/') => Control::Search,
