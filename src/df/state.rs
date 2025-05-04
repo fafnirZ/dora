@@ -155,7 +155,11 @@ impl DataFrameState {
     pub fn refresh_renderable_table_size(&mut self) {
         // get the current table area
         let table_area = self.table_area;
-        // calculate the number of rows and columns we can render
+
+        ///////////////////////////////////
+        // calculate the number of rows  //
+        // and columns we can render     //
+        ///////////////////////////////////
         let rows_rendered = 
             (table_area[0] - HEADER_HEIGHT)/ CELL_HEIGHT
             .min(MAX_ROWS_RENDERED as u16);
@@ -164,6 +168,14 @@ impl DataFrameState {
             .min(MAX_COLS_RENDERED as u16);
         self.rows_rendered = rows_rendered;
         self.cols_rendered = cols_rendered;
+
+        ////////////////////////////////////
+        // update row and col view slices //
+        ////////////////////////////////////
+        self.row_view_slice[0] = self.cursor_y;
+        self.row_view_slice[1] = self.cursor_y + rows_rendered as i64;
+        self.col_view_slice[0] = self.cursor_x;
+        self.col_view_slice[1] = self.cursor_x + cols_rendered as i64;
     }
 
 
