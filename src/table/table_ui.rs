@@ -7,7 +7,7 @@ use ratatui::widgets::{Block, Borders, Paragraph, StatefulWidget, Widget};
 
 use crate::app::App;
 use crate::header::{self, Header};
-use crate::utils::cell::{get_cell_area, CELL_HEIGHT, CELL_WIDTH};
+use crate::cell::{get_cell_area, CELL_HEIGHT, CELL_WIDTH};
 use crate::utils::centered_text::render_text_centered_in_area;
 use crate::utils::debug::debug_render_area_bg;
 
