@@ -22,11 +22,6 @@ impl ColumnUI {
 }
 
 impl ColumnUI {
-    pub fn calculate_num_rows_renderable(
-        area: Rect,
-    ) -> u16 {
-        return ((area.height / CELL_HEIGHT) as f64).floor() as u16;
-    }
 
     fn render_cell(
         text: String,

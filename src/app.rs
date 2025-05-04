@@ -1,7 +1,7 @@
 
 use ratatui::{layout::{Constraint, Layout}, prelude::Backend, Frame, Terminal};
 
-use crate::{controller::Controller, df::state::DataFrameState, errors::DoraResults, input::{Control, InputHandler}, mode_banner::{AppModeState, ModeBanner}, table::{table_banner::TableBanner, table_ui::TableUI}, utils::area::horizontal_pad_area};
+use crate::{controller::Controller, df::state::DataFrameState, errors::DoraResults, input::{self, Control, InputHandler}, mode_banner::{AppModeState, ModeBanner}, table::{table_banner::TableBanner, table_ui::TableUI}, utils::area::horizontal_pad_area};
 
 // global app state.
 pub struct App {
@@ -18,13 +18,15 @@ pub struct App {
 
 impl App {
     pub fn new(file_path: &str) -> Self {
+        let mode = AppModeState::new();
+        let input_handler = InputHandler::new();
         Self {
             input_handler: InputHandler::new(),
             // table_state: TableUIState::new(),
             dataframe_state: DataFrameState::new(
                 file_path,
             ),
-            mode_state: AppModeState::new(),
+            mode_state: mode,
         }
     }
 

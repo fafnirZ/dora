@@ -1,6 +1,6 @@
 use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
-
-use crate::events::{Event, Events};
+use ratatui::buffer::Buffer;
+use crate::{app, events::{Event, Events}, mode_banner::AppModeState};
 
 pub enum Control {
     ScrollUp,
@@ -15,16 +15,23 @@ pub enum Control {
     Esc,
 }
 
-
-
-pub struct InputHandler {
-    events: Events,
+pub enum BufferState {
+    Active(Input),
+    Inactive,
 }
 
-impl InputHandler {
-    pub fn new() -> Self {
+pub struct InputHandler<'a> {
+    events: Events,
+    buffer_state: BufferState,
+    app_mode_state: &'a mut AppModeState,
+}
+
+impl<'a> InputHandler<'a> {
+    pub fn new(app_mode_state: &'a mut AppModeState) -> Self {
         Self {
             events: Events::new(),
+            buffer_state: BufferState::Inactive,
+            app_mode_state: app_mode_state,
         }
     }
 
@@ -62,4 +69,16 @@ impl InputHandler {
             _ => Control::Nothing,
         }
     }
+
+
+
+    fn is_input_buffering(&self) -> bool {
+        matches!(self.buffer_state, BufferState::Active(_))
+    }
+
+    fn reset_buffer(&mut self) {
+        self.buffer_state = BufferState::Inactive;
+        self.mode = InputMode::Default;
+    }
+
 }
