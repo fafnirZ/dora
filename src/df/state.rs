@@ -96,14 +96,29 @@ impl DataFrameState {
     }
 
     // polars column
-    pub fn get_columns(&self) -> Vec<Column> {
+    pub fn get_columns(&self) -> Vec<&Column> {
         let df = &self.dataframe;
         // get columns
         let mut columns = vec![];
         for col_name in self.get_headers().iter() {
             let col = df.column(&col_name.name).unwrap();
             columns.push(
-                col.clone(), // copy for now 
+                col, 
+            )
+        }
+        columns
+    }
+    pub fn get_columns_in_col_slice(&self) -> Vec<&Column> {
+        let df = &self.dataframe;
+        // get columns
+        let mut columns = vec![];
+        for (idx, col_name) in self.get_headers().iter().enumerate() {
+            if idx < self.col_view_slice[0] as usize || idx > self.col_view_slice[1] as usize {
+                continue;
+            }
+            let col = df.column(&col_name.name).unwrap();
+            columns.push(
+                col, 
             )
         }
         columns

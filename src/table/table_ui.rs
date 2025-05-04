@@ -75,12 +75,11 @@ impl TableUI {
     }
 
 
-    fn render_columns(        
+    fn get_column_uis_for_rendering(        
         &self, 
         area: Rect, 
-        buf: &mut Buffer, 
         state: &mut <TableUI as StatefulWidget>::State
-    ) {
+    ) -> Vec<ColumnUI> {
 
         // debug_render_area_bg(area, buf, Color::Cyan);
 
@@ -91,7 +90,8 @@ impl TableUI {
 
         let df_state = &state.dataframe_state;
         // columns
-        let columns = df_state.get_columns();
+        let columns = df_state.get_columns_in_col_slice();
+        let mut column_uis = Vec::new();
         for (idx, column) in columns.iter().enumerate() {
             let x_offset = start_x + CELL_WIDTH * (idx as u16);
             let y_offset = start_y + CELL_HEIGHT * 1; // header
@@ -102,8 +102,9 @@ impl TableUI {
             
             let col_index = idx as u16;
             let col_ui = ColumnUI::new(col_name,col_index);
-            col_ui.render(area, buf, state);
+            column_uis.push(col_ui);
         }
+        column_uis
     }
 
     // render banners
@@ -170,7 +171,10 @@ impl StatefulWidget for TableUI {
         self.render_header(header_area, buf, state);
 
         // columns
-        self.render_columns(values_area, buf, state);
+        let column_ui_widgets = self.get_column_uis_for_rendering(values_area, state);
+        for column_ui in column_ui_widgets.into_iter() {
+            column_ui.render(values_area, buf, state);
+        }
     }
     
 }
