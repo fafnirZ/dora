@@ -1,93 +1,42 @@
 use polars::prelude::*;
 
-// Helper function to convert a Polars Series to a Vec of a specific type.
-// This uses a macro for code clarity and to avoid repetitive code.
-macro_rules! series_to_vec {
-    ($series:expr, $type:ty) => {{
-        let chunk_iterator = $series.iter_chunks();
-        let mut result_vec: Vec<$type> = Vec::with_capacity($series.len()); // Pre-allocate
-        for chunk in chunk_iterator {
-            let typed_chunk = chunk.as_any().downcast_ref::<ChunkedArray<$type>>().unwrap();
-            result_vec.extend_from_slice(typed_chunk.into_vec());
-        }
-        result_vec
-    }};
-}
+// // downcast_ref is important
+// pub fn vec_from_column(
+//     column: Column,
+// ) -> Vec<DataType>{
+//         let series = column.as_series().unwrap();
+//         // let chunk_iterator = series.into_chunks();
+//         let dtype = series.dtype();
+//         let mut result_vec: Vec<DataType> = Vec::with_capacity(series.len()); // Pre-allocate
 
+//         // manually call casting functions.
+//         match dtype {
+//             DataType::Float32 => {
+//                 let typed_series = series.f32().unwrap();
+//                 for a in typed_series.iter() {
 
-pub fn convert_column_to_vector<T: PolarsDataType>(
-    column: Column,
-) -> Vec<T::RustType>
-{
-    let series = column.as_series().unwrap(); // Convert Column to Series
-    let data_type = series.dtype();
+//                 }
+//             }
 
-    // Match on the data type to determine the concrete Rust type and use the macro.
-    match data_type {
-        &DataType::Boolean => {
-            let vec: Vec<bool> = series_to_vec!(series, BooleanType);
-            vec.into_iter().map(|v| v as T::RustType).collect()
-        }
-        &DataType::Int8 => {
-            let vec: Vec<i8> = series_to_vec!(series, Int8Type);
-            vec.into_iter().map(|v| v as T::RustType).collect()
-        }
-        &DataType::Int16 => {
-            let vec: Vec<i16> = series_to_vec!(series, Int16Type);
-             vec.into_iter().map(|v| v as T::RustType).collect()
-        }
-        &DataType::Int32 => {
-            let vec: Vec<i32> = series_to_vec!(series, Int32Type);
-             vec.into_iter().map(|v| v as T::RustType).collect()
-        }
-        &DataType::Int64 => {
-            let vec: Vec<i64> = series_to_vec!(series, Int64Type);
-             vec.into_iter().map(|v| v as T::RustType).collect()
-        }
-        &DataType::UInt8 => {
-            let vec: Vec<u8> = series_to_vec!(series, UInt8Type);
-             vec.into_iter().map(|v| v as T::RustType).collect()
-        }
-        &DataType::UInt16 => {
-            let vec: Vec<u16> = series_to_vec!(series, UInt16Type);
-             vec.into_iter().map(|v| v as T::RustType).collect()
-        }
-        &DataType::UInt32 => {
-            let vec: Vec<u32> = series_to_vec!(series, UInt32Type);
-             vec.into_iter().map(|v| v as T::RustType).collect()
-        }
-        &DataType::UInt64 => {
-            let vec: Vec<u64> = series_to_vec!(series, UInt64Type);
-             vec.into_iter().map(|v| v as T::RustType).collect()
-        }
-        &DataType::Float32 => {
-            let vec: Vec<f32> = series_to_vec!(series, Float32Type);
-             vec.into_iter().map(|v| v as T::RustType).collect()
-        }
-        &DataType::Float64 => {
-            let vec: Vec<f64> = series_to_vec!(series, Float64Type);
-             vec.into_iter().map(|v| v as T::RustType).collect()
-        }
-        &DataType::Utf8 => {
-            let vec: Vec<String> = series_to_vec!(series, Utf8Type);
-             vec.into_iter().map(|v| v.as_str() as T::RustType).collect()
-        }
-        &DataType::Null => {
-            // Handle the Null case.  Return an empty vector.
-            Vec::new()
-        }
-        _ => {
-            // Return an error for unsupported data types.
-            PolarsError::ComputeError(
-                format!("Unsupported data type: {:?}", data_type).into(),
-            )
-        }
-    }
-}
+//         }
 
+// }
+
+// return a chunk array which you can iterate over via a for loop
+// pub fn iterable_chunk_array_from_column(
+//     column: Column
+// ) -> ChunkedArray<dyn PolarsDataType> {
+
+// }
+
+// NOTE: this test is just 
+// to record me playing around with
+// the best way of iterating through a polars series.
 
 #[cfg(test)]
 mod tests {
+    use std::any::Any;
+
     use super::*;
 
     #[test]
@@ -96,8 +45,26 @@ mod tests {
         let s1 = Column::new("temp".into(), [22.1, 19.9, 7., 999999.9].as_ref());
         let df = DataFrame::new(vec![s0, s1]).unwrap();
         
+        // let v: Vec<DataType> = Vec::new();
         let column = df.column("days").unwrap();
-        let vec = iter_from_column(*column).collect();
-        assert!(vec == vec![0, 1, 2,999])
+        let series = column.as_series().unwrap().clone();
+        for (idx, value) in series.iter().enumerate() {
+            match value {
+                AnyValue::String(_) => {
+                    println!("{}", value);
+                }
+                AnyValue::Int32(_) | AnyValue::Int64(_) => {
+                    println!("{}", value.to_string());
+                }
+                AnyValue::Float32(_) | AnyValue::Float64(_) => {
+                    println!("{}", value.to_string());
+                }
+                _ => {}
+            }
+        }
+
+        // let vec = vec_from_column(*column);
+        // assert!(vec == vec![0, 1, 2,999])
+        assert!(1==0)
     }
 }
