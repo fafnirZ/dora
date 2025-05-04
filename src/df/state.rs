@@ -9,9 +9,9 @@ use super::super::header::Header;
 
 // only use these as initialisation values
 // we will update dynamically later.
-const SLICE_SIZE: i64 = 24;
+const SLICE_SIZE: i64 = 50;
 const MAX_ROWS_RENDERED: i64 = SLICE_SIZE;
-const MAX_COLS_RENDERED: i64 = 5;
+const MAX_COLS_RENDERED: i64 = 10;
 
 
 
