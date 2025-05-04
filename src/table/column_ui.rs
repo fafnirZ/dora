@@ -6,6 +6,11 @@ use crate::{any_float, any_int, any_string, any_uint, utils::{cell::{get_cell_ar
 #[derive(Clone)]
 pub struct ColumnUI {
     values: Column, // pl.column
+
+    // NOTE: y_offset might not be necessary
+    // because we can just separate the areas in the TableUI
+    // for header and column.
+
     x_offset: u16, // visual offset in pixels (i.e. its not the place offset but the actual pixel offset, can be changed later)
     y_offset: u16, // visual offset
     // TODO: handle state such as highlighted cells etc.
@@ -19,6 +24,14 @@ impl ColumnUI {
             x_offset: x_offset,
             y_offset: y_offset,
         } 
+    }
+}
+
+impl ColumnUI {
+    pub fn calculate_num_rows_renderable(
+        area: Rect,
+    ) -> u16 {
+        return ((area.height / CELL_HEIGHT) as f64).floor() as u16;
     }
 }
 
@@ -41,7 +54,11 @@ impl Widget for ColumnUI {
             .min(total_length_of_series-1); // bind by total length of series
 
         let start_offset = 0 as i64;
-        let total_len_taken = 5 as usize;
+        // maybe hardcode this for now since 
+        // i dont know how to detect viewport changes
+        // this calculation probably needs to be owned somewhere else
+        // such that i can update the table banner too
+        let total_len_taken = ColumnUI::calculate_num_rows_renderable(area) as usize; 
 
         let series = self
             .values
