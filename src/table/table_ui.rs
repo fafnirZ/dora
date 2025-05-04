@@ -6,7 +6,7 @@ use ratatui::style::{Color, Style, Stylize};
 use ratatui::widgets::{Block, Borders, Paragraph, StatefulWidget, Widget};
 
 use crate::app::App;
-use crate::header::Header;
+use crate::header::{self, Header};
 use crate::utils::cell::{get_cell_area, CELL_HEIGHT, CELL_WIDTH};
 use crate::utils::centered_text::render_text_centered_in_area;
 use crate::utils::debug::debug_render_area_bg;
@@ -138,6 +138,7 @@ impl TableUI {
             Constraint::Length(1),
         ]).areas(area)
     }
+
 }
 
 impl StatefulWidget for TableUI {
@@ -157,12 +158,24 @@ impl StatefulWidget for TableUI {
 
         // render borders
         self.render_table_borders(table_main, buf);
+
+        //////////////////////////////
+        // segment table_main area
+        /////////////////////////////
+        
+        let [
+            header_area,
+            values_area,
+        ] = Layout::vertical([
+            Constraint::Length(CELL_HEIGHT),
+            Constraint::Fill(1),
+        ]).areas(table_main);
         
         // header
-        self.render_header(table_main, buf, state);
+        self.render_header(header_area, buf, state);
 
         // columns
-        self.render_columns(table_main, buf, state);
+        self.render_columns(values_area, buf, state);
     }
     
 }
