@@ -2,13 +2,14 @@ use polars::frame::DataFrame;
 use polars::prelude::Column;
 use ratatui::buffer::Buffer;
 use ratatui::layout::{Constraint, Layout, Rect};
-use ratatui::style::{Color, Style};
-use ratatui::widgets::{Block, Borders, StatefulWidget, Widget};
+use ratatui::style::{Color, Style, Stylize};
+use ratatui::widgets::{Block, Borders, Paragraph, StatefulWidget, Widget};
 
 use crate::app::App;
 use crate::header::Header;
 use crate::utils::cell::{get_cell_area, CELL_HEIGHT, CELL_WIDTH};
 use crate::utils::centered_text::render_text_centered_in_area;
+use crate::utils::debug::debug_render_area_bg;
 
 use super::column_ui::ColumnUI;
 use super::table_banner::TableBanner;
@@ -36,6 +37,7 @@ impl TableUI {
         let block = Block::default()
             .borders(Borders::TOP | Borders::BOTTOM)
             .border_style(Style::default().fg(Color::Rgb(64, 64, 64)));
+
         block.render(area, buf);
     }
 
@@ -80,6 +82,9 @@ impl TableUI {
         buf: &mut Buffer, 
         state: &mut <TableUI as StatefulWidget>::State
     ) {
+
+        debug_render_area_bg(area, buf, Color::Cyan);
+
         // respect the area assigned to the widget.
         let start_x = area.x;
         let end_x = start_x + area.width;
