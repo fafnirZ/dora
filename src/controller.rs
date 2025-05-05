@@ -1,4 +1,5 @@
 use crossterm::cursor;
+use polars::{frame::column, prelude::{AnyValue, DataType}};
 
 use crate::{app::{self, App}, df::state::CursorFocus, input::Control, mode::AppMode, table::controller::{shift_column_cursor_left, shift_column_cursor_right, shift_displayed_df_value_slice_down, shift_displayed_df_value_slice_left, shift_displayed_df_value_slice_right, shift_displayed_df_value_slice_up, shift_row_cursor_down, shift_row_cursor_up}};
 
@@ -141,7 +142,34 @@ impl Controller {
                 app_state.input_handler.reset_buffer();
                 app_state.input_handler.mode_state = AppMode::Normal;
             },
-            _ => {},
+            _ => {
+
+                // let series_str_typed: Vec<String> = series.string();
+                let column_index = app_state
+                    .dataframe_state
+                    .get_cursor_x();
+                let column = app_state
+                    .dataframe_state
+                    .get_column_by_index(*column_index)
+                    .unwrap();
+                
+                if *column.dtype() != DataType::String {
+                    return; // do nothing
+                }
+
+                // replaces nulls with string "nulls"
+                let series: Vec<String> = column
+                    .as_series()
+                    .unwrap()
+                    .str()
+                    .unwrap()
+                    .into_iter()
+                    .map(|opt_str| match opt_str {
+                        Some(s) => s.to_string(),
+                        None => "None".to_string(),
+                    })
+                    .collect();
+            },
         }
     }
     fn handle_help_mode_control(

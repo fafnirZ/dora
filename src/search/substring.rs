@@ -1,4 +1,5 @@
-// if A is substring of B -> True
+// if A is substring of B -> [start,end]
+// else None
 pub fn substring(string_a: &str, string_b: &str) -> Option<[usize; 2]> {
     if string_a.is_empty() {
         return Some([0, 0]);

@@ -25,7 +25,7 @@ pub struct DataFrameState {
     source_path: String, // source file path to file
     // df: LazyFrame, // dataframe object itself
     // query: Option<Expr>,
-    dataframe: DataFrame,
+    pub dataframe: DataFrame,
 
     ///////////////////////////////////////
     // the following are for UI purposes
@@ -141,6 +141,21 @@ impl DataFrameState {
 
     pub fn get_column(&self, name: &String) -> &Column {
         self.dataframe.column(name).unwrap()
+    }
+
+    pub fn get_column_by_index(&self, index: i64) -> Option<&Column> {
+        let headers = self.get_headers();
+        for (idx, col_name) in headers.iter().enumerate() {
+            if (idx as i64) == index {
+                return Some(
+                    self
+                    .dataframe
+                    .column(&col_name.name)
+                    .unwrap()
+                );
+            }
+        }
+        return None
     }
 }
 
