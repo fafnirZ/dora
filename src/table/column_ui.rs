@@ -1,7 +1,7 @@
 use polars::prelude::*;
 use ratatui::prelude::*;
 
-use crate::{any_float, any_int, any_string, any_uint, app::App, cell::{get_cell_area, CELL_HEIGHT, CELL_WIDTH}, df::state::CursorFocus, utils::centered_text::{center_text_in_given_area, render_text_centered_in_area}};
+use crate::{any_float, any_int, any_string, any_uint, app::App, cell::{get_cell_area, CELL_HEIGHT, CELL_WIDTH}, df::state::CursorFocus, mode::AppMode, utils::centered_text::{center_text_in_given_area, render_text_centered_in_area}};
 // NOTE: will never add the header to column, since I dont want to be able to navigate to 
 // the header? or maybe treat the header completely differently from a datastructure perspective.
 // imean either way works, its just a choice I gotta deal with in implementation.
@@ -27,7 +27,8 @@ impl ColumnUI {
         text: String,
         area: Rect,
         buf: &mut Buffer,
-        is_selected: bool
+        is_selected: bool,
+        is_search_result: bool,
     ) {
 
         let (para, text_area) = center_text_in_given_area(text, area);
@@ -36,6 +37,11 @@ impl ColumnUI {
             para = para
                 .bg(Color::DarkGray);
         }
+        if is_search_result {
+            para = para
+                .fg(Color::Red);
+        }
+
         para.render(
             text_area,
             buf,
@@ -66,6 +72,7 @@ impl ColumnUI {
             }
         }
     }
+
 }
 
 impl StatefulWidget for ColumnUI {
@@ -95,6 +102,16 @@ impl StatefulWidget for ColumnUI {
             .unwrap()
             .slice(*val_offset_start, length_taken)
             .rechunk(); // added because of bug: https://github.com/fafnirZ/dora/issues/1
+
+        let search_results = &state
+            .search_result_state
+            .result_indices;
+
+        let search_results_found_in_row: Vec<usize> = search_results
+            .clone()
+            .iter()
+            .map(|tuple| tuple.0)
+            .collect();
          
         for (idx, value) in series.iter().enumerate() {
             let x = start_x + self.column_index * CELL_WIDTH; // WELL depends on what the x_offset is for this column.
@@ -120,11 +137,19 @@ impl StatefulWidget for ColumnUI {
                 self.column_index,
                 state,
             );
+            let is_search_result = {
+                match &state.input_handler.mode_state {
+                    AppMode::Search => search_results_found_in_row.contains(&idx),
+                    _ => false
+                }
+            };
+
             ColumnUI::render_cell(
                val_str,
                cell_area,
                buf,
                is_selected,
+               is_search_result,
             )
         }
     }
