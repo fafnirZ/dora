@@ -9,3 +9,4 @@ crossterm = "0.28.1"
 polars = "0.46.0"
 ratatui = "0.29.0"
 thiserror = "2.0.12"
+tui-input = { version = "0.12", features = ["crossterm"] }
