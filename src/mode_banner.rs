@@ -22,9 +22,6 @@ impl ModeBanner {
 
 
         let input_buffer_string = {
-            if !&state.input_handler.is_input_buffering() {
-                return "".to_string();
-            }
             match &state.input_handler.buffer_state {
                 BufferState::Active(input) => input.value(),
                 BufferState::Inactive => "",
