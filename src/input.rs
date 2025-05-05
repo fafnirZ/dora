@@ -15,6 +15,7 @@ pub enum Control {
     Quit,
     Nothing,
     Esc,
+    Enter, // enter key the generic version, if there is more nuanced definitions of enter we can define that later, right now i need a control which expresses the enter key in its generic form.
 }
 
 pub enum BufferState {
@@ -63,6 +64,7 @@ impl InputHandler {
                 KeyCode::Char('&') => Control::Filter,
                 KeyCode::Char('/') => Control::Search,
                 KeyCode::Char('?') => Control::Help,
+                KeyCode::Enter => Control::Enter,
                 _ => Control::Nothing
             },
             KeyModifiers::SHIFT => match key_event.code {
@@ -85,6 +87,16 @@ impl InputHandler {
             KeyCode::Esc => {
                 return Control::Esc
             },
+            KeyCode::Enter => {
+                // need to think about how best to interpret the enter keycode.
+                // to be honest I think conditional logic for interpreting the enter
+                // key in different ways should not be placed in this layer, but should be
+                // handled in the controller where it has access to the current states
+                // however other forms of interpreting 'enter' key might arise when the enter
+                // is interpreted in conjunction with other key terms for example shift enter?
+                // or something like that
+                return Control::Enter 
+            }
             _ => {
                 if input
                     .handle_event(&CrossTermEvent::Key(key_event)) // this function is the one which actually processes the key event.
