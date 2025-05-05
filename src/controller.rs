@@ -1,7 +1,7 @@
 use crossterm::cursor;
 use polars::{frame::column, prelude::{AnyValue, DataType}};
 
-use crate::{app::{self, App}, df::state::CursorFocus, input::Control, mode::AppMode, table::controller::{shift_column_cursor_left, shift_column_cursor_right, shift_displayed_df_value_slice_down, shift_displayed_df_value_slice_left, shift_displayed_df_value_slice_right, shift_displayed_df_value_slice_up, shift_row_cursor_down, shift_row_cursor_up}};
+use crate::{app::{self, App}, df::state::CursorFocus, input::{BufferState, Control}, mode::AppMode, search::par_search::par_find_substring_matches, table::controller::{shift_column_cursor_left, shift_column_cursor_right, shift_displayed_df_value_slice_down, shift_displayed_df_value_slice_left, shift_displayed_df_value_slice_right, shift_displayed_df_value_slice_up, shift_row_cursor_down, shift_row_cursor_up}};
 
 
 // given input,
@@ -143,6 +143,12 @@ impl Controller {
                 app_state.input_handler.mode_state = AppMode::Normal;
             },
             _ => {
+                let current_buffer_string = {
+                    match &app_state.input_handler.buffer_state {
+                        BufferState::Active(input) => input.value(),
+                        BufferState::Inactive => "",
+                    }
+                };
 
                 // let series_str_typed: Vec<String> = series.string();
                 let column_index = app_state
@@ -169,6 +175,15 @@ impl Controller {
                         None => "None".to_string(),
                     })
                     .collect();
+                
+                // finds results
+                let results = par_find_substring_matches(
+                    &series, 
+                    current_buffer_string,
+                );
+
+                // set results
+                app_state.search_result_state.result_indices = results;
             },
         }
     }
