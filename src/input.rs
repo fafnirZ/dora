@@ -82,6 +82,9 @@ impl InputHandler {
         };
 
         match key_event.code {
+            KeyCode::Esc => {
+                return Control::Esc
+            },
             _ => {
                 if input
                     .handle_event(&CrossTermEvent::Key(key_event)) // this function is the one which actually processes the key event.

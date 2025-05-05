@@ -112,6 +112,11 @@ impl Controller {
             _ => {},
         }
     }
+
+    // filter must be exact matching
+    // filter will impact the underlying dataframe
+    // by creating a dataframe filter expression to be
+    // applied on underlying dataframe.
     fn handle_filter_mode_control(
         control: &Control,
         app_state: &mut App,
@@ -123,12 +128,16 @@ impl Controller {
             _ => {},
         }
     }
+
+    // search only highlights and allows skipping 
+    // search is matched with levenshtein distance
     fn handle_search_mode_control(
         control: &Control,
         app_state: &mut App,
     ) {
         match control {
             Control::Esc => {
+                app_state.input_handler.reset_buffer();
                 app_state.input_handler.mode_state = AppMode::Normal;
             },
             _ => {},
