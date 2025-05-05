@@ -1,7 +1,7 @@
 use crossterm::cursor;
 use polars::{frame::column, prelude::{AnyValue, DataType}};
 
-use crate::{app::{self, App}, df::state::CursorFocus, input::{BufferState, Control}, mode::AppMode, search::par_search::par_find_substring_matches, table::controller::{shift_column_cursor_left, shift_column_cursor_right, shift_displayed_df_value_slice_down, shift_displayed_df_value_slice_left, shift_displayed_df_value_slice_right, shift_displayed_df_value_slice_up, shift_row_cursor_down, shift_row_cursor_up}};
+use crate::{app::{self, App}, df::state::CursorFocus, input::{BufferState, Control}, mode::AppMode, search::par_search::par_find_substring_matches, table::controller::{shift_column_cursor_left, shift_column_cursor_right, shift_displayed_df_value_slice_down, shift_displayed_df_value_slice_left, shift_displayed_df_value_slice_right, shift_displayed_df_value_slice_up, shift_displayed_df_row_to_a_particular_index, shift_row_cursor_down, shift_row_cursor_up}};
 
 
 // given input,
@@ -143,11 +143,24 @@ impl Controller {
                 app_state.input_handler.mode_state = AppMode::Normal;
             },
             Control::Enter => {
-                // make next result as 1st value being displayed on screen
 
-                // shift_displayed_df_value_to_a_particular_index(
+                match app_state.search_result_state.result_cursor {
+                    Some(_) => {
+                        app_state.search_result_state.result_cursor = Some(
+                            app_state.search_result_state.result_cursor.unwrap() 
+                            + 1
+                        );
+                    },
+                    None => {
+                        app_state.search_result_state.result_cursor = Some(0);
+                    },
+                };
 
-                // )
+                // shift the cursor value into view
+                shift_displayed_df_row_to_a_particular_index(
+                    app_state,
+                    app_state.search_result_state.result_cursor.unwrap() as i64,
+                )
             },
             _ => {
                 let current_buffer_string = {

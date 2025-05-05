@@ -68,7 +68,7 @@ pub fn shift_displayed_df_value_slice_right(
 }
 
 
-pub fn shift_displayed_df_value_to_a_particular_index(
+pub fn shift_displayed_df_row_to_a_particular_index(
     app_state: &mut App,
     index: i64
 ) {
@@ -78,7 +78,7 @@ pub fn shift_displayed_df_value_to_a_particular_index(
         index,
         index+(df_state.rows_rendered as i64),
     ];
-    df_state.set_col_view_slice(new_view);
+    df_state.set_row_view_slice(new_view);
 }
 
 
