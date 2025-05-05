@@ -1,5 +1,6 @@
 use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
 use ratatui::buffer::Buffer;
+use tui_input::Input;
 use crate::{app::{self, App}, events::{Event, Events}, mode::AppMode,};
 
 pub enum Control {
@@ -69,8 +70,6 @@ impl InputHandler {
             _ => Control::Nothing,
         }
     }
-
-
 
     fn is_input_buffering(&self) -> bool {
         matches!(self.buffer_state, BufferState::Active(_))
