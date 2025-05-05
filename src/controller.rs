@@ -1,6 +1,6 @@
 use crossterm::cursor;
 
-use crate::{app::{self, App}, df::state::CursorFocus, input::Control, mode_banner::AppMode, table::controller::{shift_column_cursor_left, shift_column_cursor_right, shift_displayed_df_value_slice_down, shift_displayed_df_value_slice_left, shift_displayed_df_value_slice_right, shift_displayed_df_value_slice_up, shift_row_cursor_down, shift_row_cursor_up}};
+use crate::{app::{self, App}, df::state::CursorFocus, input::Control, mode::AppMode, table::controller::{shift_column_cursor_left, shift_column_cursor_right, shift_displayed_df_value_slice_down, shift_displayed_df_value_slice_left, shift_displayed_df_value_slice_right, shift_displayed_df_value_slice_up, shift_row_cursor_down, shift_row_cursor_up}};
 
 
 // given input,
@@ -31,7 +31,7 @@ impl Controller {
     fn determine_app_mode(
         app_state: &App,
     ) -> &AppMode {
-        &app_state.mode_state.state
+        &app_state.input_handler.mode_state
     }
 
     fn handle_normal_mode_control(
@@ -98,13 +98,13 @@ impl Controller {
             }
 
             Control::Filter => {
-                app_state.mode_state.state = AppMode::Filter;
+                app_state.input_handler.mode_state = AppMode::Filter;
             },
             Control::Search => {
-                app_state.mode_state.state = AppMode::Search;
+                app_state.input_handler.mode_state = AppMode::Search;
             },
             Control::Help => {
-                app_state.mode_state.state = AppMode::Help;
+                app_state.input_handler.mode_state = AppMode::Help;
             },
             _ => {},
         }
@@ -115,7 +115,7 @@ impl Controller {
     ) {
         match control {
             Control::Esc => {
-                app_state.mode_state.state = AppMode::Normal;
+                app_state.input_handler.mode_state = AppMode::Normal;
             },
             _ => {},
         }
@@ -126,7 +126,7 @@ impl Controller {
     ) {
         match control {
             Control::Esc => {
-                app_state.mode_state.state = AppMode::Normal;
+                app_state.input_handler.mode_state = AppMode::Normal;
             },
             _ => {},
         }
@@ -137,7 +137,7 @@ impl Controller {
     ) {
         match control {
             Control::Esc => {
-                app_state.mode_state.state = AppMode::Normal;
+                app_state.input_handler.mode_state = AppMode::Normal;
             },
             _ => {},
         }

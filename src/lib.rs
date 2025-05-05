@@ -10,5 +10,6 @@ mod table;
 mod df;
 mod controller;
 mod cell;
+mod mode;
 
 pub use runner::run_app;
