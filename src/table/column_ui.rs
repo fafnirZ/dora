@@ -139,7 +139,14 @@ impl StatefulWidget for ColumnUI {
             );
             let is_search_result = {
                 match &state.input_handler.mode_state {
-                    AppMode::Search => search_results_found_in_row.contains(&idx),
+                    AppMode::Search => {
+                        self.column_index == (*state.dataframe_state.get_cursor_x() as u16)
+                        && (match state.dataframe_state.get_cursor_focus() { 
+                                CursorFocus::Column => true, 
+                                _ => false
+                            })
+                        && search_results_found_in_row.contains(&idx)
+                    }
                     _ => false
                 }
             };
