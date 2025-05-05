@@ -143,6 +143,9 @@ impl Controller {
                 app_state.input_handler.mode_state = AppMode::Normal;
             },
             Control::Enter => {
+                if app_state.search_result_state.result_indices.len() < 1 {
+                    return // do nothing
+                }
 
                 // note the cursor will only increment by 1
                 // since it will only move onto the next result found 
