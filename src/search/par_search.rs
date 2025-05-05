@@ -12,7 +12,11 @@ pub fn par_find_substring_matches(
         .par_iter()
         .enumerate()
         .filter_map(|(index, s)| {
-            substring(substring_to_find, s).map(|match_indices| (index, match_indices))
+            match substring(substring_to_find, s) {
+                Some(result) => Some((index, result)),
+                None => None,
+            }
+            // .map(|match_indices| (index, match_indices))
         })
         .collect()
 }

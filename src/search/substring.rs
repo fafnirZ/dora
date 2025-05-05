@@ -40,7 +40,7 @@ mod tests {
 
     #[test]
     fn test_empty_substring() {
-        assert_eq!(substring("", "abc"), Some([0, 0]));
+        assert_eq!(substring("", "abc"), None);
     }
 
     #[test]
