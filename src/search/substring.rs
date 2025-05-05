@@ -1,8 +1,11 @@
 // if A is substring of B -> [start,end]
 // else None
 pub fn substring(string_a: &str, string_b: &str) -> Option<[usize; 2]> {
+    // we consider empty input to return None
+    // the buffer defaults as empty
+    // we don't want everything to match when that occurs
     if string_a.is_empty() {
-        return Some([0, 0]);
+        return None; 
     }
     if string_b.len() < string_a.len() {
         return None;
