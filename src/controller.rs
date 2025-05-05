@@ -142,6 +142,13 @@ impl Controller {
                 app_state.input_handler.reset_buffer();
                 app_state.input_handler.mode_state = AppMode::Normal;
             },
+            Control::Enter => {
+                // make next result as 1st value being displayed on screen
+
+                // shift_displayed_df_value_to_a_particular_index(
+
+                // )
+            },
             _ => {
                 let current_buffer_string = {
                     match &app_state.input_handler.buffer_state {

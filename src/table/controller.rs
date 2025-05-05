@@ -68,6 +68,21 @@ pub fn shift_displayed_df_value_slice_right(
 }
 
 
+pub fn shift_displayed_df_value_to_a_particular_index(
+    app_state: &mut App,
+    index: i64
+) {
+    // TODO: handle out of bounds
+    let df_state = &mut app_state.dataframe_state;
+    let new_view= [
+        index,
+        index+(df_state.rows_rendered as i64),
+    ];
+    df_state.set_col_view_slice(new_view);
+}
+
+
+
 
 // the following four functions update the table cursors
 
