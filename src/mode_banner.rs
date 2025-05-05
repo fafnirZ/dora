@@ -1,6 +1,6 @@
 use ratatui::{buffer::Buffer, layout::Rect, widgets::StatefulWidget};
 
-use crate::{app::App, mode::AppMode, utils::centered_text::render_text_centered_in_area};
+use crate::{app::App, input::BufferState, mode::AppMode, utils::centered_text::render_text_centered_in_area};
 
 
 
@@ -13,12 +13,19 @@ impl ModeBanner {
         state: &<ModeBanner as ratatui::prelude::StatefulWidget>::State
     ) -> String {
         let state = state;
-        match state.input_handler.mode_state {
+        let mode_str = match state.input_handler.mode_state {
             AppMode::Normal => String::from("--normal--"),
             AppMode::Filter => String::from("--filter--"),
             AppMode::Search => String::from("--search--"),
             AppMode::Help => String::from("--help--"),
-        }
+        };
+
+        let input_buffer_string = match &state.input_handler.buffer_state {
+            BufferState::Active(input) => input.value(),
+            BufferState::Inactive => "",
+        };
+
+        return mode_str + input_buffer_string;
     }
 }
 
@@ -28,5 +35,6 @@ impl StatefulWidget for ModeBanner {
     fn render(self, area: Rect, buf: &mut Buffer, state: &mut Self::State) {
         let state_writing_fmt = ModeBanner::determine_writing(state);
         render_text_centered_in_area(state_writing_fmt, area, buf);
+
     }
 }

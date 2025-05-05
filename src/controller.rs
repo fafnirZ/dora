@@ -99,12 +99,15 @@ impl Controller {
 
             Control::Filter => {
                 app_state.input_handler.mode_state = AppMode::Filter;
+                app_state.input_handler.init_input_buffer();
             },
             Control::Search => {
                 app_state.input_handler.mode_state = AppMode::Search;
+                app_state.input_handler.init_input_buffer();
             },
             Control::Help => {
                 app_state.input_handler.mode_state = AppMode::Help;
+                app_state.input_handler.init_input_buffer();
             },
             _ => {},
         }

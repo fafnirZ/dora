@@ -1,7 +1,8 @@
-use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
+use crossterm::event::{KeyCode, KeyEvent, KeyModifiers, Event as CrossTermEvent};
 use ratatui::buffer::Buffer;
-use tui_input::Input;
-use crate::{app::{self, App}, events::{Event, Events}, mode::AppMode,};
+use tui_input::{backend::crossterm::EventHandler, Input};
+use crate::{app::{self, App},events::{Event, Events}, mode::AppMode,};
+
 
 pub enum Control {
     ScrollUp,
@@ -23,7 +24,7 @@ pub enum BufferState {
 
 pub struct InputHandler {
     events: Events,
-    buffer_state: BufferState,
+    pub buffer_state: BufferState,
     pub mode_state: AppMode,
 }
 
@@ -40,6 +41,9 @@ impl InputHandler {
         let polled_event = self.events.next().unwrap();
         let control = match polled_event {
             Event::Input(key) => {
+                if self.is_input_buffering() {
+                    return self.handle_buffered_input(key);
+                }
                 return self.handle_default(key);
             }
             _ => Control::Nothing
@@ -71,11 +75,35 @@ impl InputHandler {
         }
     }
 
-    fn is_input_buffering(&self) -> bool {
+    fn handle_buffered_input(&mut self, key_event: KeyEvent) -> Control {
+        let input = match &mut self.buffer_state {
+            BufferState::Active(input) => input,
+            BufferState::Inactive => return Control::Nothing,
+        };
+
+        match key_event.code {
+            _ => {
+                if input
+                    .handle_event(&CrossTermEvent::Key(key_event)) // this function is the one which actually processes the key event.
+                    .is_some() 
+                {
+                    // TODO
+                    return Control::Nothing;
+                }
+                return Control::Nothing; 
+            }
+        }    
+    }
+
+    pub fn init_input_buffer(&mut self) {
+        self.buffer_state  = BufferState::Active(Input::default());
+    }
+
+    pub fn is_input_buffering(&self) -> bool {
         matches!(self.buffer_state, BufferState::Active(_))
     }
 
-    fn reset_buffer(&mut self) {
+    pub fn reset_buffer(&mut self) {
         self.buffer_state = BufferState::Inactive;
         self.mode_state = AppMode::Normal;
     }
