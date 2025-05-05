@@ -11,5 +11,6 @@ mod df;
 mod controller;
 mod cell;
 mod mode;
+mod search;
 
 pub use runner::run_app;
