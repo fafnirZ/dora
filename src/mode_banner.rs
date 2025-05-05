@@ -1,4 +1,4 @@
-use ratatui::{buffer::Buffer, layout::Rect, widgets::StatefulWidget};
+use ratatui::{buffer::Buffer, layout::Rect, widgets::{Paragraph, StatefulWidget, Widget}};
 
 use crate::{app::App, input::BufferState, mode::AppMode, utils::centered_text::render_text_centered_in_area};
 
@@ -20,9 +20,15 @@ impl ModeBanner {
             AppMode::Help => String::from("--help--"),
         };
 
-        let input_buffer_string = match &state.input_handler.buffer_state {
-            BufferState::Active(input) => input.value(),
-            BufferState::Inactive => "",
+
+        let input_buffer_string = {
+            if !&state.input_handler.is_input_buffering() {
+                return "".to_string();
+            }
+            match &state.input_handler.buffer_state {
+                BufferState::Active(input) => input.value(),
+                BufferState::Inactive => "",
+            }
         };
 
         return mode_str + input_buffer_string;
@@ -34,7 +40,9 @@ impl StatefulWidget for ModeBanner {
 
     fn render(self, area: Rect, buf: &mut Buffer, state: &mut Self::State) {
         let state_writing_fmt = ModeBanner::determine_writing(state);
-        render_text_centered_in_area(state_writing_fmt, area, buf);
-
+        // render_text_centered_in_area(state_writing_fmt, area, buf);
+        
+        Paragraph::new(state_writing_fmt)
+            .render(area, buf);
     }
 }

@@ -123,6 +123,7 @@ impl Controller {
     ) {
         match control {
             Control::Esc => {
+                app_state.input_handler.reset_buffer();
                 app_state.input_handler.mode_state = AppMode::Normal;
             },
             _ => {},
@@ -149,6 +150,7 @@ impl Controller {
     ) {
         match control {
             Control::Esc => {
+                app_state.input_handler.reset_buffer();
                 app_state.input_handler.mode_state = AppMode::Normal;
             },
             _ => {},
