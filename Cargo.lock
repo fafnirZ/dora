@@ -585,6 +585,7 @@ dependencies = [
  "crossterm 0.28.1",
  "polars",
  "ratatui 0.29.0",
+ "rayon",
  "thiserror 2.0.12",
  "tui-input",
 ]
