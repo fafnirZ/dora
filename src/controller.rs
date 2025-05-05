@@ -144,6 +144,11 @@ impl Controller {
             },
             Control::Enter => {
 
+                // note the cursor will only increment by 1
+                // since it will only move onto the next result found 
+                // in the result vector
+                // in other words the cursor denotes the index in the result vector
+                // NOTE: i know it will break if the result vector was to change, but whatever.
                 match app_state.search_result_state.result_cursor {
                     Some(_) => {
                         app_state.search_result_state.result_cursor = Some(
@@ -157,9 +162,16 @@ impl Controller {
                 };
 
                 // shift the cursor value into view
+                let result_cursor = app_state
+                    .search_result_state
+                    .result_cursor
+                    .unwrap();
+                let result_location = app_state
+                .search_result_state.result_indices[result_cursor]
+                .0;
                 shift_displayed_df_row_to_a_particular_index(
                     app_state,
-                    app_state.search_result_state.result_cursor.unwrap() as i64,
+                    result_location as i64,
                 )
             },
             _ => {
