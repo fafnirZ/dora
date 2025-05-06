@@ -107,11 +107,11 @@ impl StatefulWidget for ColumnUI {
             .search_result_state
             .result_indices;
 
-        let search_results_found_in_row: Vec<usize> = search_results
-            .clone()
+        let search_results_found_in_row: &Vec<usize> = &search_results
             .iter()
             .map(|tuple| tuple.0)
             .collect();
+        
          
         for (idx, value) in series.iter().enumerate() {
             let x = start_x + self.column_index * CELL_WIDTH; // WELL depends on what the x_offset is for this column.
@@ -145,7 +145,10 @@ impl StatefulWidget for ColumnUI {
                                 CursorFocus::Column => true, 
                                 _ => false
                             })
-                        && search_results_found_in_row.contains(&idx)
+                        && (match search_results_found_in_row.binary_search(&idx) {
+                                Ok(_) => true,
+                                _ => false,
+                            })
                     }
                     _ => false
                 }
