@@ -40,6 +40,9 @@ impl ColumnUI {
         if is_search_result {
             para = para
                 .fg(Color::Red);
+        } else {
+            para = para
+                .fg(Color::White);
         }
 
         para.render(
@@ -142,13 +145,13 @@ impl StatefulWidget for ColumnUI {
                     AppMode::Search => {
                         self.column_index == (*state.dataframe_state.get_cursor_x() as u16)
                         && (match state.dataframe_state.get_cursor_focus() { 
-                                CursorFocus::Column => true, 
-                                _ => false
-                            })
+                            CursorFocus::Column => true, 
+                            _ => false
+                        })
                         && (match search_results_found_in_row.binary_search(&idx) {
-                                Ok(_) => true,
-                                _ => false,
-                            })
+                            Ok(_) => true,
+                            _ => false,
+                        })
                     }
                     _ => false
                 }
