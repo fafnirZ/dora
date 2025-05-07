@@ -2,7 +2,7 @@ use std::u16::MAX;
 
 // use polars::frame::DataFrame;
 use polars::prelude::*;
-use crate::cell::{CELL_HEIGHT, CELL_WIDTH, HEADER_HEIGHT};
+use crate::{cell::{CELL_HEIGHT, CELL_WIDTH, HEADER_HEIGHT}, io::read_from_any_path};
 
 use super::super::header::Header;
 
@@ -50,12 +50,14 @@ impl DataFrameState {
     pub fn new(file_path: &str) -> Self {
         
         // only supports csv right now
-        let df = CsvReadOptions::default()
-            .try_into_reader_with_file_path(Some(file_path.into()))
-            .unwrap()
-            .finish()
+        // let df = CsvReadOptions::default()
+        //     .try_into_reader_with_file_path(Some(file_path.into()))
+        //     .unwrap()
+        //     .finish()
+        //     .unwrap();
+        let df = read_from_any_path(file_path)
             .unwrap();
-
+        
         Self {
             source_path: String::from(file_path),
             dataframe: df,
