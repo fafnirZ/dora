@@ -107,6 +107,7 @@ pub fn shift_column_cursor_left(
     let curr_x = df_state.get_cursor_x();
     df_state.set_cursor_x(curr_x+increment_value);
 }
+
 pub fn shift_column_cursor_right(
     app_state: &mut App,
 ) {

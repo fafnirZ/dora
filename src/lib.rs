@@ -12,5 +12,6 @@ mod controller;
 mod cell;
 mod mode;
 mod search;
+mod io;
 
 pub use runner::run_app;
