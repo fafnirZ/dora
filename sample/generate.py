@@ -8,4 +8,5 @@ new_df = df.with_columns(
         random.randrange(0,9999) for _ in range(df_len)
     ])
 )
-new_df.write_csv("b.csv")
+# new_df.write_csv("b.csv")
+new_df.write_parquet("b.parquet")
