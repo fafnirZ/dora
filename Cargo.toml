@@ -10,5 +10,6 @@ polars = { version = "0.46.0", features = ["csv","parquet"] }
 ratatui = "0.29.0"
 rayon = "1.10.0"
 thiserror = "2.0.12"
-tokio = { version = "1.45.0", features = [ "rt", "rt-multithreaded" ] }
+tokio = { version = "1.45.0", features = [ "rt", "rt-multi-thread" ] }
 tui-input = { version = "0.12", features = ["crossterm"] }
+google-cloud-storage = { package = "gcloud-storage", version = "1.1.0" }
