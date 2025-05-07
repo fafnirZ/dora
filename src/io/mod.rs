@@ -53,6 +53,50 @@ impl FileType {
     }
 }
 
+pub fn read_parquet_from_gcs_synchronously(gs_path: &str, service_account_key_path: Option<&str>) -> Result<DataFrame, PolarsError> {
+    // Initialize the GCS client (this part needs to be async, so we'll block on it)
+    let gcs_client = tokio::runtime::Runtime::new()
+        .map_err(|e| PolarsError::External(Box::new(e)))
+        .unwrap()
+        .block_on(async {
+            if let Some(path) = service_account_key_path {
+                let key = ServiceAccountKey::from_file(path).await.map_err(|e| PolarsError::External(Box::new(e)))?;
+                GcsClient::from_service_account_key(key).await.map_err(|e| PolarsError::External(Box::new(e)))
+            } else {
+                GcsClient::default().await.map_err(|e| PolarsError::External(Box::new(e)))
+            }
+        }).unwrap();
+
+    // Parse the GCS URL
+    let parsed_url = Url::parse(gcs_url)
+        .map_err(|e| PolarsError::ComputeError(format!("Invalid GCS URL: {}", e)))?;
+    let bucket_name = parsed_url.host_str()
+        .ok_or(PolarsError::ComputeError("Missing bucket name in GCS URL".into()))?;
+    let path = parsed_url.path().trim_start_matches('/');
+
+    // Construct the GetObjectRequest
+    let request = GetObjectRequest {
+        bucket: bucket_name.to_string(),
+        object: path.to_string(),
+        ..Default::default()
+    };
+
+    // Download the object synchronously (block on the async call)
+    let object_data = tokio::runtime::Runtime::new()
+        .map_err(|e| PolarsError::External(Box::new(e)))?
+        .block_on(async {
+            gcs_client.download_object(&request).await.map_err(|e| PolarsError::External(Box::new(e)))
+        })
+        .unwrap();
+
+    let data = Bytes::from(object_data);
+
+    let cursor = Cursor::new(data);
+    
+    ParquetReader::new(cursor)
+        .finish()
+
+}
 
 pub fn read_from_any_path(path: &str) -> Result<DataFrame, DoraErrors> {
     let location = PathLocation::determine_location(path);
