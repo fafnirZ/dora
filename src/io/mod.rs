@@ -11,22 +11,22 @@ const GS_PREFIX: &str = "gs://";
 // if suffix: .xlsx -> excel reader
 // if prefix: gs:// -> gcs
 // if prefix: /     -> local
-// pub enum PathLocation {
-//     Local,
-//     Gcs,
-// }
+pub enum PathLocation {
+    Local,
+    Gcs,
+}
 
-// impl PathLocation {
-//     pub fn determine_location(path: &str) -> Self {
-//         return {
-//             if path.starts_with(GS_PREFIX) {
-//                 PathLocation::Gcs
-//             } else {
-//                 PathLocation::Local
-//             }
-//         }
-//     }
-// }
+impl PathLocation {
+    pub fn determine_location(path: &str) -> Self {
+        return {
+            if path.starts_with(GS_PREFIX) {
+                PathLocation::Gcs
+            } else {
+                PathLocation::Local
+            }
+        }
+    }
+}
 
 pub enum FileType {
     Csv,
@@ -55,7 +55,7 @@ impl FileType {
 
 
 pub fn read_from_any_path(path: &str) -> Result<DataFrame, DoraErrors> {
-    // let location = PathLocation::determine_location(path);
+    let location = PathLocation::determine_location(path);
     let extension = match FileType::determine_extension(path) {
         Some(res) => res,
         None => {
@@ -72,10 +72,17 @@ pub fn read_from_any_path(path: &str) -> Result<DataFrame, DoraErrors> {
                 .unwrap()
         },
         FileType::Parquet => {
-            let f = File::open(path).unwrap();
-            ParquetReader::new(f)
-                .finish()
-                .unwrap()
+            match location {
+                PathLocation::Gcs => {
+                    return Err(DoraErrors::FileNotFound("GCS not supported yet.".to_string()))
+                },
+                PathLocation::Local => {
+                    let f = File::open(path).unwrap();
+                    ParquetReader::new(f)
+                        .finish()
+                        .unwrap()
+                }
+            }
         }
         _ => return {
             Err(DoraErrors::FileNotFound("Invalid File Type".to_string()))
