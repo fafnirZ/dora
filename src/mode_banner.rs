@@ -1,4 +1,4 @@
-use ratatui::{buffer::Buffer, layout::Rect, widgets::{Paragraph, StatefulWidget, Widget}};
+use ratatui::{buffer::Buffer, layout::Rect, style::{Color, Stylize}, widgets::{Paragraph, StatefulWidget, Widget}};
 
 use crate::{app::App, input::BufferState, mode::AppMode, utils::centered_text::render_text_centered_in_area};
 
@@ -41,6 +41,7 @@ impl StatefulWidget for ModeBanner {
         // render_text_centered_in_area(state_writing_fmt, area, buf);
         
         Paragraph::new(state_writing_fmt)
+            .bg(Color::Rgb(67, 67, 113))
             .render(area, buf);
     }
 }

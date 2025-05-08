@@ -1,5 +1,5 @@
 
-use ratatui::{layout::{Constraint, Layout}, prelude::Backend, Frame, Terminal};
+use ratatui::{layout::{Constraint, Layout}, prelude::Backend, style::{Color, Stylize}, widgets::{Paragraph, Widget}, Frame, Terminal};
 
 use crate::{config::ConfigState, controller::Controller, df::state::DataFrameState, errors::DoraResults, input::{self, Control, InputHandler}, mode_banner::ModeBanner, search::state::SearchResultState, table::{table_banner::TableBanner, table_ui::TableUI}, utils::area::horizontal_pad_area};
 
@@ -47,7 +47,7 @@ impl App {
     fn render_frame(&mut self, frame: &mut Frame) {
         let area = frame.area();
         let [
-            _top_banner,
+            top_banner,
             _,
             main_area,
             _,
@@ -68,6 +68,11 @@ impl App {
         let table_area = horizontal_pad_area(main_area, [10,80,10]);
         frame.render_stateful_widget(table, table_area, self);
         frame.render_stateful_widget(mode_banner, bottom_banner, self);
+
+        // top banner
+        let top_banner_widget = Paragraph::new("Dora (A Dataframe exploration tool)")
+            .bg(Color::Rgb(67, 67, 113));
+        frame.render_widget(top_banner_widget, top_banner);
     }
 
     fn draw<B: Backend>(&mut self, terminal: &mut Terminal<B>) {
