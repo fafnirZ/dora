@@ -34,6 +34,7 @@ impl StatefulWidget for LineNumberUI {
         // flexbox in html and wanted to do position: absolute for everything...
         let start_x = area.x;
         let start_y= area.y;
+        let end_y = start_y + area.height;
         let header_offset = config_state.header_height;
         let start_y = start_y + header_offset; // need to offset the header height
         
@@ -43,9 +44,12 @@ impl StatefulWidget for LineNumberUI {
             let curr_row = line_number as usize;
             let text = curr_row.to_string();
 
+            let y = start_y + (idx as u16) * config_state.cell_height; // column
+            // do not render if y is outside of area bound
+            if y > end_y { break; } 
             let cell_area = Rect::new(
                 start_x,
-                start_y + (idx as u16) * config_state.cell_height, // column
+                y,
                 config_state.line_number_cell_width,
                 config_state.cell_height,
             );
