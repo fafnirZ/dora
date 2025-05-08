@@ -8,7 +8,7 @@ use ratatui::widgets::{Block, Borders, Paragraph, StatefulWidget, Widget};
 use crate::app::App;
 use crate::df::state;
 use crate::header::{self, Header};
-use crate::cell::{get_cell_area, get_header_area, CELL_HEIGHT, CELL_WIDTH, HEADER_HEIGHT, LINE_NUMBER_CELL_WIDTH};
+use crate::cell::{get_cell_area, get_header_area};
 use crate::utils::centered_text::render_text_centered_in_area;
 use crate::utils::debug::debug_render_area_bg;
 
@@ -55,7 +55,7 @@ impl TableUI {
         let block = Block::default()
             .borders(Borders::TOP | Borders::BOTTOM)
             .border_style(Style::default().fg(Color::Rgb(64, 64, 64)));
-        let height = HEADER_HEIGHT;
+        let height = config_state.header_height;
         let area = Rect::new(start_x, start_y, area.width, height);
         block.render(area, buf);
 
@@ -65,8 +65,8 @@ impl TableUI {
         let headers = df_state.get_headers_in_col_slice();
         for (idx, header) in headers.iter().enumerate() {
             let y = start_y;
-            let x = start_x + CELL_WIDTH * (idx as u16);
-            if x+CELL_WIDTH > area.x+area.width {break;} // do not render beyond bounds
+            let x = start_x + config_state.cell_width * (idx as u16);
+            if x+config_state.cell_width> area.x+area.width {break;} // do not render beyond bounds
             let cell_area = get_header_area(config_state, x, y);
             let header_name = header.name.clone();
             render_text_centered_in_area(header_name, cell_area, buf);
@@ -82,7 +82,7 @@ impl TableUI {
         area: Rect, 
         state: &mut <TableUI as StatefulWidget>::State
     ) -> Vec<ColumnUI> {
-
+        let config_state = &state.config_state;
         // debug_render_area_bg(area, buf, Color::Cyan);
 
         // respect the area assigned to the widget.
@@ -95,10 +95,10 @@ impl TableUI {
         let columns = df_state.get_columns_in_col_slice();
         let mut column_uis = Vec::new();
         for (idx, column) in columns.iter().enumerate() {
-            let x_offset = start_x + CELL_WIDTH * (idx as u16);
-            let y_offset = start_y + CELL_HEIGHT * 1; // header
+            let x_offset = start_x + config_state.cell_width * (idx as u16);
+            let y_offset = start_y + config_state.cell_height * 1; // header
             // do not render beyond bounds
-            if x_offset+CELL_WIDTH > end_x {break;}
+            if x_offset+config_state.cell_width > end_x {break;}
             
             let col_name = column.name().to_string();
             
@@ -166,23 +166,27 @@ impl StatefulWidget for TableUI {
     type State = App; // cheat and assign to app state so we get access to everthing?
 
     fn render(self, area: ratatui::prelude::Rect, buf: &mut ratatui::prelude::Buffer, state: &mut Self::State) {
-
         let [
             _table_banner_top,
             table_main,
             table_banner_bottom,
-        ] = TableUI::vertical_segment_area(area);
+            ] = TableUI::vertical_segment_area(area);
+
+        // all mutable references of state enclosed here to prevent compiler errors.
+        {
+            // update the table area if needed
+            // handles terminal resizing.
+            TableUI::try_update_table_area(table_main, state);
+        }
 
         let [
             line_number_area,
             table_main,
         ] = Layout::horizontal([
-            Constraint::Length(LINE_NUMBER_CELL_WIDTH),
+            Constraint::Length(state.config_state.line_number_cell_width),
             Constraint::Fill(1),
         ]).areas(table_main);
 
-        // update the table area if needed
-        TableUI::try_update_table_area(table_main, state);
 
         // render bottom banner
         self.render_bottom_banner(table_banner_bottom, buf, state);
@@ -198,7 +202,7 @@ impl StatefulWidget for TableUI {
             header_area,
             values_area,
         ] = Layout::vertical([
-            Constraint::Length(HEADER_HEIGHT),
+            Constraint::Length(state.config_state.header_height),
             Constraint::Fill(1),
         ]).areas(table_main);
         
