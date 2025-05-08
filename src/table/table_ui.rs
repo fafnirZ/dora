@@ -45,9 +45,9 @@ impl TableUI {
         &self, 
         area: Rect, 
         buf: &mut Buffer, 
-        state: &mut <TableUI as StatefulWidget>::State
+        app_state: &mut <TableUI as StatefulWidget>::State
     ) {
-
+        let config_state = &app_state.config_state;
         let start_x = area.x;
         let start_y = area.y;
 
@@ -61,13 +61,13 @@ impl TableUI {
 
 
         // rendering the column values.
-        let df_state = &state.dataframe_state;
+        let df_state = &app_state.dataframe_state;
         let headers = df_state.get_headers_in_col_slice();
         for (idx, header) in headers.iter().enumerate() {
             let y = start_y;
             let x = start_x + CELL_WIDTH * (idx as u16);
             if x+CELL_WIDTH > area.x+area.width {break;} // do not render beyond bounds
-            let cell_area = get_header_area(x, y);
+            let cell_area = get_header_area(config_state, x, y);
             let header_name = header.name.clone();
             render_text_centered_in_area(header_name, cell_area, buf);
         }
@@ -144,6 +144,7 @@ impl TableUI {
         let df_state = &mut app_state.dataframe_state;
         let [curr_height, curr_width] = df_state.table_area;
         
+        let config_state = &app_state.config_state;
         if !(
             main_table_area.height == curr_height 
             && main_table_area.width == curr_width
@@ -153,7 +154,7 @@ impl TableUI {
                 main_table_area.height,
                 main_table_area.width,
             ];
-            df_state.refresh_renderable_table_size();
+            df_state.refresh_renderable_table_size(config_state);
         }
     }
 

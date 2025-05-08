@@ -1,8 +1,9 @@
 use std::u16::MAX;
 
+use color_eyre::config;
 // use polars::frame::DataFrame;
 use polars::prelude::*;
-use crate::{cell::{CELL_HEIGHT, CELL_WIDTH, HEADER_HEIGHT}, io::read_from_any_path};
+use crate::{config::ConfigState, io::read_from_any_path};
 
 use super::super::header::Header;
 
@@ -169,7 +170,7 @@ impl DataFrameState {
     }
 
     // refresh renderable table size
-    pub fn refresh_renderable_table_size(&mut self) {
+    pub fn refresh_renderable_table_size(&mut self, config_state: &ConfigState) {
         // get the current table area
         let table_area = self.table_area;
 
@@ -179,11 +180,11 @@ impl DataFrameState {
         ///////////////////////////////////
         let minus_one_for_good_luck_because_it_needs_padding = 1;
         let rows_renderable = 
-            ((table_area[0] - HEADER_HEIGHT)
-            / CELL_HEIGHT - minus_one_for_good_luck_because_it_needs_padding)
+            ((table_area[0] - config_state.header_height)
+            / config_state.cell_width - minus_one_for_good_luck_because_it_needs_padding)
             .min(MAX_ROWS_RENDERED as u16);
         let cols_renderable = 
-            (table_area[1] / CELL_WIDTH)
+            (table_area[1] / config_state.cell_width)
             .min(MAX_COLS_RENDERED as u16);
         self.rows_rendered = rows_renderable;
         self.cols_rendered = cols_renderable;

@@ -1,3 +1,4 @@
+use color_eyre::config;
 use polars::prelude::*;
 use ratatui::prelude::*;
 
@@ -54,7 +55,7 @@ impl ColumnUI {
     fn is_selected(
         curr_row: u16,
         curr_col: u16,
-        state: &mut <ColumnUI as StatefulWidget>::State,
+        state: &<ColumnUI as StatefulWidget>::State,
     ) -> bool {
         let df_state = &state.dataframe_state;
 
@@ -82,6 +83,11 @@ impl StatefulWidget for ColumnUI {
     type State = App;
     
     fn render(self, area: Rect, buf: &mut Buffer, state: &mut Self::State) {
+
+        let config_state = &state.config_state;
+        let df_state = &state
+            .dataframe_state;
+
         // NOTE: always do co-ordinate 
         // arithmetic respecting 
         // the provided area's starting positions
@@ -93,8 +99,6 @@ impl StatefulWidget for ColumnUI {
         let start_y= area.y;
         let end_y = start_y + area.height;
 
-        let df_state = &state
-            .dataframe_state;
         let column = df_state
             .get_column(&self.column_name);
 
@@ -113,16 +117,15 @@ impl StatefulWidget for ColumnUI {
         let search_results_found_in_row: &Vec<usize> = &search_results
             .iter()
             .map(|tuple| tuple.0)
-            .collect();
-        
+            .collect(); 
          
         for (idx, value) in series.iter().enumerate() {
-            let x = start_x + self.column_index * CELL_WIDTH; // WELL depends on what the x_offset is for this column.
+            let x = start_x + self.column_index * config_state.cell_width; // WELL depends on what the x_offset is for this column.
 
-            let y = start_y + CELL_HEIGHT * (idx as u16); // respects the area bounds.
+            let y = start_y + config_state.cell_height * (idx as u16); // respects the area bounds.
 
             // do not render if y is outside of area bound
-            if y + CELL_HEIGHT > end_y {break;}
+            if y + config_state.cell_height > end_y {break;}
 
             
             let val_str = match value {
@@ -134,7 +137,6 @@ impl StatefulWidget for ColumnUI {
                     panic!("Invalid type.")
                 }
             };
-            let cell_area = get_cell_area(x, y);
             let is_selected = ColumnUI::is_selected(
                 idx as u16,
                 self.column_index,
@@ -157,6 +159,7 @@ impl StatefulWidget for ColumnUI {
                 }
             };
 
+            let cell_area = get_cell_area(config_state, x, y);
             ColumnUI::render_cell(
                val_str,
                cell_area,
