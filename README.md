@@ -1,6 +1,8 @@
 # dora
 like dora...the explorer, exploring data files like csv/parquet/xlsx in the terminal
 
+![](./assets/screenshot.png)
+
 ## what does the app do?
 It is an terminal based, interactive dataframe explorer built ontop of:
 - polars
