@@ -1,29 +1,23 @@
 
 use ratatui::{layout::{Constraint, Layout}, prelude::Backend, Frame, Terminal};
 
-use crate::{controller::Controller, df::state::DataFrameState, errors::DoraResults, input::{self, Control, InputHandler}, mode_banner::ModeBanner, search::state::SearchResultState, table::{table_banner::TableBanner, table_ui::TableUI}, utils::area::horizontal_pad_area};
+use crate::{config::ConfigState, controller::Controller, df::state::DataFrameState, errors::DoraResults, input::{self, Control, InputHandler}, mode_banner::ModeBanner, search::state::SearchResultState, table::{table_banner::TableBanner, table_ui::TableUI}, utils::area::horizontal_pad_area};
 
 // global app state.
 pub struct App {
-    // input_handler
     pub input_handler: InputHandler,
-    // table_state
-    // table_state: TableUIState, // thinking of deprecating this, maybe re-introduce it later as a view? who knows. theres probably many layers here.
-
     pub dataframe_state: DataFrameState,
-
     pub search_result_state: SearchResultState,
+    pub config_state: ConfigState,
 }
 
 impl App {
     pub fn new(file_path: &str) -> Self {
         Self {
             input_handler: InputHandler::new(),
-            // table_state: TableUIState::new(),
-            dataframe_state: DataFrameState::new(
-                file_path,
-            ),
+            dataframe_state: DataFrameState::new(file_path),
             search_result_state: SearchResultState::new(),
+            config_state: ConfigState::new(),
         }
     }
 

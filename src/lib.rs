@@ -13,5 +13,6 @@ mod cell;
 mod mode;
 mod search;
 mod io;
+mod config;
 
 pub use runner::run_app;
