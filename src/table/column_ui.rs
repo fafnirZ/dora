@@ -85,6 +85,7 @@ impl StatefulWidget for ColumnUI {
     fn render(self, area: Rect, buf: &mut Buffer, state: &mut Self::State) {
 
         let config_state = &state.config_state;
+        println!("{:?}", config_state);
         let df_state = &state
             .dataframe_state;
 
@@ -158,8 +159,8 @@ impl StatefulWidget for ColumnUI {
                     _ => false
                 }
             };
-
             let cell_area = get_cell_area(config_state, x, y);
+            println!("{:?}", cell_area);
             ColumnUI::render_cell(
                val_str,
                cell_area,

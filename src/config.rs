@@ -1,6 +1,6 @@
 use crate::cell::{CELL_HEIGHT, CELL_WIDTH, HEADER_HEIGHT, LINE_NUMBER_CELL_WIDTH};
 
-
+#[derive(Debug)]
 pub struct ConfigState {
     // visual configs
     pub header_height: u16,
