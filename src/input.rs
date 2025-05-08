@@ -15,6 +15,7 @@ pub enum Control {
     Quit,
     Nothing,
     Esc,
+    Command, // vim like command 
     Enter, // enter key the generic version, if there is more nuanced definitions of enter we can define that later, right now i need a control which expresses the enter key in its generic form.
 }
 
@@ -64,6 +65,7 @@ impl InputHandler {
                 KeyCode::Char('&') => Control::Filter,
                 KeyCode::Char('/') => Control::Search,
                 KeyCode::Char('?') => Control::Help,
+                KeyCode::Char(':') => Control::Command,
                 KeyCode::Enter => Control::Enter,
                 _ => Control::Nothing
             },

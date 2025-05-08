@@ -18,6 +18,7 @@ impl ModeBanner {
             AppMode::Filter => String::from("--filter--"),
             AppMode::Search => String::from("--search--"),
             AppMode::Help => String::from("--help--"),
+            AppMode::Command => String::from("--command--"),
         };
 
 

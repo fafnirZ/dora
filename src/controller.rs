@@ -26,6 +26,7 @@ impl Controller {
             AppMode::Filter => Controller::handle_filter_mode_control(control, app_state),
             AppMode::Search => Controller::handle_search_mode_control(control, app_state),
             AppMode::Help => Controller::handle_help_mode_control(control, app_state),
+            AppMode::Command => Controller::handle_command_mode_control(control, app_state),
         }
     }
 
@@ -110,6 +111,10 @@ impl Controller {
                 app_state.input_handler.mode_state = AppMode::Help;
                 app_state.input_handler.init_input_buffer();
             },
+            Control::Command => {
+                app_state.input_handler.mode_state = AppMode::Command;
+                app_state.input_handler.init_input_buffer();
+            }
             _ => {},
         }
     }
@@ -236,4 +241,23 @@ impl Controller {
         }
     }
 
+    fn handle_command_mode_control(
+        control: &Control,
+        app_state: &mut App,
+    ) {
+        match control {
+            Control::Esc => {
+                app_state.input_handler.reset_buffer();
+                app_state.input_handler.mode_state = AppMode::Normal;
+            },
+            Control::Enter => {
+                if app_state.search_result_state.result_indices.len() < 1 {
+                    return // do nothing
+                }
+            },
+            _ => {
+
+            },
+        }
+    }
 }
