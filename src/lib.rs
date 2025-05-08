@@ -14,5 +14,6 @@ mod mode;
 mod search;
 mod io;
 mod config;
+mod commands;
 
 pub use runner::run_app;

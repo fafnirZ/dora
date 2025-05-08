@@ -1,7 +1,8 @@
 use crossterm::cursor;
 use polars::{frame::column, prelude::{AnyValue, DataType}};
+use ratatui::buffer::Buffer;
 
-use crate::{app::{self, App}, df::state::CursorFocus, input::{BufferState, Control}, mode::AppMode, search::{controller::shift_current_result_cursor_value_into_view, par_search::par_find_substring_matches}, table::controller::{shift_column_cursor_left, shift_column_cursor_right, shift_displayed_df_value_slice_down, shift_displayed_df_value_slice_left, shift_displayed_df_value_slice_right, shift_displayed_df_value_slice_up, shift_row_cursor_down, shift_row_cursor_up}};
+use crate::{app::{self, App}, commands::controller::CommandHandler, df::state::CursorFocus, input::{BufferState, Control}, mode::AppMode, search::{controller::shift_current_result_cursor_value_into_view, par_search::par_find_substring_matches}, table::controller::{shift_column_cursor_left, shift_column_cursor_right, shift_displayed_df_value_slice_down, shift_displayed_df_value_slice_left, shift_displayed_df_value_slice_right, shift_displayed_df_value_slice_up, shift_row_cursor_down, shift_row_cursor_up}};
 
 
 // given input,
@@ -258,13 +259,18 @@ impl Controller {
                 app_state.input_handler.mode_state = AppMode::Normal;
             },
             Control::Enter => {
-                if app_state.search_result_state.result_indices.len() < 1 {
-                    return // do nothing
-                }
+                // this implementation of copying the value
+                // solves the mutable and immutable borrow problem.
+                // when that occurs you should find a way to get rid of one of them
+                // in this case we don't pass in a mutable value anymore we pass in 
+                // a cloned value's reference.
+                let buffer_value = match &app_state.input_handler.buffer_state {
+                    BufferState::Active(buffer) => buffer.value().to_string(),
+                    _ => String::new()
+                };
+                CommandHandler::try_execute(app_state,&buffer_value);
             },
-            _ => {
-
-            },
+            _ => {}, // do nothing
         }
     }
 }
