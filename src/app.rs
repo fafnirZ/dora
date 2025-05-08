@@ -54,9 +54,9 @@ impl App {
             bottom_banner,
         ] = Layout::vertical([
                 Constraint::Length(1),          // top banner
-                Constraint::Percentage(35),     // padding to center the app in middle.
-                Constraint::Length(30),         // main app
-                Constraint::Percentage(35),     // padding
+                Constraint::Percentage(5),     // padding to center the app in middle.
+                Constraint::Fill(1),            // main app
+                Constraint::Percentage(5),     // padding
                 Constraint::Length(1),          // bottom banner
             ]).areas(area);
         
@@ -65,7 +65,7 @@ impl App {
         let mode_banner = ModeBanner::new();
         
         // restricting table area horizontally
-        let table_area = horizontal_pad_area(main_area, [25,50,25]);
+        let table_area = horizontal_pad_area(main_area, [10,80,10]);
         frame.render_stateful_widget(table, table_area, self);
         frame.render_stateful_widget(mode_banner, bottom_banner, self);
     }
