@@ -116,8 +116,13 @@ impl StatefulWidget for ColumnUI {
             .iter()
             .map(|tuple| tuple.0)
             .collect(); 
-
+        
+        // idx is the row value relative to the slice.
+        // so for search result indices which is an absolute index w.r.t.
+        // the full size of the column this will be erroneous.
         for (idx, value) in series.iter().enumerate() {
+            let absolute_row_index = val_offset_start + (idx as i64);
+
             let x = start_x + self.column_index * config_state.cell_width; // WELL depends on what the x_offset is for this column.
 
             let y = start_y + config_state.cell_height * (idx as u16); // respects the area bounds.
@@ -148,7 +153,7 @@ impl StatefulWidget for ColumnUI {
                             CursorFocus::Column => true, 
                             _ => false
                         })
-                        && (match search_results_found_in_row.binary_search(&idx) {
+                        && (match search_results_found_in_row.binary_search(&(absolute_row_index as usize)) {
                             Ok(_) => true,
                             _ => false,
                         })
