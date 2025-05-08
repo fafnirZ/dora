@@ -27,7 +27,7 @@ impl TableBanner {
             None => return String::new(),
         };
 
-        return format!("{}/{} results found", result_cursor, results.len());
+        return format!("{}/{} results found", result_cursor+1, results.len());
     }
 }
 

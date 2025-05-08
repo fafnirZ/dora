@@ -159,10 +159,17 @@ impl Controller {
                 // NOTE: i know it will break if the result vector was to change, but whatever.
                 match app_state.search_result_state.result_cursor {
                     Some(_) => {
-                        app_state.search_result_state.result_cursor = Some(
-                            app_state.search_result_state.result_cursor.unwrap() 
-                            + 1
-                        );
+                        let result_len = app_state
+                            .search_result_state
+                            .result_indices
+                            .len();
+                        let next_cursor_index = 
+                            (app_state
+                                .search_result_state
+                                .result_cursor
+                                .unwrap() + 1) 
+                            % (result_len); // % len forces it to wrap around to the beginning :)
+                        app_state.search_result_state.result_cursor = Some(next_cursor_index);
                     },
                     None => {
                         app_state.search_result_state.result_cursor = Some(0);
