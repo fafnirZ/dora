@@ -16,11 +16,11 @@ impl CommandHandler {
     fn handle_set_commands(app_state: &mut App, args: Vec<&str>) {
         match args[0] {
             // set cell_width 10
-            "cell_width" => {
+            "cell-width" => {
                 app_state.config_state.cell_width = args[1].parse::<u16>().unwrap();
             },
             // set cell_height 3
-            "cell_height" => {
+            "cell-height" => {
                 app_state.config_state.cell_height = args[1].parse::<u16>().unwrap();
             },
             _ => {}
