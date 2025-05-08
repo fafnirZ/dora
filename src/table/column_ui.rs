@@ -85,7 +85,6 @@ impl StatefulWidget for ColumnUI {
     fn render(self, area: Rect, buf: &mut Buffer, state: &mut Self::State) {
 
         let config_state = &state.config_state;
-        println!("{:?}", config_state);
         let df_state = &state
             .dataframe_state;
 
@@ -110,7 +109,6 @@ impl StatefulWidget for ColumnUI {
             .unwrap()
             .slice(*val_offset_start, length_taken)
             .rechunk(); // added because of bug: https://github.com/fafnirZ/dora/issues/1
-
         let search_results = &state
             .search_result_state
             .result_indices;
@@ -119,7 +117,7 @@ impl StatefulWidget for ColumnUI {
             .iter()
             .map(|tuple| tuple.0)
             .collect(); 
-         
+
         for (idx, value) in series.iter().enumerate() {
             let x = start_x + self.column_index * config_state.cell_width; // WELL depends on what the x_offset is for this column.
 
@@ -160,7 +158,6 @@ impl StatefulWidget for ColumnUI {
                 }
             };
             let cell_area = get_cell_area(config_state, x, y);
-            println!("{:?}", cell_area);
             ColumnUI::render_cell(
                val_str,
                cell_area,

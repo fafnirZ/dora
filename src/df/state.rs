@@ -67,7 +67,7 @@ impl DataFrameState {
             cursor_x: 0,
             cursor_y: 0,
             cursor_focus: CursorFocus::Row,
-            table_area: [0,0], // height, width
+            table_area: [100,100], // height, width
             rows_rendered: MAX_ROWS_RENDERED as u16,
             cols_rendered: MAX_COLS_RENDERED as u16,
         }
@@ -181,11 +181,13 @@ impl DataFrameState {
         let minus_one_for_good_luck_because_it_needs_padding = 1;
         let rows_renderable = 
             ((table_area[0] - config_state.header_height)
-            / config_state.cell_width - minus_one_for_good_luck_because_it_needs_padding)
+            / config_state.cell_height - minus_one_for_good_luck_because_it_needs_padding)
             .min(MAX_ROWS_RENDERED as u16);
+
         let cols_renderable = 
             (table_area[1] / config_state.cell_width)
             .min(MAX_COLS_RENDERED as u16);
+
         self.rows_rendered = rows_renderable;
         self.cols_rendered = cols_renderable;
 

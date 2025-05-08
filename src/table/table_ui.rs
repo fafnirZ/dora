@@ -170,14 +170,11 @@ impl StatefulWidget for TableUI {
             _table_banner_top,
             table_main,
             table_banner_bottom,
-            ] = TableUI::vertical_segment_area(area);
+        ] = TableUI::vertical_segment_area(area);
 
-        // all mutable references of state enclosed here to prevent compiler errors.
-        {
-            // update the table area if needed
-            // handles terminal resizing.
-            TableUI::try_update_table_area(table_main, state);
-        }
+        // update the table area if needed
+        // handles terminal resizing.
+        TableUI::try_update_table_area(table_main, state);
 
         let [
             line_number_area,
