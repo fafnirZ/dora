@@ -1,8 +1,6 @@
-use crossterm::cursor;
-use polars::{frame::column, prelude::{AnyValue, DataType}};
-use ratatui::buffer::Buffer;
+use polars::prelude::DataType;
 
-use crate::{app::{self, App}, commands::controller::CommandHandler, df::state::CursorFocus, input::{BufferState, Control}, mode::AppMode, search::{controller::shift_current_result_cursor_value_into_view, par_search::par_find_substring_matches}, table::controller::{shift_column_cursor_left, shift_column_cursor_right, shift_displayed_df_value_slice_down, shift_displayed_df_value_slice_left, shift_displayed_df_value_slice_right, shift_displayed_df_value_slice_up, shift_row_cursor_down, shift_row_cursor_up}};
+use crate::{app::{App}, commands::controller::CommandHandler, df::state::CursorFocus, input::{BufferState, Control}, mode::AppMode, search::{controller::shift_current_result_cursor_value_into_view, par_search::par_find_substring_matches}, table::controller::{shift_column_cursor_left, shift_column_cursor_right, shift_displayed_df_value_slice_down, shift_displayed_df_value_slice_left, shift_displayed_df_value_slice_right, shift_displayed_df_value_slice_up, shift_row_cursor_down, shift_row_cursor_up}};
 
 
 // given input,

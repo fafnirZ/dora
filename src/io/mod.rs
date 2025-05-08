@@ -3,7 +3,7 @@ use std::fs::File;
 use polars::{frame::DataFrame, prelude::*};
 
 use crate::errors::DoraErrors;
-use std::io::{Bytes, Cursor};
+use std::io::Cursor;
 use google_cloud_storage::client::{ClientConfig, Client};
 use google_cloud_storage::http::objects::get::GetObjectRequest;
 use google_cloud_storage::http::objects::download::Range;

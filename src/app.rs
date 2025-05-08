@@ -1,7 +1,7 @@
 
-use ratatui::{layout::{Constraint, Layout}, prelude::Backend, style::{Color, Stylize}, widgets::{Paragraph, Widget}, Frame, Terminal};
+use ratatui::{layout::{Constraint, Layout}, prelude::Backend, style::{Color, Stylize}, widgets::Paragraph, Frame, Terminal};
 
-use crate::{config::ConfigState, controller::Controller, df::state::DataFrameState, errors::DoraResults, input::{self, Control, InputHandler}, mode_banner::ModeBanner, search::state::SearchResultState, table::{table_banner::TableBanner, table_ui::TableUI}, utils::area::horizontal_pad_area};
+use crate::{config::ConfigState, controller::Controller, df::state::DataFrameState, errors::DoraResults, input::{Control, InputHandler}, mode_banner::ModeBanner, search::state::SearchResultState, table::table_ui::TableUI, utils::area::horizontal_pad_area};
 
 // global app state.
 pub struct App {

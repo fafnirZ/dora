@@ -1,6 +1,6 @@
 use ratatui::{buffer::Buffer, layout::Rect, style::{Color, Stylize}, widgets::{Paragraph, StatefulWidget, Widget}};
 
-use crate::{app::App, input::BufferState, mode::AppMode, utils::centered_text::render_text_centered_in_area};
+use crate::{app::App, input::BufferState, mode::AppMode};
 
 
 

@@ -1,7 +1,6 @@
 use crossterm::event::{KeyCode, KeyEvent, KeyModifiers, Event as CrossTermEvent};
-use ratatui::buffer::Buffer;
 use tui_input::{backend::crossterm::EventHandler, Input};
-use crate::{app::{self, App},events::{Event, Events}, mode::AppMode,};
+use crate::{events::{Event, Events}, mode::AppMode,};
 
 
 pub enum Control {

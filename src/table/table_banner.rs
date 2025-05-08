@@ -1,7 +1,7 @@
-use ratatui::widgets::{Paragraph, StatefulWidget, Table};
+use ratatui::widgets::{Paragraph, StatefulWidget};
 use ratatui::prelude::*;
 
-use crate::app::{self, App};
+use crate::app::{App};
 
 
 

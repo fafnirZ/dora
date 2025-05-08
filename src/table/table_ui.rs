@@ -1,19 +1,14 @@
-use polars::frame::DataFrame;
-use polars::prelude::Column;
 use ratatui::buffer::Buffer;
 use ratatui::layout::{Constraint, Layout, Rect};
 use ratatui::style::{Color, Style, Stylize};
-use ratatui::widgets::{Block, Borders, Paragraph, StatefulWidget, Widget};
+use ratatui::widgets::{Block, Borders, StatefulWidget, Widget};
 
 use crate::app::App;
-use crate::df::state;
-use crate::header::{self, Header};
-use crate::cell::{get_cell_area, get_header_area};
+use crate::cell::get_header_area;
 use crate::utils::centered_text::render_text_centered_in_area;
-use crate::utils::debug::debug_render_area_bg;
 
 use super::column_ui::ColumnUI;
-use super::line_number_ui::{self, LineNumberUI};
+use super::line_number_ui::{LineNumberUI};
 use super::table_banner::TableBanner;
 
 

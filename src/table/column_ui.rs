@@ -1,8 +1,7 @@
-use color_eyre::config;
 use polars::prelude::*;
 use ratatui::prelude::*;
 
-use crate::{any_float, any_int, any_string, any_uint, app::App, cell::{get_cell_area}, df::state::CursorFocus, mode::AppMode, utils::centered_text::{center_text_in_given_area, render_text_centered_in_area}};
+use crate::{any_float, any_int, any_string, any_uint, app::App, cell::{get_cell_area}, df::state::CursorFocus, mode::AppMode, utils::centered_text::center_text_in_given_area};
 // NOTE: will never add the header to column, since I dont want to be able to navigate to 
 // the header? or maybe treat the header completely differently from a datastructure perspective.
 // imean either way works, its just a choice I gotta deal with in implementation.

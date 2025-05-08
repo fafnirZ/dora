@@ -1,6 +1,6 @@
 use ratatui::layout::Rect;
 
-use crate::{app::App, config::ConfigState};
+use crate::config::ConfigState;
 
 // default configs
 pub const HEADER_HEIGHT: u16 = 3;

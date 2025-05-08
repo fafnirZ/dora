@@ -1,6 +1,4 @@
-use std::u16::MAX;
 
-use color_eyre::config;
 // use polars::frame::DataFrame;
 use polars::prelude::*;
 use crate::{config::ConfigState, io::read_from_any_path};
