@@ -65,7 +65,7 @@ impl DataFrameState {
             cursor_x: 0,
             cursor_y: 0,
             cursor_focus: CursorFocus::Row,
-            table_area: [100,100], // height, width
+            table_area: [0,0], // height, width
             rows_rendered: MAX_ROWS_RENDERED as u16,
             cols_rendered: MAX_COLS_RENDERED as u16,
         }
