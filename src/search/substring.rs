@@ -8,7 +8,7 @@ impl SearchAlgorithm for ExactSubstringSearch {
     // pattern is the substring we wish to search for
     // input_str is the target string we with to check for substring containment
     // else None
-    fn search(pattern: &str, input_str: &str, _case_insensitive: bool) -> Self::Result {
+    fn search(&self, pattern: &str, input_str: &str, _case_insensitive: bool) -> Self::Result {
         // we consider empty input to return None
         // the buffer defaults as empty
         // we don't want everything to match when that occurs
@@ -40,36 +40,36 @@ mod tests {
 
     #[test]
     fn test_a() {
-        assert_eq!(substring("aaa", "bbbaaaabb"), Some([3, 6]));
+        assert_eq!(ExactSubstringSearch{}.search("aaa", "bbbaaaabb", true), Some([3, 6]));
     }
 
     #[test]
     fn test_b() {
-        assert_eq!(substring("xyz", "abc"), None);
+        assert_eq!(ExactSubstringSearch{}.search("xyz", "abc", true), None);
     }
 
     #[test]
     fn test_empty_substring() {
-        assert_eq!(substring("", "abc"), None);
+        assert_eq!(ExactSubstringSearch{}.search("", "abc", true), None);
     }
 
     #[test]
     fn test_empty_string() {
-        assert_eq!(substring("abc", ""), None);
+        assert_eq!(ExactSubstringSearch{}.search("abc", "", true), None);
     }
 
     #[test]
     fn test_substring_at_start() {
-        assert_eq!(substring("abc", "abcdef"), Some([0, 3]));
+        assert_eq!(ExactSubstringSearch{}.search("abc", "abcdef", true), Some([0, 3]));
     }
 
     #[test]
     fn test_substring_at_end() {
-        assert_eq!(substring("def", "abcdef"), Some([3, 6]));
+        assert_eq!(ExactSubstringSearch{}.search("def", "abcdef", true), Some([3, 6]));
     }
 
     #[test]
     fn test_longer_substring() {
-        assert_eq!(substring("abcdefg", "abc"), None);
+        assert_eq!(ExactSubstringSearch{}.search("abcdefg", "abc", true), None);
     }
 }
