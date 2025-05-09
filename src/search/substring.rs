@@ -1,18 +1,20 @@
 // if A is substring of B -> [start,end]
+// pattern is the substring we wish to search for
+// input_str is the target string we with to check for substring containment
 // else None
-pub fn substring(string_a: &str, string_b: &str) -> Option<[usize; 2]> {
+pub fn substring(pattern: &str, input_str: &str) -> Option<[usize; 2]> {
     // we consider empty input to return None
     // the buffer defaults as empty
     // we don't want everything to match when that occurs
-    if string_a.is_empty() {
+    if pattern.is_empty() {
         return None; 
     }
-    if string_b.len() < string_a.len() {
+    if input_str.len() < pattern.len() {
         return None;
     }
 
-    let bytes_a = string_a.as_bytes();
-    let bytes_b = string_b.as_bytes();
+    let bytes_a = pattern.as_bytes();
+    let bytes_b = input_str.as_bytes();
     let len_a = bytes_a.len();
 
     for i in 0..=(bytes_b.len() - len_a) {
