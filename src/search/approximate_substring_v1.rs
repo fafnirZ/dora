@@ -7,16 +7,18 @@ use rayon::result;
 use std::collections::VecDeque;
 
 // a == b 
+// NOTE: we only accept ascii values
 fn cmp_char_insensitive(
     a: &char,
     b: &char,
 ) -> bool {
-    if a != b {
-        // try upper case char for a
-        let upper_a = a.to_uppercase().collect();
-        let uppper_b = b.to_uppercase().collect();
+    if a.is_ascii() {
+        let tmp_a = (*a as u8).to_ascii_lowercase();
+        let tmp_b = (*b as u8).to_ascii_lowercase();
+        return tmp_a == tmp_b;
+    } else {
+        panic!("Dont currently support non ascii values");
     }
-    return true
 }
 
 // do a single pass forward
@@ -38,16 +40,16 @@ pub fn approx_substring(
 
     let input_chars: Vec<char> = input_str.chars().collect();
     for (idx, char) in input_chars.iter().enumerate() {
-        let cmp = {
+        let cmp_ = {
             if case_sensitive {
                 *char == pattern_c
             } else {
                 // insensitive check
+                cmp_char_insensitive(char, &pattern_c)
             }
         };
 
-        };
-        if cmp {
+        if cmp_ {
             result_indices.push(idx);
             pattern_c = match char_pattern_queue.pop_front() {
                 Some(res) => res,
@@ -74,48 +76,54 @@ mod tests {
     // these are the normal substring tests
     #[test]
     fn test_a() {
-        assert_eq!(approx_substring("aaa", "bbbaaaabb"), Some(vec![3,4,5]));
+        assert_eq!(approx_substring("aaa", "bbbaaaabb", true), Some(vec![3,4,5]));
     }
 
     #[test]
     fn test_b() {
-        assert_eq!(approx_substring("xyz", "abc"), None);
+        assert_eq!(approx_substring("xyz", "abc", true), None);
     }
 
     #[test]
     fn test_empty_substring() {
-        assert_eq!(approx_substring("", "abc"), None);
+        assert_eq!(approx_substring("", "abc", true), None);
     }
 
     #[test]
     fn test_empty_string() {
-        assert_eq!(approx_substring("abc", ""), None);
+        assert_eq!(approx_substring("abc", "", true), None);
     }
 
     #[test]
     fn test_substring_at_start() {
-        assert_eq!(approx_substring("abc", "abcdef"), Some(vec![0,1,2]));
+        assert_eq!(approx_substring("abc", "abcdef", true), Some(vec![0,1,2]));
     }
 
     #[test]
     fn test_substring_at_end() {
-        assert_eq!(approx_substring("def", "abcdef"), Some(vec![3,4,5]));
+        assert_eq!(approx_substring("def", "abcdef", true), Some(vec![3,4,5]));
     }
 
     #[test]
     fn test_longer_substring() {
-        assert_eq!(approx_substring("abcdefg", "abc"), None);
+        assert_eq!(approx_substring("abcdefg", "abc", true), None);
     }
 
 
     // approximate substring tests
     #[test]
     fn test_approximate_substring_1() {
-        assert_eq!(approx_substring("abc", "apppbbomc"), Some(vec![0,4,8]));
+        assert_eq!(approx_substring("abc", "apppbbomc", true), Some(vec![0,4,8]));
     }
 
     #[test]
-    fn test_approximate_substring_1() {
-        assert_eq!(approx_substring("syd", "Western Sydney"), Some(vec![0,4,8]));
+    fn test_approximate_substring_2() {
+        assert_eq!(approx_substring("syd", "Western Sydney", true), Some(vec![7,8,9]));
+    }
+
+    // bad but whatever
+    #[test]
+    fn test_approximate_substring_3() {
+        assert_eq!(approx_substring("syd", "SaveYourDreams", true), Some(vec![0,4,8]));
     }
 }
