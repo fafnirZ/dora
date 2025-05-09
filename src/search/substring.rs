@@ -1,28 +1,36 @@
-// if A is substring of B -> [start,end]
-// pattern is the substring we wish to search for
-// input_str is the target string we with to check for substring containment
-// else None
-pub fn substring(pattern: &str, input_str: &str) -> Option<[usize; 2]> {
-    // we consider empty input to return None
-    // the buffer defaults as empty
-    // we don't want everything to match when that occurs
-    if pattern.is_empty() {
-        return None; 
-    }
-    if input_str.len() < pattern.len() {
-        return None;
-    }
+use super::traits::SearchAlgorithm;
 
-    let bytes_a = pattern.as_bytes();
-    let bytes_b = input_str.as_bytes();
-    let len_a = bytes_a.len();
+struct ExactSubstringSearch {}
 
-    for i in 0..=(bytes_b.len() - len_a) {
-        if &bytes_b[i..i + len_a] == bytes_a {
-            return Some([i, i + len_a]);
+impl SearchAlgorithm for ExactSubstringSearch {
+    type Result = Option<[usize;2]>;
+    // if A is substring of B -> [start,end]
+    // pattern is the substring we wish to search for
+    // input_str is the target string we with to check for substring containment
+    // else None
+    fn search(pattern: &str, input_str: &str, _case_insensitive: bool) -> Self::Result {
+        // we consider empty input to return None
+        // the buffer defaults as empty
+        // we don't want everything to match when that occurs
+        if pattern.is_empty() {
+            return None; 
         }
+        if input_str.len() < pattern.len() {
+            return None;
+        }
+
+        let bytes_a = pattern.as_bytes();
+        let bytes_b = input_str.as_bytes();
+        let len_a = bytes_a.len();
+
+        for i in 0..=(bytes_b.len() - len_a) {
+            if &bytes_b[i..i + len_a] == bytes_a {
+                return Some([i, i + len_a]);
+            }
+        }
+        None
     }
-    None
+
 }
 
 #[cfg(test)]

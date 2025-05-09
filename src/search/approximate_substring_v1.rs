@@ -6,6 +6,62 @@
 use rayon::result;
 use std::collections::VecDeque;
 
+use super::traits::SearchAlgorithm;
+
+
+
+struct SimpleApproximateSearch {}
+
+impl SearchAlgorithm for SimpleApproximateSearch {
+
+    type Result = Option<Vec<usize>>;
+    // do a single pass forward
+    // todo: do a pass from backwards to find shorter SimpleApproximateSearch::search
+    // yet to be implemented
+    // SimpleApproximateSearch::search if there is such.
+    fn search(
+        pattern: &str,
+        input_str: &str,
+        case_insensitive: bool,
+    ) -> Self::Result {
+        let mut result_indices: Vec<usize> = Vec::new();
+        let char_pattern_vec: Vec<char> = pattern.chars().collect();
+        let mut char_pattern_queue: VecDeque<char> = VecDeque::from(char_pattern_vec);
+        let mut pattern_c = match char_pattern_queue.pop_front() {
+            Some(res) => res,
+            None => return None, // empty pattern case
+        };
+
+        let input_chars: Vec<char> = input_str.chars().collect();
+        for (idx, char) in input_chars.iter().enumerate() {
+            let cmp_ = {
+                if case_insensitive {
+                    cmp_char_insensitive(char, &pattern_c)
+                } else {
+                    // sensitive check
+                    *char == pattern_c
+                }
+            };
+
+            if cmp_ {
+                result_indices.push(idx);
+                pattern_c = match char_pattern_queue.pop_front() {
+                    Some(res) => res,
+                    None => break,
+                };
+            } else {
+                continue
+            }
+        }
+
+        if result_indices.len() == pattern.len() {
+            return Some(result_indices);
+        }
+        return None
+    }
+
+} 
+
 // a == b 
 // NOTE: we only accept ascii values
 fn cmp_char_insensitive(
@@ -21,53 +77,6 @@ fn cmp_char_insensitive(
     }
 }
 
-// do a single pass forward
-// todo: do a pass from backwards to find shorter approx_substring
-// yet to be implemented
-// approx_substring if there is such.
-pub fn approx_substring(
-    pattern: &str,
-    input_str: &str,
-    case_insensitive: bool,
-) -> Option<Vec<usize>> {
-    let mut result_indices: Vec<usize> = Vec::new();
-    let char_pattern_vec: Vec<char> = pattern.chars().collect();
-    let mut char_pattern_queue: VecDeque<char> = VecDeque::from(char_pattern_vec);
-    let mut pattern_c = match char_pattern_queue.pop_front() {
-        Some(res) => res,
-        None => return None, // empty pattern case
-    };
-
-    let input_chars: Vec<char> = input_str.chars().collect();
-    for (idx, char) in input_chars.iter().enumerate() {
-        let cmp_ = {
-            if case_insensitive {
-                cmp_char_insensitive(char, &pattern_c)
-            } else {
-                // sensitive check
-                *char == pattern_c
-            }
-        };
-
-        if cmp_ {
-            result_indices.push(idx);
-            pattern_c = match char_pattern_queue.pop_front() {
-                Some(res) => res,
-                None => break,
-            };
-        } else {
-            continue
-        }
-    }
-
-    if result_indices.len() == pattern.len() {
-        return Some(result_indices);
-    }
-    return None
-}
-
-
-
 #[cfg(test)]
 mod tests {
     // Note this useful idiom: importing names from outer (for mod tests) scope.
@@ -76,56 +85,56 @@ mod tests {
     // these are the normal substring tests
     #[test]
     fn test_a() {
-        assert_eq!(approx_substring("aaa", "bbbaaaabb", true), Some(vec![3,4,5]));
+        assert_eq!(SimpleApproximateSearch::search("aaa", "bbbaaaabb", true), Some(vec![3,4,5]));
     }
 
     #[test]
     fn test_b() {
-        assert_eq!(approx_substring("xyz", "abc", true), None);
+        assert_eq!(SimpleApproximateSearch::search("xyz", "abc", true), None);
     }
 
     #[test]
     fn test_empty_substring() {
-        assert_eq!(approx_substring("", "abc", true), None);
+        assert_eq!(SimpleApproximateSearch::search("", "abc", true), None);
     }
 
     #[test]
     fn test_empty_string() {
-        assert_eq!(approx_substring("abc", "", true), None);
+        assert_eq!(SimpleApproximateSearch::search("abc", "", true), None);
     }
 
     #[test]
     fn test_substring_at_start() {
-        assert_eq!(approx_substring("abc", "abcdef", true), Some(vec![0,1,2]));
+        assert_eq!(SimpleApproximateSearch::search("abc", "abcdef", true), Some(vec![0,1,2]));
     }
 
     #[test]
     fn test_substring_at_end() {
-        assert_eq!(approx_substring("def", "abcdef", true), Some(vec![3,4,5]));
+        assert_eq!(SimpleApproximateSearch::search("def", "abcdef", true), Some(vec![3,4,5]));
     }
 
     #[test]
     fn test_longer_substring() {
-        assert_eq!(approx_substring("abcdefg", "abc", true), None);
+        assert_eq!(SimpleApproximateSearch::search("abcdefg", "abc", true), None);
     }
 
 
     // approximate substring tests
     #[test]
     fn test_approximate_substring_1() {
-        assert_eq!(approx_substring("abc", "apppbbomc", true), Some(vec![0,4,8]));
+        assert_eq!(SimpleApproximateSearch::search("abc", "apppbbomc", true), Some(vec![0,4,8]));
     }
 
     #[test]
     fn test_approximate_substring_2() {
         // yikes the example yields a non optimal match, whatever for now i guess
-        assert_eq!(approx_substring("syd", "Western Sydney", true), Some(vec![2,9,10]));
-        // assert_eq!(approx_substring("syd", "Western Sydney", true), Some(vec![7,8,9]));
+        assert_eq!(SimpleApproximateSearch::search("syd", "Western Sydney", true), Some(vec![2,9,10]));
+        // assert_eq!(SimpleApproximateSearch::search("syd", "Western Sydney", true), Some(vec![7,8,9]));
     }
 
     // bad but whatever
     #[test]
     fn test_approximate_substring_3() {
-        assert_eq!(approx_substring("syd", "SaveYourDreams", true), Some(vec![0,4,8]));
+        assert_eq!(SimpleApproximateSearch::search("syd", "SaveYourDreams", true), Some(vec![0,4,8]));
     }
 }
