@@ -6,6 +6,19 @@
 use rayon::result;
 use std::collections::VecDeque;
 
+// a == b 
+fn cmp_char_insensitive(
+    a: &char,
+    b: &char,
+) -> bool {
+    if a != b {
+        // try upper case char for a
+        let upper_a = a.to_uppercase().collect();
+        let uppper_b = b.to_uppercase().collect();
+    }
+    return true
+}
+
 // do a single pass forward
 // todo: do a pass from backwards to find shorter approx_substring
 // yet to be implemented
@@ -13,6 +26,7 @@ use std::collections::VecDeque;
 pub fn approx_substring(
     pattern: &str,
     input_str: &str,
+    case_sensitive: bool,
 ) -> Option<Vec<usize>> {
     let mut result_indices: Vec<usize> = Vec::new();
     let char_pattern_vec: Vec<char> = pattern.chars().collect();
@@ -24,7 +38,16 @@ pub fn approx_substring(
 
     let input_chars: Vec<char> = input_str.chars().collect();
     for (idx, char) in input_chars.iter().enumerate() {
-        if *char == pattern_c {
+        let cmp = {
+            if case_sensitive {
+                *char == pattern_c
+            } else {
+                // insensitive check
+            }
+        };
+
+        };
+        if cmp {
             result_indices.push(idx);
             pattern_c = match char_pattern_queue.pop_front() {
                 Some(res) => res,
@@ -86,5 +109,13 @@ mod tests {
 
 
     // approximate substring tests
+    #[test]
+    fn test_approximate_substring_1() {
+        assert_eq!(approx_substring("abc", "apppbbomc"), Some(vec![0,4,8]));
+    }
 
+    #[test]
+    fn test_approximate_substring_1() {
+        assert_eq!(approx_substring("syd", "Western Sydney"), Some(vec![0,4,8]));
+    }
 }
