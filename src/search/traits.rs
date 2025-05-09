@@ -6,5 +6,5 @@ pub trait SearchAlgorithm {
         pattern: &str, 
         input_str: &str, 
         case_insensitive: bool
-    ) -> Self::Result;
+    ) -> Option<Self::Result>;
 }

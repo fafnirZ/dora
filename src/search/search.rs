@@ -9,14 +9,14 @@ pub fn par_find_substring_matches<T: SearchAlgorithm>(
     algorithm: &T,
     input: &Vec<String>,
     substring_to_find: &str,
-) -> Vec<(usize, [usize;2])> {
+) -> T::Result {
     let case_insensitive = true;
     input
         .par_iter()
         .enumerate()
         .filter_map(|(index, s)| {
             match algorithm.search(substring_to_find, s, case_insensitive) {
-                Some(result) => Some((index, result)),
+                Some(result) => Some(result),
                 None => None,
             }
             // .map(|match_indices| (index, match_indices))

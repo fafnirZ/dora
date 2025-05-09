@@ -14,7 +14,7 @@ struct SimpleApproximateSearch {}
 
 impl SearchAlgorithm for SimpleApproximateSearch {
 
-    type Result = Option<Vec<usize>>;
+    type Result = Vec<usize>;
     // do a single pass forward
     // todo: do a pass from backwards to find shorter SimpleApproximateSearch::search
     // yet to be implemented
@@ -24,7 +24,7 @@ impl SearchAlgorithm for SimpleApproximateSearch {
         pattern: &str,
         input_str: &str,
         case_insensitive: bool,
-    ) -> Self::Result {
+    ) -> Option<Self::Result> {
         let mut result_indices: Vec<usize> = Vec::new();
         let char_pattern_vec: Vec<char> = pattern.chars().collect();
         let mut char_pattern_queue: VecDeque<char> = VecDeque::from(char_pattern_vec);

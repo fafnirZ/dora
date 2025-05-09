@@ -3,12 +3,12 @@ use super::traits::SearchAlgorithm;
 struct ExactSubstringSearch {}
 
 impl SearchAlgorithm for ExactSubstringSearch {
-    type Result = Option<[usize;2]>;
+    type Result = [usize;2];
     // if A is substring of B -> [start,end]
     // pattern is the substring we wish to search for
     // input_str is the target string we with to check for substring containment
     // else None
-    fn search(&self, pattern: &str, input_str: &str, _case_insensitive: bool) -> Self::Result {
+    fn search(&self, pattern: &str, input_str: &str, _case_insensitive: bool) -> Option<Self::Result> {
         // we consider empty input to return None
         // the buffer defaults as empty
         // we don't want everything to match when that occurs
