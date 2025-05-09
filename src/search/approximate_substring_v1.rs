@@ -4,6 +4,7 @@
 // they do not need to be contiguous
 
 use rayon::result;
+use std::collections::VecDeque;
 
 // do a single pass forward
 // todo: do a pass from backwards to find shorter approx_substring
@@ -14,16 +15,18 @@ pub fn approx_substring(
     input_str: &str,
 ) -> Option<Vec<usize>> {
     let mut result_indices: Vec<usize> = Vec::new();
-    let mut char_pattern_queue: Vec<char> = pattern.chars().collect();
-    let mut pattern_c = match char_pattern_queue.pop() {
+    let char_pattern_vec: Vec<char> = pattern.chars().collect();
+    let mut char_pattern_queue: VecDeque<char> = VecDeque::from(char_pattern_vec);
+    let mut pattern_c = match char_pattern_queue.pop_front() {
         Some(res) => res,
         None => return None, // empty pattern case
     };
+
     let input_chars: Vec<char> = input_str.chars().collect();
     for (idx, char) in input_chars.iter().enumerate() {
         if *char == pattern_c {
             result_indices.push(idx);
-            pattern_c = match char_pattern_queue.pop() {
+            pattern_c = match char_pattern_queue.pop_front() {
                 Some(res) => res,
                 None => break,
             };
