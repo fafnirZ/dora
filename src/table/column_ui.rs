@@ -3,7 +3,7 @@ use ratatui::prelude::*;
 
 use crate::{
     any_float, any_int, any_string, any_uint, app::App, cell::get_cell_area,
-    df::state::CursorFocus, mode::AppMode, utils::centered_text::center_text_in_given_area,
+    df::state::CursorFocus, mode::AppMode, utils::centered_text::{center_text_in_given_area, render_text_centered_text_with_style},
 };
 // NOTE: will never add the header to column, since I dont want to be able to navigate to
 // the header? or maybe treat the header completely differently from a datastructure perspective.
@@ -32,18 +32,35 @@ impl ColumnUI {
         is_selected: bool,
         is_search_result: bool,
     ) {
-        let (para, text_area) = center_text_in_given_area(text, area);
-        let mut para = para; // makes it mutable, so I can code in a certain way avoiding ownership problems.
+        // let (para, text_area) = center_text_in_given_area(text, area);
+        // let mut para = para; // makes it mutable, so I can code in a certain way avoiding ownership problems.
+        // if is_selected {
+        //     para = para.bg(Color::DarkGray);
+        // }
+        // if is_search_result {
+        //     para = para.fg(Color::Red);
+        // } else {
+        //     para = para.fg(Color::White);
+        // }
+
+        // para.render(text_area, buf);
+
+        let mut style = Style::new();
         if is_selected {
-            para = para.bg(Color::DarkGray);
+            style = style.bg(Color::DarkGray);
         }
         if is_search_result {
-            para = para.fg(Color::Red);
+            style = style.fg(Color::Red);
         } else {
-            para = para.fg(Color::White);
+            style = style.fg(Color::White);
         }
 
-        para.render(text_area, buf);
+        render_text_centered_text_with_style(
+            text,
+            area,
+            style,
+            buf,
+        )
     }
 
     fn is_selected(

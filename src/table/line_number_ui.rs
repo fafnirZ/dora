@@ -1,7 +1,7 @@
 use polars::prelude::*;
 use ratatui::prelude::*;
 
-use crate::{app::App, utils::centered_text::center_text_in_given_area};
+use crate::{app::App, utils::centered_text::{render_text_centered_text_with_style}};
 // NOTE: will never add the header to column, since I dont want to be able to navigate to
 // the header? or maybe treat the header completely differently from a datastructure perspective.
 // imean either way works, its just a choice I gotta deal with in implementation.
@@ -52,11 +52,17 @@ impl StatefulWidget for LineNumberUI {
                 config_state.line_number_cell_width,
                 config_state.cell_height,
             );
-            let (para, text_area) = center_text_in_given_area(text, cell_area);
-            para.fg(Color::White)
-                // .bg(Color::Rgb(235, 233, 233)) // #EBE9E9
-                .bg(Color::Rgb(77, 80, 97)) // #4D5061
-                .render(text_area, buf);
+
+            let style = Style::new()
+                .fg(Color::White)
+                .bg(Color::Rgb(77, 80, 97));
+
+            render_text_centered_text_with_style(
+                text,
+                cell_area,
+                style,
+                buf,
+            )
         }
     }
 }
