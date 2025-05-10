@@ -1,4 +1,3 @@
-
 // default configs
 const WORD_WRAP: bool = false;
 const HEADER_HEIGHT: u16 = 3;

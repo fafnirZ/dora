@@ -7,9 +7,9 @@ use ratatui::{
 use crate::{
     any_float, any_int, any_string, any_uint,
     app::App,
-    utils::cell::get_cell_area,
     df::state::CursorFocus,
     mode::AppMode,
+    utils::cell::get_cell_area,
     utils::centered_text::{center_text_in_given_area, render_text_centered_text_with_style},
 };
 // NOTE: will never add the header to column, since I dont want to be able to navigate to
@@ -62,7 +62,6 @@ impl ColumnUI {
             .style(style)
             .render(cell_bottom_padding, buf);
 
-
         // main cell contents;
         let mut cell_contents = Paragraph::new(text)
             .style(style)
@@ -73,10 +72,7 @@ impl ColumnUI {
             cell_contents = cell_contents.wrap(Wrap { trim: false });
         }
         // render
-        cell_contents
-            .render(text_area, buf);
-
-
+        cell_contents.render(text_area, buf);
     }
 
     fn is_selected(
@@ -126,9 +122,7 @@ impl ColumnUI {
             _ => false,
         }
     }
-    fn is_word_wrap(
-        state: &<ColumnUI as StatefulWidget>::State,
-    ) -> bool {
+    fn is_word_wrap(state: &<ColumnUI as StatefulWidget>::State) -> bool {
         state.config_state.word_wrap
     }
 }
@@ -200,12 +194,12 @@ impl StatefulWidget for ColumnUI {
             );
             let cell_area = get_cell_area(config_state, x, y);
             ColumnUI::render_cell(
-                val_str, 
-                cell_area, 
-                buf, 
-                is_word_wrap, 
-                is_selected, 
-                is_search_result
+                val_str,
+                cell_area,
+                buf,
+                is_word_wrap,
+                is_selected,
+                is_search_result,
             )
         }
     }

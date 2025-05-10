@@ -2,7 +2,6 @@
 use crate::{config::ConfigState, io::read_from_any_path, table::header::Header};
 use polars::prelude::*;
 
-
 // only use these as initialisation values
 // we will update dynamically later.
 const SLICE_SIZE: i64 = 50;
