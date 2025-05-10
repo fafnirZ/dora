@@ -14,7 +14,7 @@ pub fn shift_displayed_df_value_slice_down(app_state: &mut App) {
     let df_state = &mut app_state.dataframe_state;
     let curr_view = df_state.get_row_view_slice();
     let df_row_len = df_state.get_df_shape().0;
-    if curr_view[1] == df_row_len-1 {
+    if curr_view[1] == df_row_len {
         return;
     }
     let sliding_window_increment = [
@@ -77,7 +77,7 @@ pub fn shift_row_cursor_down(app_state: &mut App) {
 
     let df_row_len = df_state.get_df_shape().0;
     let curr_y = df_state.get_cursor_y();
-    if *curr_y >= df_row_len-1 {
+    if *curr_y >= df_row_len {
         return;
     }
     df_state.set_cursor_y(curr_y + increment_value);
