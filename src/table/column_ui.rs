@@ -70,6 +70,29 @@ impl ColumnUI {
             }
         };
     }
+    fn is_search_result(
+        column_index: u16,
+        search_results_found_in_row: &Vec<usize>,
+        absolute_row_index: i64,
+        state: &<ColumnUI as StatefulWidget>::State,
+    ) -> bool {
+        match state.input_handler.mode_state {
+            AppMode::Search => {
+                column_index == (*state.dataframe_state.get_cursor_x() as u16)
+                    && (match state.dataframe_state.get_cursor_focus() {
+                        CursorFocus::Column => true,
+                        _ => false,
+                    })
+                    && (match search_results_found_in_row
+                        .binary_search(&(absolute_row_index as usize))
+                    {
+                        Ok(_) => true,
+                        _ => false,
+                    })
+            }
+            _ => false,
+        }
+    }
 }
 
 impl StatefulWidget for ColumnUI {
@@ -129,24 +152,7 @@ impl StatefulWidget for ColumnUI {
                 }
             };
             let is_selected = ColumnUI::is_selected(idx as u16, self.column_index, state);
-            let is_search_result = {
-                match &state.input_handler.mode_state {
-                    AppMode::Search => {
-                        self.column_index == (*state.dataframe_state.get_cursor_x() as u16)
-                            && (match state.dataframe_state.get_cursor_focus() {
-                                CursorFocus::Column => true,
-                                _ => false,
-                            })
-                            && (match search_results_found_in_row
-                                .binary_search(&(absolute_row_index as usize))
-                            {
-                                Ok(_) => true,
-                                _ => false,
-                            })
-                    }
-                    _ => false,
-                }
-            };
+            let is_search_result = ColumnUI::is_search_result(self.column_index, search_results_found_in_row, absolute_row_index, state);
             let cell_area = get_cell_area(config_state, x, y);
             ColumnUI::render_cell(val_str, cell_area, buf, is_selected, is_search_result)
         }
