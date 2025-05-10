@@ -21,10 +21,10 @@ pub struct ConfigState {
 impl ConfigState {
     pub fn new() -> Self {
         // deserialise from config file.
-        let deserialised_config = read_config_file()
-            .unwrap(); // yes it will panic
-
-        println!("{:?}", deserialised_config);
+        let deserialised_config = match read_config_file() {
+            Ok(res) => res,
+            Err(_) => Config::default(),
+        };
 
         Self {
             header_height: HEADER_HEIGHT,

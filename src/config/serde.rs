@@ -22,11 +22,16 @@ impl Config {
 
 
 impl Default for Config {
+    // since the values are all nullable
+    // the default should really be null.
+    // if we ever want to have a serialisation 
+    // default, we probably shouldnt use this function
+    // for that.
     fn default() -> Self {
         Self {
-            cell_height: Some(1),
-            cell_width: Some(15),
-            word_wrap: Some(true),
+            cell_height: None,
+            cell_width: None,
+            word_wrap: None,
         }
     }
 }

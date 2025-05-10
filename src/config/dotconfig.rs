@@ -51,24 +51,21 @@ pub fn read_config_file() -> Result<Config, DoraErrors> {
     if !folder_path.exists() { 
         let _ = init_shell_config_folder(); 
     }
-    println!("Folder exists?: {}", folder_path.exists());
     // note, while we do init the `.dora` folder
     // we do not initialise their config file. 
     // the user is expected to create their own 
     // otherwise stick with system defaults.
     let file_path = get_expected_config_file_path();
-    println!("file exists?: {}", file_path.exists());
-    panic!("panicked");
-    // if file_path.exists() {
-    //     let mut file = File::open(file_path)
-    //         .map_err(|e| DoraErrors::IOError(e.to_string()))?;
-    //     let mut contents = String::new();
-    //     file.read_to_string(&mut contents)
-    //         .map_err(|e| DoraErrors::IOError(e.to_string()))?;
+    if file_path.exists() {
+        let mut file = File::open(file_path)
+            .map_err(|e| DoraErrors::IOError(e.to_string()))?;
+        let mut contents = String::new();
+        file.read_to_string(&mut contents)
+            .map_err(|e| DoraErrors::IOError(e.to_string()))?;
 
-    //     let config: Config = toml::from_str(&contents)
-    //         .map_err(|e| DoraErrors::IOError(e.to_string()))?;
-    //     return Ok(config);
-    // }
+        let config: Config = toml::from_str(&contents)
+            .map_err(|e| DoraErrors::IOError(e.to_string()))?;
+        return Ok(config);
+    }
     return Err(DoraErrors::IOError("~/.dora/config.toml not found".to_string()))
 }
