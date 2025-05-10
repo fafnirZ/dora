@@ -27,10 +27,10 @@ fn split_gs_path_split(path: &str) -> Option<(&str, &str, &str)> {
     }
 }
 
-async fn read_parquet_from_gcs_async(gs_path: &str) -> Result<DataFrame, PolarsError> {
+async fn read_bytes_from_gcs_async(gs_path: &str) -> Result<Cursor<Vec<u8>>, DoraErrors> {
     if let Some((prefix, bucket, path)) = split_gs_path_split(gs_path) {
         if prefix != "gs://" {
-            return Err(PolarsError::InvalidOperation(
+            return Err(DoraErrors::IOError(
                 "expected gs:// prefix.".into(),
             ));
         }
@@ -47,23 +47,24 @@ async fn read_parquet_from_gcs_async(gs_path: &str) -> Result<DataFrame, PolarsE
                 &Range::default(),
             )
             .await
-            .unwrap();
+            .map_err(|e| DoraErrors::IOError(e.to_string()))?;
 
         let cursor = Cursor::new(object_data);
 
-        return ParquetReader::new(cursor).finish();
+        // return ParquetReader::new(cursor).finish();
+        return Ok(cursor);
     }
-    return Err(PolarsError::InvalidOperation(
+    return Err(DoraErrors::IOError(
         "read parquet from gcs async failed.".into(),
     ));
 }
 
-pub fn read_parquet_from_gcs_sync(gs_path: &str) -> Result<DataFrame, PolarsError> {
+pub fn read_bytes_from_gcs_sync(gs_path: &str) -> Result<Cursor<Vec<u8>>, DoraErrors> {
     return Ok(tokio::runtime::Runtime::new()
         .map_err(|e| PolarsError::InvalidOperation(e.to_string().into()))
         .unwrap()
         .block_on(async {
-            read_parquet_from_gcs_async(gs_path)
+            read_bytes_from_gcs_async(gs_path)
                 .await
                 .map_err(|e| PolarsError::InvalidOperation(e.to_string().into()))
         })
