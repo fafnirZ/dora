@@ -1,3 +1,4 @@
+
 use super::{dotconfig::read_config_file, serde::Config};
 
 // default configs
@@ -26,10 +27,16 @@ impl ConfigState {
 
         Self {
             header_height: HEADER_HEIGHT,
-            cell_height: CELL_HEIGHT,
-            cell_width: CELL_WIDTH,
             line_number_cell_width: LINE_NUMBER_CELL_WIDTH,
-            word_wrap: WORD_WRAP,
+            cell_height: ConfigState::from_config_or::<u16>(
+                &deserialised_config, "cell_height",CELL_HEIGHT
+            ),
+            cell_width: ConfigState::from_config_or::<u16>(
+                &deserialised_config, "cell_width",CELL_WIDTH
+            ),
+            word_wrap: ConfigState::from_config_or::<bool>(
+                &deserialised_config, "word_wrap",WORD_WRAP
+            ),
         }
     }
 
@@ -37,7 +44,7 @@ impl ConfigState {
     // and provide fallback value.
     // if wasnt able to downcast will fall back to the system default
     // if not found in config, will fall back to system default
-    fn from_config_or<T: Clone + 'static>(config: Config, attribute_name: &str, fall_back_value: T) -> T {
+    fn from_config_or<T: Clone + 'static>(config: &Config, attribute_name: &str, fall_back_value: T) -> T {
         match config.get_attr(attribute_name) {
             Some(val) => {
                 if let Some(t_val) = val.downcast_ref::<T>() {
