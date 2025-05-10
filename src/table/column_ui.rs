@@ -1,9 +1,16 @@
 use polars::prelude::*;
-use ratatui::prelude::*;
+use ratatui::{
+    prelude::*,
+    widgets::{Paragraph, Wrap},
+};
 
 use crate::{
-    any_float, any_int, any_string, any_uint, app::App, cell::get_cell_area,
-    df::state::CursorFocus, mode::AppMode, utils::centered_text::{center_text_in_given_area, render_text_centered_text_with_style},
+    any_float, any_int, any_string, any_uint,
+    app::App,
+    cell::get_cell_area,
+    df::state::CursorFocus,
+    mode::AppMode,
+    utils::centered_text::{center_text_in_given_area, render_text_centered_text_with_style},
 };
 // NOTE: will never add the header to column, since I dont want to be able to navigate to
 // the header? or maybe treat the header completely differently from a datastructure perspective.
@@ -29,22 +36,10 @@ impl ColumnUI {
         text: String,
         area: Rect,
         buf: &mut Buffer,
+        is_word_wrap: bool,
         is_selected: bool,
         is_search_result: bool,
     ) {
-        // let (para, text_area) = center_text_in_given_area(text, area);
-        // let mut para = para; // makes it mutable, so I can code in a certain way avoiding ownership problems.
-        // if is_selected {
-        //     para = para.bg(Color::DarkGray);
-        // }
-        // if is_search_result {
-        //     para = para.fg(Color::Red);
-        // } else {
-        //     para = para.fg(Color::White);
-        // }
-
-        // para.render(text_area, buf);
-
         let mut style = Style::new();
         if is_selected {
             style = style.bg(Color::DarkGray);
@@ -55,12 +50,33 @@ impl ColumnUI {
             style = style.fg(Color::White);
         }
 
-        render_text_centered_text_with_style(
-            text,
-            area,
-            style,
-            buf,
-        )
+        // Fill(0) allows collapsing to size 0 when needed?
+        let [cell_top_padding, text_area, cell_bottom_padding] =
+            Layout::vertical([Constraint::Fill(0), Constraint::Min(1), Constraint::Fill(0)])
+                .areas(area);
+
+        Paragraph::new("")
+            .style(style)
+            .render(cell_top_padding, buf);
+        Paragraph::new("")
+            .style(style)
+            .render(cell_bottom_padding, buf);
+
+
+        // main cell contents;
+        let mut cell_contents = Paragraph::new(text)
+            .style(style)
+            .alignment(Alignment::Center);
+
+        // determine whether to word wrap or not
+        if is_word_wrap {
+            cell_contents = cell_contents.wrap(Wrap { trim: false });
+        }
+        // render
+        cell_contents
+            .render(text_area, buf);
+
+
     }
 
     fn is_selected(
@@ -110,6 +126,11 @@ impl ColumnUI {
             _ => false,
         }
     }
+    fn is_word_wrap(
+        state: &<ColumnUI as StatefulWidget>::State,
+    ) -> bool {
+        state.config_state.word_wrap
+    }
 }
 
 impl StatefulWidget for ColumnUI {
@@ -144,6 +165,8 @@ impl StatefulWidget for ColumnUI {
         let search_results_found_in_row: &Vec<usize> =
             &search_results.iter().map(|tuple| tuple.0).collect();
 
+        let is_word_wrap = ColumnUI::is_word_wrap(state);
+
         // idx is the row value relative to the slice.
         // so for search result indices which is an absolute index w.r.t.
         // the full size of the column this will be erroneous.
@@ -169,9 +192,21 @@ impl StatefulWidget for ColumnUI {
                 }
             };
             let is_selected = ColumnUI::is_selected(idx as u16, self.column_index, state);
-            let is_search_result = ColumnUI::is_search_result(self.column_index, search_results_found_in_row, absolute_row_index, state);
+            let is_search_result = ColumnUI::is_search_result(
+                self.column_index,
+                search_results_found_in_row,
+                absolute_row_index,
+                state,
+            );
             let cell_area = get_cell_area(config_state, x, y);
-            ColumnUI::render_cell(val_str, cell_area, buf, is_selected, is_search_result)
+            ColumnUI::render_cell(
+                val_str, 
+                cell_area, 
+                buf, 
+                is_word_wrap, 
+                is_selected, 
+                is_search_result
+            )
         }
     }
 }
