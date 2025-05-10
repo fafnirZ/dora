@@ -1,5 +1,4 @@
 mod app;
-mod cell;
 mod commands;
 mod config;
 mod controller;

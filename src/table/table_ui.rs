@@ -4,7 +4,7 @@ use ratatui::style::{Color, Style, Stylize};
 use ratatui::widgets::{Block, Borders, StatefulWidget, Widget};
 
 use crate::app::App;
-use crate::cell::get_header_area;
+use crate::utils::cell::get_header_area;
 use crate::utils::centered_text::render_text_centered_in_area;
 
 use super::column_ui::ColumnUI;

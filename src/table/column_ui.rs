@@ -7,7 +7,7 @@ use ratatui::{
 use crate::{
     any_float, any_int, any_string, any_uint,
     app::App,
-    cell::get_cell_area,
+    utils::cell::get_cell_area,
     df::state::CursorFocus,
     mode::AppMode,
     utils::centered_text::{center_text_in_given_area, render_text_centered_text_with_style},
