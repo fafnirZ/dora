@@ -10,9 +10,6 @@ const CELL_HEIGHT: u16 = 1;
 const CELL_WIDTH: u16 = 15;
 const LINE_NUMBER_CELL_WIDTH: u16 = 5;
 
-
-const IGNORE_CONFIG_FILE_ON_PARSE_ERROR: bool = false;
-
 #[derive(Debug)]
 pub struct ConfigState {
     // visual configs
@@ -32,7 +29,6 @@ impl ConfigState {
                 Config::default()
             },
         };
-
         Self {
             header_height: HEADER_HEIGHT,
             line_number_cell_width: LINE_NUMBER_CELL_WIDTH,
@@ -56,8 +52,10 @@ impl ConfigState {
         match config.get_attr(attribute_name) {
             Some(val) => {
                 if let Some(t_val) = val.downcast_ref::<T>() {
+                    println!("downcasted to something");
                     t_val.clone()
                 } else {
+                    println!("downcasted failed");
                     fall_back_value.clone() // Return the fallback if downcast fails
                 }
             }
