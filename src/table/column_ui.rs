@@ -171,19 +171,20 @@ impl StatefulWidget for ColumnUI {
                 break;
             }
 
-            let val_str = match value {
-                any_int!() => value.to_string(),
-                any_float!() => value.to_string(),
-                any_uint!() => value.to_string(),
-                any_string!() => value.to_string(),
-                any_datetime!() => value.to_string(),
-                AnyValue::Null => "None".to_string(),
-                AnyValue::Boolean(value) => value.to_string(),
+            // let val_str = match value {
+            //     any_int!() => value.to_string(),
+            //     any_float!() => value.to_string(),
+            //     any_uint!() => value.to_string(),
+            //     any_string!() => value.to_string(),
+            //     any_datetime!() => value.to_string(), // needs work to make it human readable.
+            //     AnyValue::Null => "None".to_string(),
+            //     AnyValue::Boolean(value) => value.to_string(),
 
-                _ => {
-                    panic!("Invalid type.")
-                }
-            };
+            //     _ => {
+            //         panic!("Invalid type.")
+            //     }
+            // };
+            let value_str = value.str_value();
             let is_selected = ColumnUI::is_selected(idx as u16, self.column_index, state);
             let is_search_result = ColumnUI::is_search_result(
                 self.column_index,
@@ -193,7 +194,7 @@ impl StatefulWidget for ColumnUI {
             );
             let cell_area = get_cell_area(config_state, x, y);
             ColumnUI::render_cell(
-                val_str,
+                value_str.as_ref().to_string(),
                 cell_area,
                 buf,
                 is_word_wrap,
