@@ -37,6 +37,11 @@ pub fn read_from_any_path(path: &str) -> Result<DataFrame, DoraErrors> {
                 .finish()
                 .map_err(|e| DoraErrors::IOError(e.to_string()))?
         },
+        FileType::NdJson => {
+            JsonReader::new(cursor)
+                .finish()
+                .map_err(|e| DoraErrors::IOError(e.to_string()))?
+        },
         _ => return Err(DoraErrors::FileNotFound("Invalid File Type".to_string())),
     });
 }
