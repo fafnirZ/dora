@@ -5,7 +5,6 @@ mod controller;
 mod df;
 mod errors;
 mod events;
-mod header;
 mod input;
 mod io;
 mod mode;
