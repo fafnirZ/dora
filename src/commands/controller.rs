@@ -1,3 +1,5 @@
+use std::process::Command;
+
 use crate::{app::App, errors::DoraErrors};
 
 pub struct CommandHandler {}
@@ -22,8 +24,11 @@ impl CommandHandler {
         match args[0] {
             // set cell_width 10
             "cell-width" => {
-                app_state.config_state.cell_width = args[1].parse::<u16>()
+                app_state.config_state.cell_width = 
+                    CommandHandler::try_get_argument(args, 1)?
+                    .parse::<u16>()
                     .map_err(|e| DoraErrors::CommandError(e.to_string()))?;
+
                 // need to refresh dataframe state to re-calculate the appropriate cursor
                 // and view bounds such that the dataframe cursor and view operations
                 // respect the new cell sizes in the new calculations.
@@ -35,7 +40,9 @@ impl CommandHandler {
             }
             // set cell_height 3
             "cell-height" => {
-                let input = args[1].parse::<u16>()
+                let input = 
+                    CommandHandler::try_get_argument(args, 1)?
+                    .parse::<u16>()
                     .map_err(|e| DoraErrors::CommandError(e.to_string()))?;
                 if input % 2 == 0 {
                     return Err(DoraErrors::CommandError(
@@ -59,7 +66,7 @@ impl CommandHandler {
                     app_state.config_state.word_wrap = !app_state.config_state.word_wrap;
                     return Ok(())
                 }
-                let input = args[1]
+                let input = CommandHandler::try_get_argument(args, 1)?
                     .parse::<bool>()
                     .map_err(|e| DoraErrors::CommandError(e.to_string()))?;
 
@@ -74,5 +81,16 @@ impl CommandHandler {
                 )))
             }
         }
+    }
+
+    fn try_get_argument(args: Vec<&str>, index: usize) -> Result<&str, DoraErrors> {
+        match args.get(index) {
+            Some(element) => Ok(*element),
+            None => Err(DoraErrors::CommandError(format!(
+                "Argument in index: {} not found",
+                index,
+            )))
+        }
+
     }
 }
