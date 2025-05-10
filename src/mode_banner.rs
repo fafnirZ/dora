@@ -20,9 +20,9 @@ impl ModeBanner {
         let state = state;
         let mode_str = match state.input_handler.mode_state {
             AppMode::Normal => String::from("--normal--"),
-            AppMode::Filter => String::from("--filter--"),
-            AppMode::Search => String::from("--search--"),
-            AppMode::Help => String::from("--help--"),
+            AppMode::Filter => String::from("filter:"),
+            AppMode::Search => String::from("search:"),
+            AppMode::Help => String::from("help:"),
             AppMode::Command => String::from(":"),
         };
 
