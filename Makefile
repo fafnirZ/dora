@@ -5,7 +5,7 @@ build_release:
 	cargo build --release
 
 fmt:
-	cargo format
+	cargo fmt
 
 lint:
 	cargo check
