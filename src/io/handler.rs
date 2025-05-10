@@ -9,7 +9,7 @@ use google_cloud_storage::http::objects::get::GetObjectRequest;
 use std::io::Cursor;
 
 use super::file_type::FileType;
-use super::gcloud::read_parquet_from_gcs_sync;
+use super::gcloud::read_bytes_from_gcs_sync;
 use super::path_location::PathLocation;
 
 
@@ -27,13 +27,18 @@ pub fn read_from_any_path(path: &str) -> Result<DataFrame, DoraErrors> {
             .finish()
             .unwrap(),
         FileType::Parquet => match location {
-            PathLocation::Gcs => match read_parquet_from_gcs_sync(path) {
-                Ok(res) => return Ok(res),
-                Err(err) => return Err(DoraErrors::IOError(err.to_string())),
+            PathLocation::Gcs => {
+                let cursor = read_bytes_from_gcs_sync(path)?;
+                ParquetReader::new(cursor)
+                    .finish()
+                    .map_err(|e| DoraErrors::IOError(e.to_string()))?
+
             },
             PathLocation::Local => {
                 let f = File::open(path).unwrap();
-                ParquetReader::new(f).finish().unwrap()
+                ParquetReader::new(f)
+                    .finish()
+                    .map_err(|e| DoraErrors::IOError(e.to_string()))?
             }
         },
         _ => return Err(DoraErrors::FileNotFound("Invalid File Type".to_string())),
