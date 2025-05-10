@@ -36,6 +36,7 @@ impl ColumnUI {
         text: String,
         area: Rect,
         buf: &mut Buffer,
+        is_word_wrap: bool,
         is_selected: bool,
         is_search_result: bool,
     ) {
@@ -56,17 +57,26 @@ impl ColumnUI {
         Paragraph::new("")
             .style(style)
             .render(cell_top_padding, buf);
-
-        // main cell contents;
-        Paragraph::new(text)
-            .style(style)
-            .alignment(Alignment::Center)
-            .wrap(Wrap { trim: true })
-            .render(text_area, buf);
-
         Paragraph::new("")
             .style(style)
             .render(cell_bottom_padding, buf);
+
+
+        // main cell contents;
+        let mut cell_contents = Paragraph::new(text)
+            .style(style)
+            .alignment(Alignment::Center);
+
+        // determine whether to word wrap or not
+        if is_word_wrap {
+            cell_contents = cell_contents.wrap(Wrap { trim: true });
+
+        }
+        // render
+        cell_contents
+            .render(text_area, buf);
+
+
     }
 
     fn is_selected(
@@ -116,6 +126,11 @@ impl ColumnUI {
             _ => false,
         }
     }
+    fn is_word_wrap(
+        state: &<ColumnUI as StatefulWidget>::State,
+    ) -> bool {
+        state.config_state.word_wrap
+    }
 }
 
 impl StatefulWidget for ColumnUI {
@@ -150,6 +165,8 @@ impl StatefulWidget for ColumnUI {
         let search_results_found_in_row: &Vec<usize> =
             &search_results.iter().map(|tuple| tuple.0).collect();
 
+        let is_word_wrap = ColumnUI::is_word_wrap(state);
+
         // idx is the row value relative to the slice.
         // so for search result indices which is an absolute index w.r.t.
         // the full size of the column this will be erroneous.
@@ -182,7 +199,14 @@ impl StatefulWidget for ColumnUI {
                 state,
             );
             let cell_area = get_cell_area(config_state, x, y);
-            ColumnUI::render_cell(val_str, cell_area, buf, is_selected, is_search_result)
+            ColumnUI::render_cell(
+                val_str, 
+                cell_area, 
+                buf, 
+                is_word_wrap, 
+                is_selected, 
+                is_search_result
+            )
         }
     }
 }
