@@ -117,6 +117,8 @@ impl InputHandler {
         }
     }
 
+    // input buffer 
+
     pub fn init_input_buffer(&mut self) {
         self.buffer_state = BufferState::Active(Input::default());
     }
@@ -128,5 +130,11 @@ impl InputHandler {
     pub fn reset_buffer(&mut self) {
         self.buffer_state = BufferState::Inactive;
         self.mode_state = AppMode::Normal;
+    }
+
+
+    // error buffer
+    pub fn reset_error_buffer(&mut self) {
+        self.error_buffer = String::new();
     }
 }
