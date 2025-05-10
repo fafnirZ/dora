@@ -1,8 +1,10 @@
+use super::traits::{AnySearchResult, SearchAlgorithm};
+
 
 pub struct SearchResultState {
     // assuming you're only performing on a single column
     // the current focused column;
-    pub result_indices: Vec<(usize, [usize;2])>,
+    pub result_indices: Vec<(usize, AnySearchResult)>,
     pub result_cursor: Option<usize>,
 }
 

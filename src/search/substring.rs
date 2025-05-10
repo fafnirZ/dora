@@ -1,6 +1,6 @@
 use super::traits::SearchAlgorithm;
 
-struct ExactSubstringSearch {}
+pub struct ExactSubstringSearch {}
 
 impl SearchAlgorithm for ExactSubstringSearch {
     type Result = [usize;2];

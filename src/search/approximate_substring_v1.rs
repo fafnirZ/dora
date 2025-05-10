@@ -10,7 +10,7 @@ use super::traits::SearchAlgorithm;
 
 
 
-struct SimpleApproximateSearch {}
+pub struct SimpleApproximateSearch {}
 
 impl SearchAlgorithm for SimpleApproximateSearch {
 

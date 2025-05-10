@@ -1,6 +1,6 @@
 use polars::prelude::DataType;
 
-use crate::{app::{App}, commands::controller::CommandHandler, df::state::CursorFocus, input::{BufferState, Control}, mode::AppMode, search::{controller::shift_current_result_cursor_value_into_view, par_search::par_find_substring_matches}, table::controller::{shift_column_cursor_left, shift_column_cursor_right, shift_displayed_df_value_slice_down, shift_displayed_df_value_slice_left, shift_displayed_df_value_slice_right, shift_displayed_df_value_slice_up, shift_row_cursor_down, shift_row_cursor_up}};
+use crate::{app::App, commands::controller::CommandHandler, df::state::CursorFocus, input::{BufferState, Control}, mode::AppMode, search::{approximate_substring_v1::SimpleApproximateSearch, controller::shift_current_result_cursor_value_into_view, search::par_find_substring_matches}, table::controller::{shift_column_cursor_left, shift_column_cursor_right, shift_displayed_df_value_slice_down, shift_displayed_df_value_slice_left, shift_displayed_df_value_slice_right, shift_displayed_df_value_slice_up, shift_row_cursor_down, shift_row_cursor_up}};
 
 
 // given input,
@@ -224,7 +224,12 @@ impl Controller {
                     .collect();
                 
                 // finds results
+                // TODO: control which algorithm to use
+                // right now itll be hardcoded.
+                // let algorithm = ExactSubstringSearch{};
+                let algorithm = SimpleApproximateSearch{};
                 let results = par_find_substring_matches(
+                    &algorithm,
                     &series, 
                     current_buffer_string,
                 );
