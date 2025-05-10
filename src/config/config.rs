@@ -24,6 +24,7 @@ impl ConfigState {
         let deserialised_config = read_config_file()
             .unwrap(); // yes it will panic
 
+        println!("{:?}", deserialised_config);
 
         Self {
             header_height: HEADER_HEIGHT,

@@ -59,16 +59,18 @@ pub fn read_config_file() -> Result<Config, DoraErrors> {
     // the user is expected to create their own 
     // otherwise stick with system defaults.
     let file_path = get_expected_config_file_path();
-    if file_path.exists() {
-        let mut file = File::open(file_path)
-            .map_err(|e| DoraErrors::IOError(e.to_string()))?;
-        let mut contents = String::new();
-        file.read_to_string(&mut contents)
-            .map_err(|e| DoraErrors::IOError(e.to_string()))?;
+    println!("file exists?: {}", file_path.exists());
+    panic!("panicked");
+    // if file_path.exists() {
+    //     let mut file = File::open(file_path)
+    //         .map_err(|e| DoraErrors::IOError(e.to_string()))?;
+    //     let mut contents = String::new();
+    //     file.read_to_string(&mut contents)
+    //         .map_err(|e| DoraErrors::IOError(e.to_string()))?;
 
-        let config: Config = toml::from_str(&contents)
-            .map_err(|e| DoraErrors::IOError(e.to_string()))?;
-        return Ok(config);
-    }
+    //     let config: Config = toml::from_str(&contents)
+    //         .map_err(|e| DoraErrors::IOError(e.to_string()))?;
+    //     return Ok(config);
+    // }
     return Err(DoraErrors::IOError("~/.dora/config.toml not found".to_string()))
 }

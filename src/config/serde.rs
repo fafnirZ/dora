@@ -2,7 +2,7 @@ use std::any::Any;
 
 use serde::Deserialize;
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug)]
 pub struct Config {
     cell_height: Option<u16>,
     cell_width: Option<u16>,
