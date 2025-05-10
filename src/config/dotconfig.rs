@@ -18,12 +18,10 @@ pub fn get_expected_config_folder_path() -> PathBuf {
 
 // -> $HOME/.dora/config.toml
 pub fn get_expected_config_file_path() -> PathBuf {
-    let folder_path = get_expected_config_file_path();
+    let folder_path = get_expected_config_folder_path();
     let file_path = Path::new("config.toml");
     return folder_path.join(file_path);
 }
-
-
 
 
 // initialise folder if doesnt exist
@@ -53,7 +51,7 @@ pub fn read_config_file() -> Result<Config, DoraErrors> {
     if !folder_path.exists() { 
         let _ = init_shell_config_folder(); 
     }
-
+    println!("Folder exists?: {}", folder_path.exists());
     // note, while we do init the `.dora` folder
     // we do not initialise their config file. 
     // the user is expected to create their own 
