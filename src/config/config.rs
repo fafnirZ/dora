@@ -1,3 +1,5 @@
+use super::dotconfig::read_config_file;
+
 // default configs
 const WORD_WRAP: bool = false;
 const HEADER_HEIGHT: u16 = 3;
@@ -17,6 +19,11 @@ pub struct ConfigState {
 
 impl ConfigState {
     pub fn new() -> Self {
+        // deserialise from config file.
+        let deserialised_config = read_config_file()
+            .unwrap(); // yes it will panic
+
+
         Self {
             header_height: HEADER_HEIGHT,
             cell_height: CELL_HEIGHT,
@@ -25,4 +32,6 @@ impl ConfigState {
             word_wrap: WORD_WRAP,
         }
     }
+
+    
 }
