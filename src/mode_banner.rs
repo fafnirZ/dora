@@ -1,7 +1,7 @@
 use ratatui::{
     buffer::Buffer,
-    layout::Rect,
-    style::{Color, Stylize},
+    layout::{Alignment, Constraint, Layout, Rect},
+    style::{Color, Style, Stylize},
     widgets::{Paragraph, StatefulWidget, Widget},
 };
 
@@ -41,11 +41,44 @@ impl StatefulWidget for ModeBanner {
     type State = App;
 
     fn render(self, area: Rect, buf: &mut Buffer, state: &mut Self::State) {
+        let [
+            left_side,
+            right_side,
+        ] = Layout::horizontal([
+            Constraint::Percentage(50),
+            Constraint::Percentage(50),     
+        ]).areas(area);
+        
+        let err_buf = &state.input_handler.error_buffer;
+        let is_err = {
+            err_buf != ""
+        };
+
+        //
+        // left side in app banner
+        // is for commands and stuff
+        //
+        let mut common_style = Style::new();
+
+        if is_err {
+            common_style = common_style.bg(Color::Red);
+        } else {
+            // default color
+            common_style = common_style.bg(Color::Rgb(67, 67, 113));
+        }
+
         let state_writing_fmt = ModeBanner::determine_writing(state);
-        // render_text_centered_in_area(state_writing_fmt, area, buf);
 
         Paragraph::new(state_writing_fmt)
-            .bg(Color::Rgb(67, 67, 113))
-            .render(area, buf);
+            .style(common_style)
+            .render(left_side, buf);
+
+        //
+        // right side is for errors
+        //
+        Paragraph::new(err_buf.clone())
+            .style(common_style)
+            .alignment(Alignment::Right)
+            .render(right_side, buf);
     }
 }
