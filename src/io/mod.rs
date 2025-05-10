@@ -1,5 +1,6 @@
 
 mod gcloud;
+mod local;
 mod file_type;
 mod path_location;
 mod handler;
