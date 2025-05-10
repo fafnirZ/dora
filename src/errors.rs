@@ -9,4 +9,7 @@ pub enum DoraErrors {
 
     #[error("IO Error: {0}")]
     IOError(String),
+
+    #[error("CommandError: {0}")]
+    CommandError(String),
 }
