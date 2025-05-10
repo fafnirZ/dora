@@ -29,6 +29,11 @@ pub struct InputHandler {
     events: Events,
     pub buffer_state: BufferState,
     pub mode_state: AppMode,
+
+    // this is the location
+    // for storing the error messages the
+    // app wishes to communicate to the user.
+    pub error_buffer: String,
 }
 
 impl InputHandler {
@@ -37,6 +42,7 @@ impl InputHandler {
             events: Events::new(),
             buffer_state: BufferState::Inactive,
             mode_state: AppMode::Normal,
+            error_buffer: String::new(),
         }
     }
 

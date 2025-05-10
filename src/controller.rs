@@ -280,7 +280,18 @@ impl Controller {
                     BufferState::Active(buffer) => buffer.value().to_string(),
                     _ => String::new(),
                 };
-                CommandHandler::try_execute(app_state, &buffer_value);
+                match CommandHandler::try_execute(app_state, &buffer_value) {
+                    Ok(_) => {
+                        app_state
+                        .input_handler
+                        .error_buffer = String::new(); // clear previous error buffers
+                    },
+                    Err(err) => {
+                        app_state
+                        .input_handler
+                        .error_buffer = err.to_string(); // sets error buffer
+                    }
+                }
             }
             _ => {} // do nothing
         }
