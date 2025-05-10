@@ -38,7 +38,10 @@ impl CommandHandler {
                 return Ok(());
             }
             _ => {
-                let command_str_reconstructed = command_prefix.to_owned() + &args.join(" ");
+                let command_str_reconstructed = 
+                    command_prefix.to_owned()
+                    + " " 
+                    + &args.join(" ");
                 Err(
                     DoraErrors::CommandError(format!(
                         "Unknown Command {}", command_str_reconstructed
