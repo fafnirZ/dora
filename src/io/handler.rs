@@ -39,6 +39,7 @@ pub fn read_from_any_path(path: &str) -> Result<DataFrame, DoraErrors> {
         },
         FileType::NdJson => {
             JsonReader::new(cursor)
+                .with_json_format(JsonFormat::JsonLines)
                 .finish()
                 .map_err(|e| DoraErrors::IOError(e.to_string()))?
         },
