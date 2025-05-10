@@ -51,6 +51,14 @@ impl CommandHandler {
                     .refresh_renderable_table_size(config_state);
                 return Ok(());
             }
+            "word-wrap" => {
+                let input = args[1]
+                    .parse::<bool>()
+                    .map_err(|e| DoraErrors::CommandError(e.to_string()))?;
+
+                app_state.config_state.word_wrap = input;
+                return Ok(());
+            }
             _ => {
                 let command_str_reconstructed = command_prefix.to_owned() + " " + &args.join(" ");
                 Err(DoraErrors::CommandError(format!(
