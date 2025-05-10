@@ -3,7 +3,6 @@
 // for all pattern characters in the input string
 // they do not need to be contiguous
 
-use rayon::result;
 use std::collections::VecDeque;
 
 use super::traits::SearchAlgorithm;

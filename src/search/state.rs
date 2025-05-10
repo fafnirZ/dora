@@ -1,4 +1,4 @@
-use super::traits::{AnySearchResult, SearchAlgorithm};
+use super::traits::AnySearchResult;
 
 pub struct SearchResultState {
     // assuming you're only performing on a single column

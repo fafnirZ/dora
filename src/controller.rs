@@ -1,4 +1,3 @@
-use std::any::Any;
 
 use polars::prelude::DataType;
 
@@ -12,7 +11,6 @@ use crate::{
         approximate_substring_v1::SimpleApproximateSearch,
         controller::shift_current_result_cursor_value_into_view,
         search::par_find_substring_matches,
-        substring::ExactSubstringSearch,
         traits::{AnySearchResult, SearchAlgorithmImplementations},
     },
     table::controller::{

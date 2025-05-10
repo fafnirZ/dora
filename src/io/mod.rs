@@ -185,6 +185,6 @@ pub fn read_from_any_path(path: &str) -> Result<DataFrame, DoraErrors> {
                 ParquetReader::new(f).finish().unwrap()
             }
         },
-        _ => return { Err(DoraErrors::FileNotFound("Invalid File Type".to_string())) },
+        _ => return Err(DoraErrors::FileNotFound("Invalid File Type".to_string())),
     });
 }
