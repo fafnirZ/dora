@@ -52,6 +52,11 @@ impl CommandHandler {
                 return Ok(());
             }
             "word-wrap" => {
+                // toggle 
+                if args.len() == 1 {
+                    app_state.config_state.word_wrap = !app_state.config_state.word_wrap;
+                    return Ok(())
+                }
                 let input = args[1]
                     .parse::<bool>()
                     .map_err(|e| DoraErrors::CommandError(e.to_string()))?;
