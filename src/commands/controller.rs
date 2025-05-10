@@ -1,4 +1,3 @@
-use std::process::Command;
 
 use crate::{app::App, errors::DoraErrors};
 

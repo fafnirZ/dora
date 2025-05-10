@@ -2,7 +2,7 @@
 // to be called in src/controller.rs
 // for mutating table state
 
-use crate::app::{self, App};
+use crate::app::{App};
 
 // the following 4 functions does the following:
 // update the data slice for dataframe rows being

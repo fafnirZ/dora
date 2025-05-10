@@ -10,7 +10,6 @@ use crate::{
     df::state::CursorFocus,
     mode::AppMode,
     utils::cell::get_cell_area,
-    utils::centered_text::{center_text_in_given_area, render_text_centered_text_with_style},
 };
 // NOTE: will never add the header to column, since I dont want to be able to navigate to
 // the header? or maybe treat the header completely differently from a datastructure perspective.
