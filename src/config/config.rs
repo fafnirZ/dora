@@ -29,7 +29,6 @@ impl ConfigState {
                 Config::default()
             },
         };
-        println!("{:?}", deserialised_config);
         Self {
             header_height: HEADER_HEIGHT,
             line_number_cell_width: LINE_NUMBER_CELL_WIDTH,
