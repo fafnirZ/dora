@@ -1,8 +1,6 @@
 // use polars::frame::DataFrame;
-use crate::{config::ConfigState, io::read_from_any_path};
+use crate::{config::ConfigState, io::read_from_any_path, table::header::Header};
 use polars::prelude::*;
-
-use super::super::header::Header;
 
 // only use these as initialisation values
 // we will update dynamically later.

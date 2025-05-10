@@ -1,12 +1,10 @@
 mod app;
-mod cell;
 mod commands;
 mod config;
 mod controller;
 mod df;
 mod errors;
 mod events;
-mod header;
 mod input;
 mod io;
 mod mode;

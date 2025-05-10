@@ -1,4 +1,3 @@
-use std::process::Command;
 
 use crate::{app::App, errors::DoraErrors};
 
@@ -24,8 +23,7 @@ impl CommandHandler {
         match args[0] {
             // set cell_width 10
             "cell-width" => {
-                app_state.config_state.cell_width = 
-                    CommandHandler::try_get_argument(args, 1)?
+                app_state.config_state.cell_width = CommandHandler::try_get_argument(args, 1)?
                     .parse::<u16>()
                     .map_err(|e| DoraErrors::CommandError(e.to_string()))?;
 
@@ -40,8 +38,7 @@ impl CommandHandler {
             }
             // set cell_height 3
             "cell-height" => {
-                let input = 
-                    CommandHandler::try_get_argument(args, 1)?
+                let input = CommandHandler::try_get_argument(args, 1)?
                     .parse::<u16>()
                     .map_err(|e| DoraErrors::CommandError(e.to_string()))?;
                 if input % 2 == 0 {
@@ -61,10 +58,10 @@ impl CommandHandler {
                 return Ok(());
             }
             "word-wrap" => {
-                // toggle 
+                // toggle
                 if args.len() == 1 {
                     app_state.config_state.word_wrap = !app_state.config_state.word_wrap;
-                    return Ok(())
+                    return Ok(());
                 }
                 let input = CommandHandler::try_get_argument(args, 1)?
                     .parse::<bool>()
@@ -89,8 +86,7 @@ impl CommandHandler {
             None => Err(DoraErrors::CommandError(format!(
                 "Argument in index: {} not found",
                 index,
-            )))
+            ))),
         }
-
     }
 }

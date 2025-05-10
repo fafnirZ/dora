@@ -2,12 +2,6 @@ use ratatui::layout::Rect;
 
 use crate::config::ConfigState;
 
-// default configs
-pub const HEADER_HEIGHT: u16 = 3;
-pub const CELL_HEIGHT: u16 = 1;
-pub const CELL_WIDTH: u16 = 15;
-pub const LINE_NUMBER_CELL_WIDTH: u16 = 5;
-
 // needs to be a mutable borrow, because
 // the functions which call this require app to be mutable
 // if otherwise compiler complains of both mutable and immutable in scope.

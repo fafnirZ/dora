@@ -1,7 +1,9 @@
-use crate::cell::{CELL_HEIGHT, CELL_WIDTH, HEADER_HEIGHT, LINE_NUMBER_CELL_WIDTH};
-
 // default configs
 const WORD_WRAP: bool = false;
+const HEADER_HEIGHT: u16 = 3;
+const CELL_HEIGHT: u16 = 1;
+const CELL_WIDTH: u16 = 15;
+const LINE_NUMBER_CELL_WIDTH: u16 = 5;
 
 #[derive(Debug)]
 pub struct ConfigState {
