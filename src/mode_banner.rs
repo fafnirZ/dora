@@ -1,16 +1,21 @@
-use ratatui::{buffer::Buffer, layout::Rect, style::{Color, Stylize}, widgets::{Paragraph, StatefulWidget, Widget}};
+use ratatui::{
+    buffer::Buffer,
+    layout::Rect,
+    style::{Color, Stylize},
+    widgets::{Paragraph, StatefulWidget, Widget},
+};
 
 use crate::{app::App, input::BufferState, mode::AppMode};
-
-
 
 pub struct ModeBanner {}
 
 impl ModeBanner {
-    pub fn new() -> Self { Self{} }
-    
+    pub fn new() -> Self {
+        Self {}
+    }
+
     fn determine_writing(
-        state: &<ModeBanner as ratatui::prelude::StatefulWidget>::State
+        state: &<ModeBanner as ratatui::prelude::StatefulWidget>::State,
     ) -> String {
         let state = state;
         let mode_str = match state.input_handler.mode_state {
@@ -20,7 +25,6 @@ impl ModeBanner {
             AppMode::Help => String::from("--help--"),
             AppMode::Command => String::from(":"),
         };
-
 
         let input_buffer_string = {
             match &state.input_handler.buffer_state {
@@ -39,7 +43,7 @@ impl StatefulWidget for ModeBanner {
     fn render(self, area: Rect, buf: &mut Buffer, state: &mut Self::State) {
         let state_writing_fmt = ModeBanner::determine_writing(state);
         // render_text_centered_in_area(state_writing_fmt, area, buf);
-        
+
         Paragraph::new(state_writing_fmt)
             .bg(Color::Rgb(67, 67, 113))
             .render(area, buf);

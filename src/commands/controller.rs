@@ -1,6 +1,5 @@
 use crate::app::App;
 
-
 pub struct CommandHandler {}
 
 impl CommandHandler {
@@ -18,16 +17,12 @@ impl CommandHandler {
             // set cell_width 10
             "cell-width" => {
                 app_state.config_state.cell_width = args[1].parse::<u16>().unwrap();
-            },
+            }
             // set cell_height 3
             "cell-height" => {
                 app_state.config_state.cell_height = args[1].parse::<u16>().unwrap();
-            },
+            }
             _ => {}
         }
     }
 }
-
-
-
-

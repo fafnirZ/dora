@@ -1,7 +1,10 @@
-use std::{io::LineWriter, panic};
-use crossterm::{execute, terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen}};
-use ratatui::{prelude::CrosstermBackend, Terminal};
+use crossterm::{
+    execute,
+    terminal::{EnterAlternateScreen, LeaveAlternateScreen, disable_raw_mode, enable_raw_mode},
+};
+use ratatui::{Terminal, prelude::CrosstermBackend};
 use std::thread::panicking;
+use std::{io::LineWriter, panic};
 
 use crate::app::App;
 
@@ -27,11 +30,10 @@ fn drop() {
     }
 }
 
-
 pub fn run_app(file_name: &str) {
     // cleanup on panic hook
     restore_terminal_on_close_hook();
-    
+
     // https://docs.rs/crossterm/latest/crossterm/terminal/index.html#raw-mode
     // this is why the inputs arent being displayed
     // and why you don't need to hit enter in order for inputs to be registered.
@@ -41,11 +43,9 @@ pub fn run_app(file_name: &str) {
     execute!(output, EnterAlternateScreen).unwrap();
     let backend = CrosstermBackend::new(LineWriter::new(output));
     let mut terminal = Terminal::new(backend).unwrap();
-    App::new(file_name)
-        .main_loop(&mut terminal)
-        .unwrap();
+    App::new(file_name).main_loop(&mut terminal).unwrap();
 
-    // cleanup 
+    // cleanup
     // in normal end
     drop();
 }

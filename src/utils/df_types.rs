@@ -8,42 +8,30 @@
 #[macro_export]
 macro_rules! any_int {
     () => {
-        AnyValue::Int8(_)
-        | AnyValue::Int16(_)
-        | AnyValue::Int32(_)
-        | AnyValue::Int64(_)
-    }
+        AnyValue::Int8(_) | AnyValue::Int16(_) | AnyValue::Int32(_) | AnyValue::Int64(_)
+    };
 }
 
 #[macro_export]
 macro_rules! any_uint {
     () => {
-        AnyValue::UInt8(_)
-        | AnyValue::UInt16(_)
-        | AnyValue::UInt32(_)
-        | AnyValue::UInt64(_)
-    }
+        AnyValue::UInt8(_) | AnyValue::UInt16(_) | AnyValue::UInt32(_) | AnyValue::UInt64(_)
+    };
 }
 
 #[macro_export]
 macro_rules! any_float {
     () => {
-        AnyValue::Float32(_)
-        | AnyValue::Float64(_)
-    }
+        AnyValue::Float32(_) | AnyValue::Float64(_)
+    };
 }
 
 #[macro_export]
 macro_rules! any_string {
     () => {
-        AnyValue::String(_)
-        | AnyValue::StringOwned(_)
-    }
+        AnyValue::String(_) | AnyValue::StringOwned(_)
+    };
 }
-
-
-
-
 
 // macros for DataType
 // polars DataType is the type

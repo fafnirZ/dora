@@ -12,21 +12,8 @@ pub const LINE_NUMBER_CELL_WIDTH: u16 = 5;
 // the functions which call this require app to be mutable
 // if otherwise compiler complains of both mutable and immutable in scope.
 pub fn get_cell_area(config: &ConfigState, x: u16, y: u16) -> Rect {
-
-    return Rect::new(
-        x,
-        y,
-        config.cell_width,
-        config.cell_height,
-    )
+    return Rect::new(x, y, config.cell_width, config.cell_height);
 }
 pub fn get_header_area(config: &ConfigState, x: u16, y: u16) -> Rect {
-    return Rect::new(
-        x,
-        y,
-        config.cell_width,
-        config.header_height,
-    )
+    return Rect::new(x, y, config.cell_width, config.header_height);
 }
-
-

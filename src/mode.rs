@@ -1,4 +1,3 @@
-
 pub enum AppMode {
     Normal,
     Filter, // `&`

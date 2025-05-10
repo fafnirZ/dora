@@ -1,6 +1,6 @@
 // Credits to: https://github.dev/YS-L/csvlens/blob/main/src/util/events.rs
 
-use std::time::{Duration,Instant};
+use std::time::{Duration, Instant};
 
 use crossterm::event::{Event as CrossTermEvent, KeyEvent, KeyEventKind, poll, read};
 

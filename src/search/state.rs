@@ -1,6 +1,5 @@
 use super::traits::{AnySearchResult, SearchAlgorithm};
 
-
 pub struct SearchResultState {
     // assuming you're only performing on a single column
     // the current focused column;

@@ -3,15 +3,14 @@ use std::fs::File;
 use polars::{frame::DataFrame, prelude::*};
 
 use crate::errors::DoraErrors;
-use std::io::Cursor;
-use google_cloud_storage::client::{ClientConfig, Client};
-use google_cloud_storage::http::objects::get::GetObjectRequest;
+use google_cloud_storage::client::{Client, ClientConfig};
 use google_cloud_storage::http::objects::download::Range;
+use google_cloud_storage::http::objects::get::GetObjectRequest;
+use std::io::Cursor;
 // use url::Url;
 // use std::fs::File;
 // use std::io::BufReader;
 // use std::io::Read;
-
 
 const GS_PREFIX: &str = "gs://";
 
@@ -33,7 +32,7 @@ impl PathLocation {
             } else {
                 PathLocation::Local
             }
-        }
+        };
     }
 }
 
@@ -47,16 +46,10 @@ impl FileType {
     pub fn determine_extension(path: &str) -> Option<Self> {
         if path.ends_with(".csv") {
             return Some(FileType::Csv);
-        } else if 
-            path.ends_with(".xlsx")
-            || path.ends_with(".xls")
-        {
-            return Some(FileType::Excel)
-        } else if
-            path.ends_with(".parquet")
-            || path.ends_with(".pq")
-        {
-            return Some(FileType::Parquet)
+        } else if path.ends_with(".xlsx") || path.ends_with(".xls") {
+            return Some(FileType::Excel);
+        } else if path.ends_with(".parquet") || path.ends_with(".pq") {
+            return Some(FileType::Parquet);
         }
         None
     }
@@ -120,40 +113,42 @@ fn split_gs_path_split(path: &str) -> Option<(&str, &str, &str)> {
 //     let data = Bytes::from(object_data);
 
 //     let cursor = Cursor::new(data);
-    
+
 //     ParquetReader::new(cursor)
 //         .finish()
 
 // }
 
-async fn read_parquet_from_gcs_async(gs_path: &str) -> Result<DataFrame, PolarsError>{
+async fn read_parquet_from_gcs_async(gs_path: &str) -> Result<DataFrame, PolarsError> {
     if let Some((prefix, bucket, path)) = split_gs_path_split(gs_path) {
         if prefix != "gs://" {
-            return Err(PolarsError::InvalidOperation("expected gs:// prefix.".into())); 
+            return Err(PolarsError::InvalidOperation(
+                "expected gs:// prefix.".into(),
+            ));
         }
-        let config = ClientConfig::default()
-            .with_auth()
-            .await
-            .unwrap();
+        let config = ClientConfig::default().with_auth().await.unwrap();
         let gcs_client = Client::new(config);
 
-        let object_data = gcs_client.download_object(&GetObjectRequest {
-                bucket: bucket.to_string(),
-                object: path.to_string(),
-                ..Default::default()
-            }, &Range::default())        
+        let object_data = gcs_client
+            .download_object(
+                &GetObjectRequest {
+                    bucket: bucket.to_string(),
+                    object: path.to_string(),
+                    ..Default::default()
+                },
+                &Range::default(),
+            )
             .await
             .unwrap();
-
 
         let cursor = Cursor::new(object_data);
 
-        return ParquetReader::new(cursor)
-            .finish()
+        return ParquetReader::new(cursor).finish();
     }
-    return Err(PolarsError::InvalidOperation("read parquet from gcs async failed.".into()));
+    return Err(PolarsError::InvalidOperation(
+        "read parquet from gcs async failed.".into(),
+    ));
 }
-
 
 pub fn read_parquet_from_gcs_sync(gs_path: &str) -> Result<DataFrame, PolarsError> {
     return Ok(tokio::runtime::Runtime::new()
@@ -161,50 +156,35 @@ pub fn read_parquet_from_gcs_sync(gs_path: &str) -> Result<DataFrame, PolarsErro
         .unwrap()
         .block_on(async {
             read_parquet_from_gcs_async(gs_path)
-            .await
-            .map_err(
-                |e| PolarsError::InvalidOperation(e.to_string().into())
-            )
+                .await
+                .map_err(|e| PolarsError::InvalidOperation(e.to_string().into()))
         })
-        .unwrap())
+        .unwrap());
 }
-
 
 pub fn read_from_any_path(path: &str) -> Result<DataFrame, DoraErrors> {
     let location = PathLocation::determine_location(path);
     let extension = match FileType::determine_extension(path) {
         Some(res) => res,
-        None => {
-            return Err(DoraErrors::FileNotFound("File not found.".to_string()))
-        }
+        None => return Err(DoraErrors::FileNotFound("File not found.".to_string())),
     };
 
     return Ok(match extension {
-        FileType::Csv => {
-            CsvReadOptions::default()
-                .try_into_reader_with_file_path(Some(path.into()))
-                .unwrap()
-                .finish()
-                .unwrap()
-        },
-        FileType::Parquet => {
-            match location {
-                PathLocation::Gcs => {
-                    match read_parquet_from_gcs_sync(path) {
-                        Ok(res) => return Ok(res),
-                        Err(err) => return Err(DoraErrors::IOError(err.to_string()))
-                    }
-                },
-                PathLocation::Local => {
-                    let f = File::open(path).unwrap();
-                    ParquetReader::new(f)
-                        .finish()
-                        .unwrap()
-                }
+        FileType::Csv => CsvReadOptions::default()
+            .try_into_reader_with_file_path(Some(path.into()))
+            .unwrap()
+            .finish()
+            .unwrap(),
+        FileType::Parquet => match location {
+            PathLocation::Gcs => match read_parquet_from_gcs_sync(path) {
+                Ok(res) => return Ok(res),
+                Err(err) => return Err(DoraErrors::IOError(err.to_string())),
+            },
+            PathLocation::Local => {
+                let f = File::open(path).unwrap();
+                ParquetReader::new(f).finish().unwrap()
             }
-        }
-        _ => return {
-            Err(DoraErrors::FileNotFound("Invalid File Type".to_string()))
-        }
+        },
+        _ => return { Err(DoraErrors::FileNotFound("Invalid File Type".to_string())) },
     });
 }

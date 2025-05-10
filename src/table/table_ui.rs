@@ -8,25 +8,20 @@ use crate::cell::get_header_area;
 use crate::utils::centered_text::render_text_centered_in_area;
 
 use super::column_ui::ColumnUI;
-use super::line_number_ui::{LineNumberUI};
+use super::line_number_ui::LineNumberUI;
 use super::table_banner::TableBanner;
-
 
 pub struct TableUI {}
 
 impl TableUI {
-    pub fn new() -> Self { Self {} } 
+    pub fn new() -> Self {
+        Self {}
+    }
 }
-
 
 // priv
 impl TableUI {
-
-    fn render_table_borders(
-        &self, 
-        area: Rect, 
-        buf: &mut Buffer, 
-    ) {
+    fn render_table_borders(&self, area: Rect, buf: &mut Buffer) {
         // render a block for table.
         // give it a top & bottom border;
         let block = Block::default()
@@ -37,10 +32,10 @@ impl TableUI {
     }
 
     fn render_header(
-        &self, 
-        area: Rect, 
-        buf: &mut Buffer, 
-        app_state: &mut <TableUI as StatefulWidget>::State
+        &self,
+        area: Rect,
+        buf: &mut Buffer,
+        app_state: &mut <TableUI as StatefulWidget>::State,
     ) {
         let config_state = &app_state.config_state;
         let start_x = area.x;
@@ -54,14 +49,15 @@ impl TableUI {
         let area = Rect::new(start_x, start_y, area.width, height);
         block.render(area, buf);
 
-
         // rendering the column values.
         let df_state = &app_state.dataframe_state;
         let headers = df_state.get_headers_in_col_slice();
         for (idx, header) in headers.iter().enumerate() {
             let y = start_y;
             let x = start_x + config_state.cell_width * (idx as u16);
-            if x+config_state.cell_width> area.x+area.width {break;} // do not render beyond bounds
+            if x + config_state.cell_width > area.x + area.width {
+                break;
+            } // do not render beyond bounds
             let cell_area = get_header_area(config_state, x, y);
             let header_name = header.name.clone();
             render_text_centered_in_area(header_name, cell_area, buf);
@@ -71,11 +67,10 @@ impl TableUI {
         // (height.saturating_sub(2), height)
     }
 
-
-    fn get_column_uis_for_rendering(        
-        &self, 
-        area: Rect, 
-        state: &mut <TableUI as StatefulWidget>::State
+    fn get_column_uis_for_rendering(
+        &self,
+        area: Rect,
+        state: &mut <TableUI as StatefulWidget>::State,
     ) -> Vec<ColumnUI> {
         let config_state = &state.config_state;
         // debug_render_area_bg(area, buf, Color::Cyan);
@@ -93,12 +88,14 @@ impl TableUI {
             let x_offset = start_x + config_state.cell_width * (idx as u16);
             let y_offset = start_y + config_state.cell_height * 1; // header
             // do not render beyond bounds
-            if x_offset+config_state.cell_width > end_x {break;}
-            
+            if x_offset + config_state.cell_width > end_x {
+                break;
+            }
+
             let col_name = column.name().to_string();
-            
+
             let col_index = idx as u16;
-            let col_ui = ColumnUI::new(col_name,col_index);
+            let col_ui = ColumnUI::new(col_name, col_index);
             column_uis.push(col_ui);
         }
         column_uis
@@ -106,53 +103,43 @@ impl TableUI {
 
     // render banners
     fn render_bottom_banner(
-        &self, 
-        area: Rect, 
-        buf: &mut Buffer, 
-        state: &mut <TableUI as StatefulWidget>::State
+        &self,
+        area: Rect,
+        buf: &mut Buffer,
+        state: &mut <TableUI as StatefulWidget>::State,
     ) {
         let table_banner = TableBanner::new();
-        
-        table_banner.render(
-            area,
-            buf,
-            state,
-        )
+
+        table_banner.render(area, buf, state)
     }
 
     // vertically segment area into 3 section
     // table_banner_top
     // table_main
     // table_banner_bottom
-    fn vertical_segment_area(area: Rect) -> [Rect;3] {
+    fn vertical_segment_area(area: Rect) -> [Rect; 3] {
         return Layout::vertical([
             Constraint::Length(1),
             Constraint::Fill(1),
             Constraint::Length(1),
-        ]).areas(area)
+        ])
+        .areas(area);
     }
-    
+
     fn try_update_table_area(
         main_table_area: Rect, // new table area
         app_state: &mut <TableUI as StatefulWidget>::State,
     ) {
         let df_state = &mut app_state.dataframe_state;
         let [curr_height, curr_width] = df_state.table_area;
-        
+
         let config_state = &app_state.config_state;
-        if !(
-            main_table_area.height == curr_height 
-            && main_table_area.width == curr_width
-        ) {
+        if !(main_table_area.height == curr_height && main_table_area.width == curr_width) {
             // update the table area
-            df_state.table_area = [
-                main_table_area.height,
-                main_table_area.width,
-            ];
+            df_state.table_area = [main_table_area.height, main_table_area.width];
             df_state.refresh_renderable_table_size(config_state);
         }
     }
-
 }
 
 impl StatefulWidget for TableUI {
@@ -160,25 +147,24 @@ impl StatefulWidget for TableUI {
     // since you can only assign 1 object to this trait.
     type State = App; // cheat and assign to app state so we get access to everthing?
 
-    fn render(self, area: ratatui::prelude::Rect, buf: &mut ratatui::prelude::Buffer, state: &mut Self::State) {
-        let [
-            _table_banner_top,
-            table_main,
-            table_banner_bottom,
-        ] = TableUI::vertical_segment_area(area);
+    fn render(
+        self,
+        area: ratatui::prelude::Rect,
+        buf: &mut ratatui::prelude::Buffer,
+        state: &mut Self::State,
+    ) {
+        let [_table_banner_top, table_main, table_banner_bottom] =
+            TableUI::vertical_segment_area(area);
 
         // update the table area if needed
         // handles terminal resizing.
         TableUI::try_update_table_area(table_main, state);
 
-        let [
-            line_number_area,
-            table_main,
-        ] = Layout::horizontal([
+        let [line_number_area, table_main] = Layout::horizontal([
             Constraint::Length(state.config_state.line_number_cell_width),
             Constraint::Fill(1),
-        ]).areas(table_main);
-
+        ])
+        .areas(table_main);
 
         // render bottom banner
         self.render_bottom_banner(table_banner_bottom, buf, state);
@@ -189,15 +175,13 @@ impl StatefulWidget for TableUI {
         //////////////////////////////
         // segment table_main area
         /////////////////////////////
-        
-        let [
-            header_area,
-            values_area,
-        ] = Layout::vertical([
+
+        let [header_area, values_area] = Layout::vertical([
             Constraint::Length(state.config_state.header_height),
             Constraint::Fill(1),
-        ]).areas(table_main);
-        
+        ])
+        .areas(table_main);
+
         // header
         self.render_header(header_area, buf, state);
 
@@ -211,14 +195,12 @@ impl StatefulWidget for TableUI {
             column_ui.render(values_area, buf, state);
         }
     }
-    
 }
-
 
 // pub struct TableUIState {
 //     pub dataframe: DataFrame
 // }
 
 // impl TableUIState {
-  
+
 // }

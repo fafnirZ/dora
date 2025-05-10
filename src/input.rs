@@ -1,7 +1,9 @@
-use crossterm::event::{KeyCode, KeyEvent, KeyModifiers, Event as CrossTermEvent};
-use tui_input::{backend::crossterm::EventHandler, Input};
-use crate::{events::{Event, Events}, mode::AppMode,};
-
+use crate::{
+    events::{Event, Events},
+    mode::AppMode,
+};
+use crossterm::event::{Event as CrossTermEvent, KeyCode, KeyEvent, KeyModifiers};
+use tui_input::{Input, backend::crossterm::EventHandler};
 
 pub enum Control {
     ScrollUp,
@@ -14,7 +16,7 @@ pub enum Control {
     Quit,
     Nothing,
     Esc,
-    Command, // vim like command 
+    Command, // vim like command
     Enter, // enter key the generic version, if there is more nuanced definitions of enter we can define that later, right now i need a control which expresses the enter key in its generic form.
 }
 
@@ -47,7 +49,7 @@ impl InputHandler {
                 }
                 return self.handle_default(key);
             }
-            _ => Control::Nothing
+            _ => Control::Nothing,
         };
         control
     }
@@ -56,7 +58,7 @@ impl InputHandler {
         match key_event.modifiers {
             KeyModifiers::NONE => match key_event.code {
                 KeyCode::Char('q') => Control::Quit,
-                KeyCode::Char('k') | KeyCode::Up=> Control::ScrollUp,
+                KeyCode::Char('k') | KeyCode::Up => Control::ScrollUp,
                 KeyCode::Char('j') | KeyCode::Down => Control::ScrollDown,
                 KeyCode::Char('h') | KeyCode::Left => Control::ScrollLeft,
                 KeyCode::Char('l') | KeyCode::Right => Control::ScrollRight,
@@ -66,13 +68,13 @@ impl InputHandler {
                 KeyCode::Char('?') => Control::Help,
                 KeyCode::Char(':') => Control::Command,
                 KeyCode::Enter => Control::Enter,
-                _ => Control::Nothing
+                _ => Control::Nothing,
             },
             KeyModifiers::SHIFT => match key_event.code {
-                _ => Control::Nothing
+                _ => Control::Nothing,
             },
             KeyModifiers::CONTROL => match key_event.code {
-                _ => Control::Nothing
+                _ => Control::Nothing,
             },
             _ => Control::Nothing,
         }
@@ -85,9 +87,7 @@ impl InputHandler {
         };
 
         match key_event.code {
-            KeyCode::Esc => {
-                return Control::Esc
-            },
+            KeyCode::Esc => return Control::Esc,
             KeyCode::Enter => {
                 // need to think about how best to interpret the enter keycode.
                 // to be honest I think conditional logic for interpreting the enter
@@ -96,23 +96,23 @@ impl InputHandler {
                 // however other forms of interpreting 'enter' key might arise when the enter
                 // is interpreted in conjunction with other key terms for example shift enter?
                 // or something like that
-                return Control::Enter 
+                return Control::Enter;
             }
             _ => {
                 if input
                     .handle_event(&CrossTermEvent::Key(key_event)) // this function is the one which actually processes the key event.
-                    .is_some() 
+                    .is_some()
                 {
                     // TODO
                     return Control::Nothing;
                 }
-                return Control::Nothing; 
+                return Control::Nothing;
             }
-        }    
+        }
     }
 
     pub fn init_input_buffer(&mut self) {
-        self.buffer_state  = BufferState::Active(Input::default());
+        self.buffer_state = BufferState::Active(Input::default());
     }
 
     pub fn is_input_buffering(&self) -> bool {
@@ -123,5 +123,4 @@ impl InputHandler {
         self.buffer_state = BufferState::Inactive;
         self.mode_state = AppMode::Normal;
     }
-
 }

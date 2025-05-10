@@ -8,12 +8,9 @@ use std::collections::VecDeque;
 
 use super::traits::SearchAlgorithm;
 
-
-
 pub struct SimpleApproximateSearch {}
 
 impl SearchAlgorithm for SimpleApproximateSearch {
-
     type Result = Vec<usize>;
     // do a single pass forward
     // todo: do a pass from backwards to find shorter SimpleApproximateSearch::search
@@ -51,24 +48,20 @@ impl SearchAlgorithm for SimpleApproximateSearch {
                     None => break,
                 };
             } else {
-                continue
+                continue;
             }
         }
 
         if result_indices.len() == pattern.len() {
             return Some(result_indices);
         }
-        return None
+        return None;
     }
+}
 
-} 
-
-// a == b 
+// a == b
 // NOTE: we only accept ascii values
-fn cmp_char_insensitive(
-    a: &char,
-    b: &char,
-) -> bool {
+fn cmp_char_insensitive(a: &char, b: &char) -> bool {
     if a.is_ascii() {
         let tmp_a = (*a as u8).to_ascii_lowercase();
         let tmp_b = (*b as u8).to_ascii_lowercase();
@@ -86,56 +79,76 @@ mod tests {
     // these are the normal substring tests
     #[test]
     fn test_a() {
-        assert_eq!(SimpleApproximateSearch{}.search("aaa", "bbbaaaabb", true), Some(vec![3,4,5]));
+        assert_eq!(
+            SimpleApproximateSearch {}.search("aaa", "bbbaaaabb", true),
+            Some(vec![3, 4, 5])
+        );
     }
 
     #[test]
     fn test_b() {
-        assert_eq!(SimpleApproximateSearch{}.search("xyz", "abc", true), None);
+        assert_eq!(SimpleApproximateSearch {}.search("xyz", "abc", true), None);
     }
 
     #[test]
     fn test_empty_substring() {
-        assert_eq!(SimpleApproximateSearch{}.search("", "abc", true), None);
+        assert_eq!(SimpleApproximateSearch {}.search("", "abc", true), None);
     }
 
     #[test]
     fn test_empty_string() {
-        assert_eq!(SimpleApproximateSearch{}.search("abc", "", true), None);
+        assert_eq!(SimpleApproximateSearch {}.search("abc", "", true), None);
     }
 
     #[test]
     fn test_substring_at_start() {
-        assert_eq!(SimpleApproximateSearch{}.search("abc", "abcdef", true), Some(vec![0,1,2]));
+        assert_eq!(
+            SimpleApproximateSearch {}.search("abc", "abcdef", true),
+            Some(vec![0, 1, 2])
+        );
     }
 
     #[test]
     fn test_substring_at_end() {
-        assert_eq!(SimpleApproximateSearch{}.search("def", "abcdef", true), Some(vec![3,4,5]));
+        assert_eq!(
+            SimpleApproximateSearch {}.search("def", "abcdef", true),
+            Some(vec![3, 4, 5])
+        );
     }
 
     #[test]
     fn test_longer_substring() {
-        assert_eq!(SimpleApproximateSearch{}.search("abcdefg", "abc", true), None);
+        assert_eq!(
+            SimpleApproximateSearch {}.search("abcdefg", "abc", true),
+            None
+        );
     }
-
 
     // approximate substring tests
     #[test]
     fn test_approximate_substring_1() {
-        assert_eq!(SimpleApproximateSearch{}.search("abc", "apppbbomc", true), Some(vec![0,4,8]));
+        assert_eq!(
+            SimpleApproximateSearch {}.search("abc", "apppbbomc", true),
+            Some(vec![0, 4, 8])
+        );
     }
 
     #[test]
     fn test_approximate_substring_2() {
         // yikes the example yields a non optimal match, whatever for now i guess
-        assert_eq!(SimpleApproximateSearch{}.search("syd", "Western Sydney", true), Some(vec![2,9,10]));
+        assert_eq!(
+            SimpleApproximateSearch {}.search("syd", "Western Sydney", true),
+            Some(vec![2, 9, 10])
+        );
         // assert_eq!(SimpleApproximateSearch{}.search("syd", "Western Sydney", true), Some(vec![7,8,9]));
     }
 
     // bad but whatever
     #[test]
     fn test_approximate_substring_3() {
-        assert_eq!(SimpleApproximateSearch{}.search("syd", "SaveYourDreams", true), Some(vec![0,4,8]));
+        assert_eq!(
+            SimpleApproximateSearch {}.search("syd", "SaveYourDreams", true),
+            Some(vec![0, 4, 8])
+        );
     }
 }
