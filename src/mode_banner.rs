@@ -41,18 +41,12 @@ impl StatefulWidget for ModeBanner {
     type State = App;
 
     fn render(self, area: Rect, buf: &mut Buffer, state: &mut Self::State) {
-        let [
-            left_side,
-            right_side,
-        ] = Layout::horizontal([
-            Constraint::Percentage(50),
-            Constraint::Percentage(50),     
-        ]).areas(area);
-        
+        let [left_side, right_side] =
+            Layout::horizontal([Constraint::Percentage(50), Constraint::Percentage(50)])
+                .areas(area);
+
         let err_buf = &state.input_handler.error_buffer;
-        let is_err = {
-            err_buf != ""
-        };
+        let is_err = { err_buf != "" };
 
         //
         // left side in app banner

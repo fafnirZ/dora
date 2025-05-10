@@ -162,8 +162,7 @@ impl DataFrameState {
         // and columns we can render     //
         ///////////////////////////////////
         let minus_one_for_good_luck_because_it_needs_padding = 1;
-        let rows_renderable = 
-        ((table_area[0] - config_state.header_height)
+        let rows_renderable = ((table_area[0] - config_state.header_height)
             / config_state.cell_height
             - minus_one_for_good_luck_because_it_needs_padding)
             .min(MAX_ROWS_RENDERED as u16);

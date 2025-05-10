@@ -1,4 +1,3 @@
-
 use polars::prelude::DataType;
 
 use crate::{
@@ -286,14 +285,10 @@ impl Controller {
                 };
                 match CommandHandler::try_execute(app_state, &buffer_value) {
                     Ok(_) => {
-                        app_state
-                        .input_handler
-                        .error_buffer = String::new(); // clear previous error buffers
-                    },
+                        app_state.input_handler.error_buffer = String::new(); // clear previous error buffers
+                    }
                     Err(err) => {
-                        app_state
-                        .input_handler
-                        .error_buffer = err.to_string(); // sets error buffer
+                        app_state.input_handler.error_buffer = err.to_string(); // sets error buffer
                     }
                 }
             }
