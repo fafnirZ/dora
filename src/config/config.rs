@@ -1,4 +1,6 @@
 
+use crate::errors::DoraErrors;
+
 use super::{dotconfig::read_config_file, serde::Config};
 
 // default configs
@@ -7,6 +9,9 @@ const HEADER_HEIGHT: u16 = 3;
 const CELL_HEIGHT: u16 = 1;
 const CELL_WIDTH: u16 = 15;
 const LINE_NUMBER_CELL_WIDTH: u16 = 5;
+
+
+const IGNORE_CONFIG_FILE_ON_PARSE_ERROR: bool = false;
 
 #[derive(Debug)]
 pub struct ConfigState {
@@ -23,7 +28,9 @@ impl ConfigState {
         // deserialise from config file.
         let deserialised_config = match read_config_file() {
             Ok(res) => res,
-            Err(_) => Config::default(),
+            Err(_) => {
+                Config::default()
+            },
         };
 
         Self {
