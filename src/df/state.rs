@@ -153,7 +153,7 @@ impl DataFrameState {
     }
 
     // refresh renderable table size
-    pub fn refresh_renderable_table_size(&mut self, config_state: &ConfigState) {
+    pub fn recalculate_renderable_cells(&mut self, config_state: &ConfigState) {
         // get the current table area
         let table_area = self.table_area;
 
@@ -172,7 +172,8 @@ impl DataFrameState {
 
         self.rows_rendered = rows_renderable;
         self.cols_rendered = cols_renderable;
-
+    }
+    pub fn recalculate_view_slices(&mut self) {
         ////////////////////////////////////
         // update row and col view slices //
         ////////////////////////////////////
@@ -180,6 +181,10 @@ impl DataFrameState {
         self.row_view_slice[1] = self.cursor_y + self.rows_rendered as i64;
         self.col_view_slice[0] = self.cursor_x;
         self.col_view_slice[1] = self.cursor_x + self.cols_rendered as i64;
+    }
+    pub fn refresh_renderable_table_size(&mut self, config_state: &ConfigState) {
+        self.recalculate_renderable_cells(config_state);
+        self.recalculate_view_slices();
     }
 
     // setter getters
