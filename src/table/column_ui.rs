@@ -50,8 +50,9 @@ impl ColumnUI {
             style = style.fg(Color::White);
         }
 
+        // Fill(0) allows collapsing to size 0 when needed?
         let [cell_top_padding, text_area, cell_bottom_padding] =
-            Layout::vertical([Constraint::Fill(1), Constraint::Min(1), Constraint::Fill(1)])
+            Layout::vertical([Constraint::Fill(0), Constraint::Min(1), Constraint::Fill(0)])
                 .areas(area);
 
         Paragraph::new("")
@@ -69,8 +70,7 @@ impl ColumnUI {
 
         // determine whether to word wrap or not
         if is_word_wrap {
-            cell_contents = cell_contents.wrap(Wrap { trim: true });
-
+            cell_contents = cell_contents.wrap(Wrap { trim: false });
         }
         // render
         cell_contents
