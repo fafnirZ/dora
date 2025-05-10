@@ -1,4 +1,4 @@
-use super::dotconfig::read_config_file;
+use super::{dotconfig::read_config_file, serde::Config};
 
 // default configs
 const WORD_WRAP: bool = false;
@@ -33,5 +33,20 @@ impl ConfigState {
         }
     }
 
-    
+    // generic downcast from any
+    // and provide fallback value.
+    // if wasnt able to downcast will fall back to the system default
+    // if not found in config, will fall back to system default
+    fn from_config_or<T: Clone + 'static>(config: Config, attribute_name: &str, fall_back_value: T) -> T {
+        match config.get_attr(attribute_name) {
+            Some(val) => {
+                if let Some(t_val) = val.downcast_ref::<T>() {
+                    t_val.clone()
+                } else {
+                    fall_back_value.clone() // Return the fallback if downcast fails
+                }
+            }
+            None => fall_back_value.clone(), // Return a clone of the fallback
+        }
+    }
 }
