@@ -29,6 +29,7 @@ impl ConfigState {
                 Config::default()
             },
         };
+        println!("{:?}", deserialised_config);
         Self {
             header_height: HEADER_HEIGHT,
             line_number_cell_width: LINE_NUMBER_CELL_WIDTH,
@@ -51,11 +52,14 @@ impl ConfigState {
     fn from_config_or<T: Clone + 'static>(config: &Config, attribute_name: &str, fall_back_value: T) -> T {
         match config.get_attr(attribute_name) {
             Some(val) => {
-                if let Some(t_val) = val.downcast_ref::<T>() {
-                    println!("downcasted to something");
-                    t_val.clone()
+                if let Some(opt_val) = val.downcast_ref::<Option<T>>() {
+                    // println!("downcasted to Option<{}>", std::any::type_name::<T>());
+                    match opt_val {
+                        Some(t_val) => t_val.clone(),
+                        None => fall_back_value.clone(),
+                    } 
                 } else {
-                    println!("downcasted failed");
+                    // println!("downcasted failed");
                     fall_back_value.clone() // Return the fallback if downcast fails
                 }
             }
