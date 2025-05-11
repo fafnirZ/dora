@@ -194,10 +194,41 @@ impl DataFrameState {
         ////////////////////////////////////
         // update row and col view slices //
         ////////////////////////////////////
-        self.row_view_slice[0] = self.cursor_y;
-        self.row_view_slice[1] = self.cursor_y + self.rows_rendered;
-        self.col_view_slice[0] = self.cursor_x;
-        self.col_view_slice[1] = self.cursor_x + self.cols_rendered;
+        //
+        // keeping old implementation for now
+        // previous implementation was cursor centric
+        // now we are view slice centric
+        // and adjust the cursor to be within the bounds
+        // self.row_view_slice[0] = self.cursor_y;
+        // self.row_view_slice[1] = self.cursor_y + self.rows_rendered;
+        // self.col_view_slice[0] = self.cursor_x;
+        // self.col_view_slice[1] = self.cursor_x + self.cols_rendered;
+
+        let curr_row_view_slice = self.row_view_slice.clone();
+        let curr_col_view_slice = self.col_view_slice.clone();
+        let new_row_view_slice = [
+            curr_row_view_slice[0],
+            curr_row_view_slice[0]+self.rows_rendered,
+        ];
+        let new_col_view_slice = [
+            curr_col_view_slice[0],
+            curr_col_view_slice[0]+self.rows_rendered,
+        ];
+        self.row_view_slice = new_row_view_slice;
+        self.col_view_slice = new_col_view_slice;
+
+        // bound the cursors to be the upper bound
+        // no need to do for lower bound since its lower bound centric
+        // meaning its impossible for the lower bound to be mutated in
+        // this function, we take it as the starting point for calculations
+
+        // if self.cursor_x > self.cols_rendered {
+        //     self.cursor_x = self.cols_rendered
+        // }
+        // if self.cursor_y > self.rows_rendered {
+        //     self.cursor_y = self.rows_rendered
+        // }
+
     }
 
     pub fn refresh_renderable_table_size(&mut self, config_state: &ConfigState) {
