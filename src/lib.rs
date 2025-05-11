@@ -13,5 +13,6 @@ mod runner;
 mod search;
 mod table;
 mod utils;
+mod page;
 
 pub use runner::run_app;

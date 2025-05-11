@@ -7,15 +7,7 @@ use ratatui::{
 };
 
 use crate::{
-    config::ConfigState,
-    controller::Controller,
-    df::state::DataFrameState,
-    errors::DoraResults,
-    input::{Control, InputHandler},
-    mode_banner::ModeBanner,
-    search::state::SearchResultState,
-    table::table_ui::TableUI,
-    utils::area::horizontal_pad_area,
+    config::ConfigState, controller::Controller, df::state::DataFrameState, errors::DoraResults, input::{Control, InputHandler}, mode_banner::ModeBanner, page::PageState, search::state::SearchResultState, table::table_ui::TableUI, utils::area::horizontal_pad_area
 };
 
 // global app state.
@@ -24,6 +16,7 @@ pub struct App {
     pub dataframe_state: DataFrameState,
     pub search_result_state: SearchResultState,
     pub config_state: ConfigState,
+    pub page_state: PageState,
 }
 
 impl App {
@@ -33,6 +26,7 @@ impl App {
             dataframe_state: DataFrameState::new(file_path),
             search_result_state: SearchResultState::new(),
             config_state: ConfigState::new(),
+            page_state: PageState::TablePage, // default
         }
     }
 
@@ -62,7 +56,12 @@ impl App {
     ///////////////
 
     fn render_frame(&mut self, frame: &mut Frame) {
-        self.render_table(frame);
+        match self.page_state {
+            PageState::TablePage => {
+                self.render_table(frame);
+            }
+            PageState::MultiSheetSelectionPage => {}
+        }
     }
     fn render_table(&mut self, frame: &mut Frame) {
         let area = frame.area();
