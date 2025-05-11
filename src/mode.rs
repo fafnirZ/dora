@@ -1,7 +1,8 @@
 pub enum AppMode {
     Normal,
-    Filter, // `&`
-    Search, // `/`
-    Help,   // `?`
-    Command,
+    Filter,  // `&`
+    Search,  // `/`
+    Help,    // `?`
+    Command, // :
+    SheetSelection,
 }

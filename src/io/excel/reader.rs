@@ -7,40 +7,50 @@
 use std::{cell, io::Cursor};
 
 // use polars::error::PolarsError;
+use calamine::{Reader, Sheets, open_workbook_auto_from_rs};
 use polars::prelude::*;
-use calamine::{open_workbook_auto_from_rs, Reader, Sheets};
 
 use crate::errors::DoraErrors;
 
-pub struct ExcelReader{
-    cursor: Cursor<Vec<u8>>
+pub struct ExcelReader {
+    cursor: Cursor<Vec<u8>>,
 }
 
 // this will 'feel' like all the other polars io readers.
 impl ExcelReader {
     pub fn new(cursor: Cursor<Vec<u8>>) -> Self {
-        Self {
-            cursor: cursor,
-        }
+        Self { cursor: cursor }
     }
 
-    pub fn finish(&self) -> Result<DataFrame, DoraErrors> {
+    pub fn read_sheet(&self, sheet_index: usize) -> Result<DataFrame, DoraErrors> {
         let mut file_contents = open_workbook_auto_from_rs(self.cursor.clone())
             .map_err(|e| DoraErrors::IOError(e.to_string()))?;
-        
+
         // TODO handle sheet later.
         // but right now we take first one and convert to dataframe :)
         let csv_buffers = ExcelReader::worksheets_to_csv_string_bufs(&mut file_contents);
         // consumes the buffers, because I don't want them to be doubly owned.
         // this obj is useless after this funtion.
-        let sheet_1_contents = csv_buffers[0].to_owned(); // TODO, for initial testing purposes since I dont wanna deal with multisheets just yet.
-        let cursor = Cursor::new(sheet_1_contents);
+        let sheet_contents = csv_buffers[sheet_index].to_owned(); // TODO, for initial testing purposes since I dont wanna deal with multisheets just yet.
+        let cursor = Cursor::new(sheet_contents);
 
         // to polars dataframe.
         let df = CsvReader::new(cursor)
             .finish()
             .map_err(|e| DoraErrors::IOError(e.to_string()))?;
         Ok(df)
+    }
+
+    pub fn get_worksheet_names(&self) -> Result<Vec<String>, DoraErrors> {
+        let mut file_contents = open_workbook_auto_from_rs(self.cursor.clone())
+            .map_err(|e| DoraErrors::IOError(e.to_string()))?;
+
+        let worksheets = file_contents.worksheets();
+        let worksheet_names: Vec<String> = worksheets
+            .into_iter()
+            .map(|(sheet_name, _)| sheet_name)
+            .collect();
+        Ok(worksheet_names)
     }
 
     fn worksheets_to_csv_string_bufs(
@@ -67,6 +77,6 @@ impl ExcelReader {
             }
             sheet_store.push(sheet_buf);
         }
-        sheet_store     
+        sheet_store
     }
 }

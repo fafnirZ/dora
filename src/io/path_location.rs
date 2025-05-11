@@ -8,7 +8,6 @@ use google_cloud_storage::http::objects::download::Range;
 use google_cloud_storage::http::objects::get::GetObjectRequest;
 use std::io::Cursor;
 
-
 const GS_PREFIX: &str = "gs://";
 
 // given a path

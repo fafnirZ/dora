@@ -20,11 +20,10 @@ impl Config {
     }
 }
 
-
 impl Default for Config {
     // since the values are all nullable
     // the default should really be null.
-    // if we ever want to have a serialisation 
+    // if we ever want to have a serialisation
     // default, we probably shouldnt use this function
     // for that.
     fn default() -> Self {

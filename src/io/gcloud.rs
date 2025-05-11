@@ -8,7 +8,6 @@ use google_cloud_storage::http::objects::download::Range;
 use google_cloud_storage::http::objects::get::GetObjectRequest;
 use std::io::Cursor;
 
-
 // example:
 // gs://bucket/rest/of/path
 // (gs://, bucket, rest/of/path)
@@ -30,9 +29,7 @@ fn split_gs_path_split(path: &str) -> Option<(&str, &str, &str)> {
 async fn read_bytes_from_gcs_async(gs_path: &str) -> Result<Cursor<Vec<u8>>, DoraErrors> {
     if let Some((prefix, bucket, path)) = split_gs_path_split(gs_path) {
         if prefix != "gs://" {
-            return Err(DoraErrors::IOError(
-                "expected gs:// prefix.".into(),
-            ));
+            return Err(DoraErrors::IOError("expected gs:// prefix.".into()));
         }
         let config = ClientConfig::default().with_auth().await.unwrap();
         let gcs_client = Client::new(config);

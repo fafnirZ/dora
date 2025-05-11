@@ -1,22 +1,16 @@
 use polars::prelude::DataType;
 
 use crate::{
-    app::App,
-    commands::controller::CommandHandler,
-    df::state::CursorFocus,
-    input::{BufferState, Control},
-    mode::AppMode,
-    search::{
+    app::App, commands::controller::CommandHandler, df::state::CursorFocus, input::{BufferState, Control}, io::read_excel_from_any_path, mode::AppMode, page::PageState, search::{
         approximate_substring_v1::SimpleApproximateSearch,
         controller::shift_current_result_cursor_value_into_view,
         search::par_find_substring_matches,
         traits::{AnySearchResult, SearchAlgorithmImplementations},
-    },
-    table::controller::{
+    }, table::controller::{
         shift_column_cursor_left, shift_column_cursor_right, shift_displayed_df_value_slice_down,
         shift_displayed_df_value_slice_left, shift_displayed_df_value_slice_right,
         shift_displayed_df_value_slice_up, shift_row_cursor_down, shift_row_cursor_up,
-    },
+    }
 };
 
 // given input,
@@ -36,6 +30,9 @@ impl Controller {
             AppMode::Search => Controller::handle_search_mode_control(control, app_state),
             AppMode::Help => Controller::handle_help_mode_control(control, app_state),
             AppMode::Command => Controller::handle_command_mode_control(control, app_state),
+            AppMode::SheetSelection => {
+                Controller::handle_sheet_selection_mode_control(control, app_state)
+            }
         }
     }
 
@@ -293,6 +290,39 @@ impl Controller {
                 }
             }
             _ => {} // do nothing
+        }
+    }
+
+    fn handle_sheet_selection_mode_control(control: &Control, app_state: &mut App) {
+        match control {
+            Control::Enter => {
+                let sheet_index = app_state.sheet_selector_state.cursor as usize;
+                let df_state = &mut app_state.dataframe_state;
+                df_state.collect_from_excel_sheet(sheet_index);
+                app_state.page_state = PageState::TablePage; // render table page
+                app_state.input_handler.mode_state = AppMode::Normal; // handle table mode inputs
+            }
+            Control::ScrollUp => {
+                let cursor = app_state.sheet_selector_state.cursor;
+                if cursor == 0 {
+                    return;
+                }
+                app_state.sheet_selector_state.cursor = cursor - 1;
+            }
+            Control::ScrollDown => {
+                let cursor = app_state.sheet_selector_state.cursor;
+                let item_len = app_state
+                    .sheet_selector_state
+                    .sheet_names
+                    .as_ref()
+                    .expect("Sheet selector's sheet names is set to null.")
+                    .len();
+                if cursor == (item_len as u16) - 1 {
+                    return;
+                }
+                app_state.sheet_selector_state.cursor = cursor + 1;
+            }
+            _ => {}
         }
     }
 }

@@ -24,6 +24,7 @@ impl ModeBanner {
             AppMode::Search => String::from("search:"),
             AppMode::Help => String::from("help:"),
             AppMode::Command => String::from(":"),
+            _ => String::from(""),
         };
 
         let input_buffer_string = {

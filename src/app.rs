@@ -1,3 +1,4 @@
+use polars::prelude::file;
 use ratatui::{
     Frame, Terminal,
     layout::{Constraint, Layout},
@@ -11,8 +12,14 @@ use crate::{
     controller::Controller,
     df::state::DataFrameState,
     errors::DoraResults,
-    input::{Control, InputHandler},
+    input::{self, Control, InputHandler},
+    io::{
+        ExcelReader, ExcelSheetSelectorPage, ExcelSheetSelectorWidgetState,
+        get_cursor_from_any_path,
+    },
+    mode::AppMode,
     mode_banner::ModeBanner,
+    page::{self, PageState},
     search::state::SearchResultState,
     table::table_ui::TableUI,
     utils::area::horizontal_pad_area,
@@ -20,19 +27,69 @@ use crate::{
 
 // global app state.
 pub struct App {
+    // global states (regardless of page)
     pub input_handler: InputHandler,
+    pub config_state: ConfigState,
+    pub page_state: PageState,
+
+    // normal page state
     pub dataframe_state: DataFrameState,
     pub search_result_state: SearchResultState,
-    pub config_state: ConfigState,
+
+    // excel sheet selector page state
+    pub sheet_selector_state: ExcelSheetSelectorWidgetState,
 }
 
 impl App {
     pub fn new(file_path: &str) -> Self {
+        // determining page state.
+        let page_state = {
+            if PageState::determine_is_multisheet_selection_page(file_path) {
+                PageState::MultiSheetSelectionPage
+            } else {
+                PageState::TablePage
+            }
+        };
+
+        // dataframe state
+        let mut dataframe_state = DataFrameState::new(file_path);
+        match page_state {
+            PageState::MultiSheetSelectionPage => {} // dataframe wont be evaluated until collect is called later
+            _ => {
+                dataframe_state.collect(); // will evaluate the dataframe upfront
+            }
+        }
+
+        // sheet_selector_state
+        let sheet_selector_state = match page_state {
+            PageState::MultiSheetSelectionPage => {
+                let cursor = get_cursor_from_any_path(file_path).unwrap();
+                let worksheet_names = ExcelReader::new(cursor).get_worksheet_names().unwrap();
+                ExcelSheetSelectorWidgetState {
+                    sheet_names: Some(worksheet_names),
+                    cursor: 0,
+                }
+            } // dataframe wont be evaluated until collect is called later
+            _ => ExcelSheetSelectorWidgetState::new(),
+        };
+
+        // input handler
+        let input_hander = match page_state {
+            PageState::MultiSheetSelectionPage => {
+                let mut input_handler = InputHandler::new();
+                input_handler.mode_state = AppMode::SheetSelection;
+                input_handler
+            }
+            _ => InputHandler::new(),
+        };
+
         Self {
-            input_handler: InputHandler::new(),
-            dataframe_state: DataFrameState::new(file_path),
+            input_handler: input_hander,
+            dataframe_state: dataframe_state,
             search_result_state: SearchResultState::new(),
             config_state: ConfigState::new(),
+            page_state: page_state,
+            sheet_selector_state: sheet_selector_state,
         }
     }
 
@@ -62,6 +119,17 @@ impl App {
     ///////////////
 
     fn render_frame(&mut self, frame: &mut Frame) {
+        match self.page_state {
+            PageState::TablePage => {
+                self.render_table(frame);
+            }
+            PageState::MultiSheetSelectionPage => {
+                let page = ExcelSheetSelectorPage::new();
+                frame.render_stateful_widget(page, frame.area(), &mut self.sheet_selector_state);
+            }
+        }
+    }
+    fn render_table(&mut self, frame: &mut Frame) {
         let area = frame.area();
         let [top_banner, _, main_area, _, bottom_banner] = Layout::vertical([
             Constraint::Length(1),     // top banner
