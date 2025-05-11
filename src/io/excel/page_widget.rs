@@ -10,6 +10,9 @@ use ratatui::{
     widgets::{Block, Borders, Paragraph, StatefulWidget, Widget, Wrap},
 };
 
+///////////
+// state //
+///////////
 pub struct ExcelSheetSelectorWidgetState {
     pub sheet_names: Option<Vec<String>>,
     pub cursor: u16,
@@ -24,6 +27,9 @@ impl ExcelSheetSelectorWidgetState {
     }
 }
 
+//////////////
+// renderer //
+//////////////
 // const ELEMENT_WIDTH: u16 = 10;
 const ELEMENT_HEIGHT: u16 = 1;
 
@@ -43,9 +49,13 @@ impl ExcelSheetSelectorPage {
         let mut para = Paragraph::new(sheet_name).alignment(Alignment::Center);
 
         if is_selected {
-            para = para.bg(Color::DarkGray);
+            para = para
+                .fg(Color::White)
+                .bg(Color::DarkGray);
         } else {
-            para = para.bg(Color::Gray);
+            para = para
+                .fg(Color::Black)
+                .bg(Color::Gray);
         }
 
         para.render(main, buf);
