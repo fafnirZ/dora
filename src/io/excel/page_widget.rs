@@ -4,9 +4,7 @@
 // for the excel reader.
 
 use ratatui::{
-    buffer::Buffer,
-    layout::{Alignment, Constraint, Layout, Rect},
-    widgets::{Paragraph, StatefulWidget, Widget},
+    buffer::Buffer, layout::{Alignment, Constraint, Layout, Rect}, style::{Color, Stylize}, widgets::{Block, Borders, Paragraph, StatefulWidget, Widget}
 };
 
 pub struct ExcelSheetSelectorWidgetState {
@@ -33,10 +31,27 @@ impl ExcelSheetSelectorPage {
         Self {}
     }
 
-    fn render_element(&self, sheet_name: &str, area: Rect, buf: &mut Buffer) {
-        Paragraph::new(sheet_name)
-            .alignment(Alignment::Center)
-            .render(area, buf);
+    fn render_element(&self, sheet_name: &str, is_selected: bool, area: Rect, buf: &mut Buffer) {
+        // v align
+        let [
+            _,
+            main,
+            _,
+        ] = Layout::vertical([
+            Constraint::Fill(0),
+            Constraint::Min(1),
+            Constraint::Fill(0),
+        ]).areas(area);
+
+
+        let mut para = Paragraph::new(sheet_name)
+            .alignment(Alignment::Center);
+            
+        if is_selected {
+            para = para.bg(Color::DarkGray);
+        }
+
+        para.render(main, buf);
     }
 
     fn render_widget(
@@ -56,7 +71,16 @@ impl ExcelSheetSelectorPage {
             let curr_y = start_y + (idx as u16) * ELEMENT_HEIGHT;
             // fills width to the size of the element.
             let area = Rect::new(start_x, curr_y, area.width, ELEMENT_HEIGHT);
-            self.render_element(sheet_name, area, buf);
+            // render a boarder around the block.
+            Block::new()
+                .borders(Borders::ALL)
+                .render(area, buf);
+
+            // highlights if cursor is on it.
+            let is_selected = {
+                (idx as u16) == state.cursor
+            };
+            self.render_element(sheet_name, is_selected, area, buf);
         }
     }
 }
