@@ -4,6 +4,7 @@
 
 use crate::app::App;
 
+
 // the following 4 functions does the following:
 // update the data slice for dataframe rows being
 // displayed.

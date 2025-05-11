@@ -4,9 +4,9 @@ use polars::prelude::*;
 
 // only use these as initialisation values
 // we will update dynamically later.
-const SLICE_SIZE: i64 = 50;
-const MAX_ROWS_RENDERED: i64 = SLICE_SIZE;
-const MAX_COLS_RENDERED: i64 = 10;
+const SLICE_SIZE: u16 = 50;
+const MAX_ROWS_RENDERED: u16 = SLICE_SIZE;
+const MAX_COLS_RENDERED: u16 = 10;
 
 const NULL_DF_ERR: &'static str = "Dataframe State's Dataframe attribute is None.";
 
@@ -28,10 +28,10 @@ pub struct DataFrameState {
     // not sure if it should be owned here
     // but we figure it out later.
     ///////////////////////////////////////
-    row_view_slice: [i64; 2],  // the current viewable slice.
-    col_view_slice: [i64; 2],  // the current viewable slice.
-    cursor_x: i64, // dataframe cursor for col NOTE: is limited by the number of columns renderable
-    cursor_y: i64, // dataframe cursor for row NOTE: is limited by the number of rows renderable
+    row_view_slice: [u16; 2],  // the current viewable slice.
+    col_view_slice: [u16; 2],  // the current viewable slice.
+    cursor_x: u16, // dataframe cursor for col NOTE: is limited by the number of columns renderable
+    cursor_y: u16, // dataframe cursor for row NOTE: is limited by the number of rows renderable
     cursor_focus: CursorFocus, // dataframe cursor focus on row or column (renders different highlights)
 
     // other UI state
@@ -78,11 +78,11 @@ impl DataFrameState {
     }
 
     // height, width
-    pub fn get_df_shape(&self) -> (i64, i64) {
+    pub fn get_df_shape(&self) -> (u16, u16) {
         let df = self.dataframe.as_ref().expect(NULL_DF_ERR);
 
         let shape = df.shape();
-        (shape.0 as i64, shape.1 as i64)
+        (shape.0 as u16, shape.1 as u16)
     }
 
     pub fn get_headers(&self) -> Vec<Header> {
@@ -149,11 +149,11 @@ impl DataFrameState {
         df.column(name).unwrap()
     }
 
-    pub fn get_column_by_index(&self, index: i64) -> Option<&Column> {
+    pub fn get_column_by_index(&self, index: u16) -> Option<&Column> {
         let df = self.dataframe.as_ref().expect(NULL_DF_ERR);
         let headers = self.get_headers();
         for (idx, col_name) in headers.iter().enumerate() {
-            if (idx as i64) == index {
+            if (idx as u16) == index {
                 return Some(df.column(&col_name.name).unwrap());
             }
         }
@@ -194,9 +194,9 @@ impl DataFrameState {
         // update row and col view slices //
         ////////////////////////////////////
         self.row_view_slice[0] = self.cursor_y;
-        self.row_view_slice[1] = self.cursor_y + self.rows_rendered as i64;
+        self.row_view_slice[1] = self.cursor_y + self.rows_rendered;
         self.col_view_slice[0] = self.cursor_x;
-        self.col_view_slice[1] = self.cursor_x + self.cols_rendered as i64;
+        self.col_view_slice[1] = self.cursor_x + self.cols_rendered;
     }
 
     pub fn refresh_renderable_table_size(&mut self, config_state: &ConfigState) {
@@ -205,34 +205,34 @@ impl DataFrameState {
     }
 
     // setter getters
-    pub fn get_row_view_slice(&self) -> &[i64; 2] {
+    pub fn get_row_view_slice(&self) -> &[u16; 2] {
         &self.row_view_slice
     }
-    pub fn set_row_view_slice(&mut self, new_indices: [i64; 2]) {
+    pub fn set_row_view_slice(&mut self, new_indices: [u16; 2]) {
         self.row_view_slice = new_indices;
     }
 
-    pub fn get_col_view_slice(&self) -> &[i64; 2] {
+    pub fn get_col_view_slice(&self) -> &[u16; 2] {
         &self.col_view_slice
     }
-    pub fn set_col_view_slice(&mut self, new_indices: [i64; 2]) {
+    pub fn set_col_view_slice(&mut self, new_indices: [u16; 2]) {
         self.col_view_slice = new_indices;
     }
 
-    pub fn get_cursor_x(&self) -> &i64 {
+    pub fn get_cursor_x(&self) -> &u16 {
         &self.cursor_x
     }
-    pub fn set_cursor_x(&mut self, cursor_x: i64) {
-        if cursor_x > MAX_COLS_RENDERED {
-            self.cursor_x = MAX_COLS_RENDERED;
+    pub fn set_cursor_x(&mut self, cursor_x: u16) {
+        if cursor_x as u16 > self.cols_rendered{
+            self.cursor_x = self.cols_rendered;
             return;
         }
         self.cursor_x = cursor_x;
     }
-    pub fn get_cursor_y(&self) -> &i64 {
+    pub fn get_cursor_y(&self) -> &u16 {
         &self.cursor_y
     }
-    pub fn set_cursor_y(&mut self, cursor_y: i64) {
+    pub fn set_cursor_y(&mut self, cursor_y: u16) {
         // limit the max y to be MAX_ROWS Rendered
         if cursor_y > MAX_ROWS_RENDERED {
             self.cursor_y = MAX_ROWS_RENDERED;
