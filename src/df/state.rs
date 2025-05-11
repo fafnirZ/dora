@@ -226,17 +226,19 @@ impl DataFrameState {
         self.set_col_view_slice(new_col_view_slice);
         self.set_row_view_slice(new_row_view_slice);
         // println!("rendered {},{}", self.rows_rendered, self.cols_rendered);
-        // bound the cursors to be the upper bound
-        // no need to do for lower bound since its lower bound centric
-        // meaning its impossible for the lower bound to be mutated in
-        // this function, we take it as the starting point for calculations
 
-        // if self.cursor_x > self.cols_rendered {
-        //     self.cursor_x = self.cols_rendered
-        // }
-        // if self.cursor_y > self.rows_rendered {
-        //     self.cursor_y = self.rows_rendered
-        // }
+        // for simplicitys sake
+        // just set the cursor to 0
+        // if the user decided to change size mid navigation
+        // itll be annoying but not the worst
+        // we just gotta acknowledge that its view slice first.
+        // this occurs when you resize the cells
+        if self.cursor_x >= self.cols_rendered {
+            self.cursor_x = 0;
+        }
+        if self.cursor_y >= self.rows_rendered {
+            self.cursor_y = 0;
+        }
 
     }
 
