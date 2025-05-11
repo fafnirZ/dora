@@ -4,7 +4,7 @@
 // csv string buffer.
 // then pass the cursor into polars dataframe.
 
-use std::io::Cursor;
+use std::{cell, io::Cursor};
 
 // use polars::error::PolarsError;
 use polars::prelude::*;
@@ -53,11 +53,16 @@ impl ExcelReader {
         for (_sheet_name, sheet_data) in worksheets.iter() {
             let mut sheet_buf = String::new();
             for row in sheet_data.rows() {
+                let mut cell_vec = Vec::new();
                 // serialise to csv format
                 for cell in row {
-                    sheet_buf += &cell.to_string();
-                    sheet_buf.push(',');
+                    cell_vec.push(cell.to_string().clone());
                 }
+
+                // utilise join so we dont get an additional , at the end
+                // and dont have to do any special logic.
+                let tmp = cell_vec.join(",");
+                sheet_buf += &tmp;
                 sheet_buf.push('\n');
             }
             sheet_store.push(sheet_buf);
