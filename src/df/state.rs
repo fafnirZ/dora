@@ -1,5 +1,5 @@
 // use polars::frame::DataFrame;
-use crate::{config::ConfigState, io::read_from_any_path, table::header::Header};
+use crate::{config::ConfigState, io::{read_excel_from_any_path, read_from_any_path}, table::header::Header};
 use polars::prelude::*;
 
 // only use these as initialisation values
@@ -17,7 +17,7 @@ pub enum CursorFocus {
 // for now its the all encompasing state object
 // will figure out how to break it up later.
 pub struct DataFrameState {
-    source_path: String, // source file path to file
+    pub source_path: String, // source file path to file
     // df: LazyFrame, // dataframe object itself
     // query: Option<Expr>,
     pub dataframe: Option<DataFrame>,
@@ -61,6 +61,19 @@ impl DataFrameState {
     // this allows lazy evaluation of the dataframe
     pub fn collect(&mut self) {
         let df = read_from_any_path(&self.source_path).unwrap();
+        self.dataframe = Some(df);
+    }
+
+    // given an arbitrary df
+    // set Df state's df
+    // this is particularly useful
+    // for 
+    pub fn collect_from_excel_sheet(&mut self, sheet_index: usize) {
+        let df = read_excel_from_any_path(
+            &self.source_path,
+            sheet_index,
+        )
+        .unwrap();
         self.dataframe = Some(df);
     }
 
