@@ -25,9 +25,9 @@ impl ExcelReader {
     }
 
     pub fn finish(&self) -> Result<DataFrame, DoraErrors> {
-        let mut file_contents = open_workbook_auto_from_rs(self.cursor.to_owned())
+        let mut file_contents = open_workbook_auto_from_rs(self.cursor.clone())
             .map_err(|e| DoraErrors::IOError(e.to_string()))?;
-
+        
         // TODO handle sheet later.
         // but right now we take first one and convert to dataframe :)
         let csv_buffers = ExcelReader::worksheets_to_csv_string_bufs(&mut file_contents);
@@ -48,7 +48,7 @@ impl ExcelReader {
     ) -> Vec<String> {
         // each string in the vec will contain all data in a single sheet
         // inside of a string buffer of csv serialsied data.
-        let sheet_store: Vec<String> = Vec::new();
+        let mut sheet_store: Vec<String> = Vec::new();
         let worksheets = excel_file_contents.worksheets();
         for (_sheet_name, sheet_data) in worksheets.iter() {
             let mut sheet_buf = String::new();
@@ -60,6 +60,7 @@ impl ExcelReader {
                 }
                 sheet_buf.push('\n');
             }
+            sheet_store.push(sheet_buf);
         }
         sheet_store     
     }
