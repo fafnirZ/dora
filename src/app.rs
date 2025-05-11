@@ -12,11 +12,12 @@ use crate::{
     controller::Controller,
     df::state::DataFrameState,
     errors::DoraResults,
-    input::{Control, InputHandler},
+    input::{self, Control, InputHandler},
     io::{
         ExcelReader, ExcelSheetSelectorPage, ExcelSheetSelectorWidgetState,
         get_cursor_from_any_path,
     },
+    mode::AppMode,
     mode_banner::ModeBanner,
     page::{self, PageState},
     search::state::SearchResultState,
@@ -72,8 +73,18 @@ impl App {
             _ => ExcelSheetSelectorWidgetState::new(),
         };
 
+        // input handler
+        let input_hander = match page_state {
+            PageState::MultiSheetSelectionPage => {
+                let mut input_handler = InputHandler::new();
+                input_handler.mode_state = AppMode::SheetSelection;
+                input_handler
+            }
+            _ => InputHandler::new(),
+        };
+
         Self {
-            input_handler: InputHandler::new(),
+            input_handler: input_hander,
             dataframe_state: dataframe_state,
             search_result_state: SearchResultState::new(),
             config_state: ConfigState::new(),
@@ -114,11 +125,7 @@ impl App {
             }
             PageState::MultiSheetSelectionPage => {
                 let page = ExcelSheetSelectorPage::new();
-                frame.render_stateful_widget(
-                    page,
-                    frame.area(),
-                    &mut self.sheet_selector_state,
-                );
+                frame.render_stateful_widget(page, frame.area(), &mut self.sheet_selector_state);
             }
         }
     }

@@ -36,7 +36,9 @@ impl Controller {
             AppMode::Search => Controller::handle_search_mode_control(control, app_state),
             AppMode::Help => Controller::handle_help_mode_control(control, app_state),
             AppMode::Command => Controller::handle_command_mode_control(control, app_state),
-            AppMode::SheetSelection => Controller::handle_sheet_selection_mode_control(control, app_state),
+            AppMode::SheetSelection => {
+                Controller::handle_sheet_selection_mode_control(control, app_state)
+            }
         }
     }
 
@@ -297,17 +299,16 @@ impl Controller {
         }
     }
 
-
     fn handle_sheet_selection_mode_control(control: &Control, app_state: &mut App) {
         match control {
-            Control::Enter => {},
+            Control::Enter => {}
             Control::ScrollUp => {
                 let cursor = app_state.sheet_selector_state.cursor;
                 if cursor == 0 {
                     return;
                 }
                 app_state.sheet_selector_state.cursor = cursor - 1;
-            },
+            }
             Control::ScrollDown => {
                 let cursor = app_state.sheet_selector_state.cursor;
                 let item_len = app_state
@@ -320,7 +321,7 @@ impl Controller {
                     return;
                 }
                 app_state.sheet_selector_state.cursor = cursor + 1;
-            },
+            }
             _ => {}
         }
     }
