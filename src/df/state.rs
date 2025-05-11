@@ -30,6 +30,7 @@ pub struct DataFrameState {
     ///////////////////////////////////////
     row_view_slice: [u16; 2],  // the current viewable slice.
     col_view_slice: [u16; 2],  // the current viewable slice.
+    // !!!!NOTE CURSORS ARE RELATIVE TO THE VIEW SLICE!!!!!
     cursor_x: u16, // dataframe cursor for col NOTE: is limited by the number of columns renderable
     cursor_y: u16, // dataframe cursor for row NOTE: is limited by the number of rows renderable
     cursor_focus: CursorFocus, // dataframe cursor focus on row or column (renders different highlights)
