@@ -43,8 +43,6 @@ pub struct DataFrameState {
 
 impl DataFrameState {
     pub fn new(file_path: &str) -> Self {
-
-
         Self {
             source_path: String::from(file_path),
             dataframe: None,
@@ -68,20 +66,14 @@ impl DataFrameState {
 
     // height, width
     pub fn get_df_shape(&self) -> (i64, i64) {
-        let df = self
-            .dataframe
-            .as_ref()
-            .expect(NULL_DF_ERR);
+        let df = self.dataframe.as_ref().expect(NULL_DF_ERR);
 
         let shape = df.shape();
         (shape.0 as i64, shape.1 as i64)
     }
 
     pub fn get_headers(&self) -> Vec<Header> {
-        let df = self
-            .dataframe
-            .as_ref()
-            .expect(NULL_DF_ERR);
+        let df = self.dataframe.as_ref().expect(NULL_DF_ERR);
 
         let df_schema = df.schema();
         let mut headers: Vec<Header> = vec![];
@@ -98,10 +90,7 @@ impl DataFrameState {
     // to the table UI as the entire series (due to filtering and querying)
     // requirements.
     pub fn get_headers_in_col_slice(&self) -> Vec<Header> {
-        let df = self
-            .dataframe
-            .as_ref()
-            .expect(NULL_DF_ERR);
+        let df = self.dataframe.as_ref().expect(NULL_DF_ERR);
 
         let df_schema = df.schema();
         let mut headers: Vec<Header> = vec![];
@@ -118,10 +107,7 @@ impl DataFrameState {
 
     // polars column
     pub fn get_columns(&self) -> Vec<&Column> {
-        let df = self
-            .dataframe
-            .as_ref()
-            .expect(NULL_DF_ERR);
+        let df = self.dataframe.as_ref().expect(NULL_DF_ERR);
         // get columns
         let mut columns = vec![];
         for col_name in self.get_headers().iter() {
@@ -131,10 +117,7 @@ impl DataFrameState {
         columns
     }
     pub fn get_columns_in_col_slice(&self) -> Vec<&Column> {
-        let df = self
-            .dataframe
-            .as_ref()
-            .expect(NULL_DF_ERR);
+        let df = self.dataframe.as_ref().expect(NULL_DF_ERR);
         // get columns
         let mut columns = vec![];
         for (idx, col_name) in self.get_headers().iter().enumerate() {
@@ -148,21 +131,13 @@ impl DataFrameState {
     }
 
     pub fn get_column(&self, name: &String) -> &Column {
-        let df = self
-            .dataframe
-            .as_ref()
-            .expect(NULL_DF_ERR);
+        let df = self.dataframe.as_ref().expect(NULL_DF_ERR);
 
-        df
-        .column(name)
-        .unwrap()
+        df.column(name).unwrap()
     }
 
     pub fn get_column_by_index(&self, index: i64) -> Option<&Column> {
-        let df = self
-            .dataframe
-            .as_ref()
-            .expect(NULL_DF_ERR);
+        let df = self.dataframe.as_ref().expect(NULL_DF_ERR);
         let headers = self.get_headers();
         for (idx, col_name) in headers.iter().enumerate() {
             if (idx as i64) == index {

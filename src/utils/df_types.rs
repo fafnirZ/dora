@@ -36,14 +36,13 @@ macro_rules! any_string {
 #[macro_export]
 macro_rules! any_datetime {
     () => {
-        AnyValue::Date(_) 
-        | AnyValue::Datetime(_,_,_)
-        | AnyValue::DatetimeOwned(_,_,_)
-        | AnyValue::Duration(_,_)
-        | AnyValue::Time(_)
+        AnyValue::Date(_)
+            | AnyValue::Datetime(_, _, _)
+            | AnyValue::DatetimeOwned(_, _, _)
+            | AnyValue::Duration(_, _)
+            | AnyValue::Time(_)
     };
 }
-
 
 // macros for DataType
 // polars DataType is the type

@@ -9,10 +9,10 @@ mod input;
 mod io;
 mod mode;
 mod mode_banner;
+mod page;
 mod runner;
 mod search;
 mod table;
 mod utils;
-mod page;
 
 pub use runner::run_app;

@@ -7,27 +7,25 @@
 use std::{cell, io::Cursor};
 
 // use polars::error::PolarsError;
+use calamine::{Reader, Sheets, open_workbook_auto_from_rs};
 use polars::prelude::*;
-use calamine::{open_workbook_auto_from_rs, Reader, Sheets};
 
 use crate::errors::DoraErrors;
 
-pub struct ExcelReader{
-    cursor: Cursor<Vec<u8>>
+pub struct ExcelReader {
+    cursor: Cursor<Vec<u8>>,
 }
 
 // this will 'feel' like all the other polars io readers.
 impl ExcelReader {
     pub fn new(cursor: Cursor<Vec<u8>>) -> Self {
-        Self {
-            cursor: cursor,
-        }
+        Self { cursor: cursor }
     }
 
     pub fn finish(&self) -> Result<DataFrame, DoraErrors> {
         let mut file_contents = open_workbook_auto_from_rs(self.cursor.clone())
             .map_err(|e| DoraErrors::IOError(e.to_string()))?;
-        
+
         // TODO handle sheet later.
         // but right now we take first one and convert to dataframe :)
         let csv_buffers = ExcelReader::worksheets_to_csv_string_bufs(&mut file_contents);
@@ -55,7 +53,6 @@ impl ExcelReader {
         Ok(worksheet_names)
     }
 
-
     fn worksheets_to_csv_string_bufs(
         excel_file_contents: &mut Sheets<Cursor<Vec<u8>>>,
     ) -> Vec<String> {
@@ -80,6 +77,6 @@ impl ExcelReader {
             }
             sheet_store.push(sheet_buf);
         }
-        sheet_store     
+        sheet_store
     }
 }

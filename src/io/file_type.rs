@@ -2,7 +2,7 @@ pub enum FileType {
     Csv,
     Excel, // todo
     Parquet,
-    NdJson, 
+    NdJson,
 }
 
 impl FileType {

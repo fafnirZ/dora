@@ -1,4 +1,3 @@
-
 use crate::errors::DoraErrors;
 
 use super::{dotconfig::read_config_file, serde::Config};
@@ -25,21 +24,25 @@ impl ConfigState {
         // deserialise from config file.
         let deserialised_config = match read_config_file() {
             Ok(res) => res,
-            Err(_) => {
-                Config::default()
-            },
+            Err(_) => Config::default(),
         };
         Self {
             header_height: HEADER_HEIGHT,
             line_number_cell_width: LINE_NUMBER_CELL_WIDTH,
             cell_height: ConfigState::from_config_or::<u16>(
-                &deserialised_config, "cell_height",CELL_HEIGHT
+                &deserialised_config,
+                "cell_height",
+                CELL_HEIGHT,
             ),
             cell_width: ConfigState::from_config_or::<u16>(
-                &deserialised_config, "cell_width",CELL_WIDTH
+                &deserialised_config,
+                "cell_width",
+                CELL_WIDTH,
             ),
             word_wrap: ConfigState::from_config_or::<bool>(
-                &deserialised_config, "word_wrap",WORD_WRAP
+                &deserialised_config,
+                "word_wrap",
+                WORD_WRAP,
             ),
         }
     }
@@ -48,7 +51,11 @@ impl ConfigState {
     // and provide fallback value.
     // if wasnt able to downcast will fall back to the system default
     // if not found in config, will fall back to system default
-    fn from_config_or<T: Clone + 'static>(config: &Config, attribute_name: &str, fall_back_value: T) -> T {
+    fn from_config_or<T: Clone + 'static>(
+        config: &Config,
+        attribute_name: &str,
+        fall_back_value: T,
+    ) -> T {
         match config.get_attr(attribute_name) {
             Some(val) => {
                 if let Some(opt_val) = val.downcast_ref::<Option<T>>() {
@@ -56,7 +63,7 @@ impl ConfigState {
                     match opt_val {
                         Some(t_val) => t_val.clone(),
                         None => fall_back_value.clone(),
-                    } 
+                    }
                 } else {
                     // println!("downcasted failed");
                     fall_back_value.clone() // Return the fallback if downcast fails

@@ -7,7 +7,17 @@ use ratatui::{
 };
 
 use crate::{
-    config::ConfigState, controller::Controller, df::state::DataFrameState, errors::DoraResults, input::{Control, InputHandler}, io::ExcelSheetSelectorWidgetState, mode_banner::ModeBanner, page::{self, PageState}, search::state::SearchResultState, table::table_ui::TableUI, utils::area::horizontal_pad_area
+    config::ConfigState,
+    controller::Controller,
+    df::state::DataFrameState,
+    errors::DoraResults,
+    input::{Control, InputHandler},
+    io::ExcelSheetSelectorWidgetState,
+    mode_banner::ModeBanner,
+    page::{self, PageState},
+    search::state::SearchResultState,
+    table::table_ui::TableUI,
+    utils::area::horizontal_pad_area,
 };
 
 // global app state.
@@ -16,8 +26,8 @@ pub struct App {
     pub input_handler: InputHandler,
     pub config_state: ConfigState,
     pub page_state: PageState,
-    
-    // normal page state    
+
+    // normal page state
     pub dataframe_state: DataFrameState,
     pub search_result_state: SearchResultState,
 
@@ -27,7 +37,6 @@ pub struct App {
 
 impl App {
     pub fn new(file_path: &str) -> Self {
-
         // determining page state.
         let page_state = {
             if PageState::determine_is_multisheet_selection_page(file_path) {
