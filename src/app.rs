@@ -1,3 +1,4 @@
+use polars::prelude::file;
 use ratatui::{
     Frame, Terminal,
     layout::{Constraint, Layout},
@@ -12,7 +13,7 @@ use crate::{
     df::state::DataFrameState,
     errors::DoraResults,
     input::{Control, InputHandler},
-    io::ExcelSheetSelectorWidgetState,
+    io::{get_cursor_from_any_path, ExcelReader, ExcelSheetSelectorWidgetState},
     mode_banner::ModeBanner,
     page::{self, PageState},
     search::state::SearchResultState,
@@ -46,6 +47,7 @@ impl App {
             }
         };
 
+        // dataframe state
         let mut dataframe_state = DataFrameState::new(file_path);
         match page_state {
             PageState::MultiSheetSelectionPage => {} // dataframe wont be evaluated until collect is called later
@@ -54,12 +56,31 @@ impl App {
             }
         }
 
+        // sheet_selector_state 
+        let sheet_selector_state = match page_state {
+            PageState::MultiSheetSelectionPage => {
+                let cursor = get_cursor_from_any_path(file_path)
+                    .unwrap();
+                let worksheet_names = ExcelReader::new(cursor)
+                    .get_worksheet_names()
+                    .unwrap();
+                ExcelSheetSelectorWidgetState{
+                    sheet_names: Some(worksheet_names),
+                    cursor: 0,
+                }
+            } // dataframe wont be evaluated until collect is called later
+            _ => {
+                ExcelSheetSelectorWidgetState::new()
+            }
+        };
+
         Self {
             input_handler: InputHandler::new(),
             dataframe_state: dataframe_state,
             search_result_state: SearchResultState::new(),
             config_state: ConfigState::new(),
             page_state: page_state,
+            sheet_selector_state: sheet_selector_state,
         }
     }
 

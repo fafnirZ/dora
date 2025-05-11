@@ -10,8 +10,17 @@ use ratatui::{
 };
 
 pub struct ExcelSheetSelectorWidgetState {
-    sheet_names: Option<Vec<String>>,
-    cursor: u16,
+    pub sheet_names: Option<Vec<String>>,
+    pub cursor: u16,
+}
+
+impl ExcelSheetSelectorWidgetState {
+    pub fn new() -> Self {
+        Self {
+            sheet_names: None,
+            cursor: 0,
+        }
+    }
 }
 
 // const ELEMENT_WIDTH: u16 = 10;

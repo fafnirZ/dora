@@ -14,6 +14,16 @@ use super::gcloud::read_bytes_from_gcs_sync;
 use super::local::read_bytes_from_local_sync;
 use super::path_location::PathLocation;
 
+// helper
+pub fn get_cursor_from_any_path(path: &str) -> Result<Cursor<Vec<u8>>, DoraErrors> {
+    let location = PathLocation::determine_location(path);
+    let cursor = match location {
+        PathLocation::Gcs => read_bytes_from_gcs_sync(path)?,
+        PathLocation::Local => read_bytes_from_local_sync(path)?,
+    };
+    return Ok(cursor);
+}
+
 pub fn read_from_any_path(path: &str) -> Result<DataFrame, DoraErrors> {
     let location = PathLocation::determine_location(path);
     let extension = match FileType::determine_extension(path) {
@@ -25,7 +35,7 @@ pub fn read_from_any_path(path: &str) -> Result<DataFrame, DoraErrors> {
         PathLocation::Gcs => read_bytes_from_gcs_sync(path)?,
         PathLocation::Local => read_bytes_from_local_sync(path)?,
     };
-
+    
     return Ok(match extension {
         FileType::Csv => CsvReader::new(cursor)
             .finish()
