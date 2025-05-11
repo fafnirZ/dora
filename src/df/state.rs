@@ -8,6 +8,8 @@ const SLICE_SIZE: i64 = 50;
 const MAX_ROWS_RENDERED: i64 = SLICE_SIZE;
 const MAX_COLS_RENDERED: i64 = 10;
 
+const NULL_DF_ERR: &'static str = "Dataframe State's Dataframe attribute is None.";
+
 pub enum CursorFocus {
     Row,
     Column,
@@ -18,7 +20,7 @@ pub struct DataFrameState {
     source_path: String, // source file path to file
     // df: LazyFrame, // dataframe object itself
     // query: Option<Expr>,
-    pub dataframe: DataFrame,
+    pub dataframe: Option<DataFrame>,
 
     ///////////////////////////////////////
     // the following are for UI purposes
@@ -42,11 +44,10 @@ pub struct DataFrameState {
 impl DataFrameState {
     pub fn new(file_path: &str) -> Self {
 
-        let df = read_from_any_path(file_path).unwrap();
 
         Self {
             source_path: String::from(file_path),
-            dataframe: df,
+            dataframe: None,
             col_view_slice: [0, MAX_COLS_RENDERED],
             row_view_slice: [0, MAX_ROWS_RENDERED],
             cursor_x: 0,
@@ -58,15 +59,29 @@ impl DataFrameState {
         }
     }
 
+    // sets self.df = polars df
+    // this allows lazy evaluation of the dataframe
+    pub fn collect(&mut self) {
+        let df = read_from_any_path(&self.source_path).unwrap();
+        self.dataframe = Some(df);
+    }
+
     // height, width
     pub fn get_df_shape(&self) -> (i64, i64) {
-        let df = &self.dataframe;
+        let df = self
+            .dataframe
+            .as_ref()
+            .expect(NULL_DF_ERR);
+
         let shape = df.shape();
         (shape.0 as i64, shape.1 as i64)
     }
 
     pub fn get_headers(&self) -> Vec<Header> {
-        let df = &self.dataframe;
+        let df = self
+            .dataframe
+            .as_ref()
+            .expect(NULL_DF_ERR);
 
         let df_schema = df.schema();
         let mut headers: Vec<Header> = vec![];
@@ -83,7 +98,10 @@ impl DataFrameState {
     // to the table UI as the entire series (due to filtering and querying)
     // requirements.
     pub fn get_headers_in_col_slice(&self) -> Vec<Header> {
-        let df = &self.dataframe;
+        let df = self
+            .dataframe
+            .as_ref()
+            .expect(NULL_DF_ERR);
 
         let df_schema = df.schema();
         let mut headers: Vec<Header> = vec![];
@@ -100,7 +118,10 @@ impl DataFrameState {
 
     // polars column
     pub fn get_columns(&self) -> Vec<&Column> {
-        let df = &self.dataframe;
+        let df = self
+            .dataframe
+            .as_ref()
+            .expect(NULL_DF_ERR);
         // get columns
         let mut columns = vec![];
         for col_name in self.get_headers().iter() {
@@ -110,7 +131,10 @@ impl DataFrameState {
         columns
     }
     pub fn get_columns_in_col_slice(&self) -> Vec<&Column> {
-        let df = &self.dataframe;
+        let df = self
+            .dataframe
+            .as_ref()
+            .expect(NULL_DF_ERR);
         // get columns
         let mut columns = vec![];
         for (idx, col_name) in self.get_headers().iter().enumerate() {
@@ -124,14 +148,25 @@ impl DataFrameState {
     }
 
     pub fn get_column(&self, name: &String) -> &Column {
-        self.dataframe.column(name).unwrap()
+        let df = self
+            .dataframe
+            .as_ref()
+            .expect(NULL_DF_ERR);
+
+        df
+        .column(name)
+        .unwrap()
     }
 
     pub fn get_column_by_index(&self, index: i64) -> Option<&Column> {
+        let df = self
+            .dataframe
+            .as_ref()
+            .expect(NULL_DF_ERR);
         let headers = self.get_headers();
         for (idx, col_name) in headers.iter().enumerate() {
             if (idx as i64) == index {
-                return Some(self.dataframe.column(&col_name.name).unwrap());
+                return Some(df.column(&col_name.name).unwrap());
             }
         }
         return None;
