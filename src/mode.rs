@@ -3,5 +3,6 @@ pub enum AppMode {
     Filter, // `&`
     Search, // `/`
     Help,   // `?`
-    Command,
+    Command, // :
+    SheetSelection,
 }
