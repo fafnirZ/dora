@@ -96,7 +96,7 @@ impl Controller {
                 let col_view_slice = df_state.get_col_view_slice();
                 let slice_length = col_view_slice[1] - col_view_slice[0];
                 let df_max_cols = df_state.get_df_shape().1;
-                if *cursor_x == (slice_length - 1) {
+                if *cursor_x >= ((slice_length-1) - 1) {
                     if col_view_slice[1] > df_max_cols {
                     }
                     // reached the very end of the table
