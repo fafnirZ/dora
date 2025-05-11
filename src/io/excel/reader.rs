@@ -43,6 +43,19 @@ impl ExcelReader {
         Ok(df)
     }
 
+    pub fn get_worksheet_names(&self) -> Result<Vec<String>, DoraErrors> {
+        let mut file_contents = open_workbook_auto_from_rs(self.cursor.clone())
+            .map_err(|e| DoraErrors::IOError(e.to_string()))?;
+
+        let worksheets = file_contents.worksheets();
+        let worksheet_names: Vec<String> = worksheets
+            .into_iter()
+            .map(|(sheet_name, _)| sheet_name)
+            .collect();
+        Ok(worksheet_names)
+    }
+
+
     fn worksheets_to_csv_string_bufs(
         excel_file_contents: &mut Sheets<Cursor<Vec<u8>>>,
     ) -> Vec<String> {

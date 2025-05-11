@@ -24,7 +24,10 @@ impl PageState {
     ) -> bool {
         match FileType::determine_extension(file_path).unwrap() {
             FileType::Excel => {
-                // more logic
+                // NOTE this means any excel file 
+                // even if they have only 1 tab
+                // will render into the tab selector
+                // which imean fair enough?
                 true
             }
             _ => false
