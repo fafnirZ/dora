@@ -8,3 +8,4 @@ mod excel;
 
 
 pub use handler::read_from_any_path;
+pub use file_type::FileType;

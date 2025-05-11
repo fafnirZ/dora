@@ -41,12 +41,7 @@ pub struct DataFrameState {
 
 impl DataFrameState {
     pub fn new(file_path: &str) -> Self {
-        // only supports csv right now
-        // let df = CsvReadOptions::default()
-        //     .try_into_reader_with_file_path(Some(file_path.into()))
-        //     .unwrap()
-        //     .finish()
-        //     .unwrap();
+
         let df = read_from_any_path(file_path).unwrap();
 
         Self {
