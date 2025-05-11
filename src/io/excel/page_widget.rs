@@ -4,7 +4,7 @@
 // for the excel reader.
 
 use ratatui::{
-    buffer::Buffer, layout::{Alignment, Constraint, Layout, Rect}, style::{Color, Stylize}, widgets::{Block, Borders, Paragraph, StatefulWidget, Widget}
+    buffer::Buffer, layout::{Alignment, Constraint, Layout, Rect}, style::{Color, Stylize}, widgets::{Block, Borders, Paragraph, StatefulWidget, Widget, Wrap}
 };
 
 pub struct ExcelSheetSelectorWidgetState {
@@ -38,9 +38,9 @@ impl ExcelSheetSelectorPage {
             main,
             _,
         ] = Layout::vertical([
-            Constraint::Fill(0),
+            Constraint::Fill(1),
             Constraint::Min(1),
-            Constraint::Fill(0),
+            Constraint::Fill(1),
         ]).areas(area);
 
 
@@ -49,6 +49,8 @@ impl ExcelSheetSelectorPage {
             
         if is_selected {
             para = para.bg(Color::DarkGray);
+        } else {
+            para = para.bg(Color::Gray);
         }
 
         para.render(main, buf);
@@ -60,27 +62,47 @@ impl ExcelSheetSelectorPage {
         buf: &mut Buffer,
         state: &mut <ExcelSheetSelectorPage as StatefulWidget>::State,
     ) {
-        let start_x = area.x;
-        let start_y = area.y;
+
+        // split area up vertically
+        let [
+            heading,
+            main,
+            footer,
+        ] = Layout::vertical([
+            Constraint::Length(3),
+            Constraint::Fill(1),
+            Constraint::Length(3),
+        ]).areas(area);
+        // heading
+        Paragraph::new("Select the sheet you wish to view")
+            .wrap(Wrap{trim: true})
+            .alignment(Alignment::Center)
+            .render(heading, buf);
+
+        // footer
+        Paragraph::new("Press <Enter> to select your sheet")
+            .wrap(Wrap{trim: true})
+            .alignment(Alignment::Center)
+            .render(footer, buf);
+
+        // main section
+        let start_x = main.x;
+        let start_y = main.y;
         let sheet_names = state
             .sheet_names
             .as_ref()
             .expect("excel file doesnt have sheet names? is this possible?");
 
         for (idx, sheet_name) in sheet_names.iter().enumerate() {
-            let curr_y = start_y + (idx as u16) * ELEMENT_HEIGHT;
+            let curr_y = start_y + ((idx as u16) * ELEMENT_HEIGHT);
             // fills width to the size of the element.
-            let area = Rect::new(start_x, curr_y, area.width, ELEMENT_HEIGHT);
-            // render a boarder around the block.
-            Block::new()
-                .borders(Borders::ALL)
-                .render(area, buf);
+            let main_area = Rect::new(start_x, curr_y, area.width, ELEMENT_HEIGHT+2);
 
             // highlights if cursor is on it.
             let is_selected = {
                 (idx as u16) == state.cursor
             };
-            self.render_element(sheet_name, is_selected, area, buf);
+            self.render_element(sheet_name, is_selected, main_area, buf);
         }
     }
 }
@@ -100,7 +122,7 @@ impl StatefulWidget for ExcelSheetSelectorPage {
         // padding horizontal
         let [_, main, _] = Layout::horizontal([
             Constraint::Fill(1),
-            Constraint::Percentage(10),
+            Constraint::Percentage(20),
             Constraint::Fill(1),
         ])
         .areas(main);
