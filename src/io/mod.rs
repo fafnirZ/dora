@@ -9,3 +9,7 @@ mod excel;
 
 pub use handler::read_from_any_path;
 pub use file_type::FileType;
+pub use excel::page_widget::{
+    ExcelSheetSelectorPage,
+    ExcelSheetSelectorWidgetState,
+};

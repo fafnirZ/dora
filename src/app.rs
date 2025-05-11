@@ -7,16 +7,22 @@ use ratatui::{
 };
 
 use crate::{
-    config::ConfigState, controller::Controller, df::state::DataFrameState, errors::DoraResults, input::{Control, InputHandler}, mode_banner::ModeBanner, page::{self, PageState}, search::state::SearchResultState, table::table_ui::TableUI, utils::area::horizontal_pad_area
+    config::ConfigState, controller::Controller, df::state::DataFrameState, errors::DoraResults, input::{Control, InputHandler}, io::ExcelSheetSelectorWidgetState, mode_banner::ModeBanner, page::{self, PageState}, search::state::SearchResultState, table::table_ui::TableUI, utils::area::horizontal_pad_area
 };
 
 // global app state.
 pub struct App {
+    // global states (regardless of page)
     pub input_handler: InputHandler,
-    pub dataframe_state: DataFrameState,
-    pub search_result_state: SearchResultState,
     pub config_state: ConfigState,
     pub page_state: PageState,
+    
+    // normal page state    
+    pub dataframe_state: DataFrameState,
+    pub search_result_state: SearchResultState,
+
+    // excel sheet selector page state
+    pub sheet_selector_state: ExcelSheetSelectorWidgetState,
 }
 
 impl App {
