@@ -206,13 +206,20 @@ impl DataFrameState {
 
         let curr_row_view_slice = self.row_view_slice.clone();
         let curr_col_view_slice = self.col_view_slice.clone();
+        // bound by max table size
+        let max_cols_in_table = self.get_df_shape().1;
+        let max_rows_in_table = self.get_df_shape().0;
+
+        // generate new row sizes bounded by:
+        //    renderable sizes
+        //    actual table bounds
         let new_row_view_slice = [
             curr_row_view_slice[0],
-            curr_row_view_slice[0]+self.rows_rendered,
+            (curr_row_view_slice[0]+self.rows_rendered).min(max_rows_in_table),
         ];
         let new_col_view_slice = [
             curr_col_view_slice[0],
-            curr_col_view_slice[0]+self.rows_rendered,
+            (curr_col_view_slice[0]+self.rows_rendered).min(max_cols_in_table),
         ];
         self.row_view_slice = new_row_view_slice;
         self.col_view_slice = new_col_view_slice;
