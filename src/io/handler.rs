@@ -30,16 +30,21 @@ pub fn read_from_any_path(
     };
 
     return Ok(match extension {
-        FileType::Csv => CsvReader::new(cursor)
+        FileType::Csv => CsvReadOptions::default()
+            .with_infer_schema_length(None) // infer schema with entire file.
+            .into_reader_with_file_handle(cursor)
             .finish()
             .map_err(|e| DoraErrors::IOError(e.to_string()))?,
+
         FileType::Parquet => ParquetReader::new(cursor)
             .finish()
             .map_err(|e| DoraErrors::IOError(e.to_string()))?,
+
         FileType::NdJson => JsonReader::new(cursor)
             .with_json_format(JsonFormat::JsonLines)
             .finish()
             .map_err(|e| DoraErrors::IOError(e.to_string()))?,
+            
         FileType::Excel => {
             panic!("Excel files should not be read using this function, the developer did a whoopsie!");
         }
