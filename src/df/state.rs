@@ -225,7 +225,7 @@ impl DataFrameState {
         // self.col_view_slice = new_col_view_slice;
         self.set_col_view_slice(new_col_view_slice);
         self.set_row_view_slice(new_row_view_slice);
-        println!("rendered {},{}", self.rows_rendered, self.cols_rendered);
+        // println!("rendered {},{}", self.rows_rendered, self.cols_rendered);
         // bound the cursors to be the upper bound
         // no need to do for lower bound since its lower bound centric
         // meaning its impossible for the lower bound to be mutated in
