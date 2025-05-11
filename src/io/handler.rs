@@ -8,6 +8,7 @@ use google_cloud_storage::http::objects::download::Range;
 use google_cloud_storage::http::objects::get::GetObjectRequest;
 use std::io::Cursor;
 
+use super::excel::ExcelReader;
 use super::file_type::FileType;
 use super::gcloud::read_bytes_from_gcs_sync;
 use super::local::read_bytes_from_local_sync;
@@ -43,6 +44,10 @@ pub fn read_from_any_path(path: &str) -> Result<DataFrame, DoraErrors> {
                 .finish()
                 .map_err(|e| DoraErrors::IOError(e.to_string()))?
         },
-        _ => return Err(DoraErrors::FileNotFound("Invalid File Type".to_string())),
+        FileType::Excel => {
+            ExcelReader::new(cursor)
+                .finish()?
+        },
+        // _ => return Err(DoraErrors::FileNotFound("Invalid File Type".to_string())),
     });
 }
