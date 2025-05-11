@@ -22,7 +22,7 @@ impl ExcelReader {
         Self { cursor: cursor }
     }
 
-    pub fn read_sheet(&self, sheet_name: &str) -> Result<DataFrame, DoraErrors> {
+    pub fn read_sheet(&self, sheet_index: usize) -> Result<DataFrame, DoraErrors> {
         let mut file_contents = open_workbook_auto_from_rs(self.cursor.clone())
             .map_err(|e| DoraErrors::IOError(e.to_string()))?;
 
@@ -31,8 +31,8 @@ impl ExcelReader {
         let csv_buffers = ExcelReader::worksheets_to_csv_string_bufs(&mut file_contents);
         // consumes the buffers, because I don't want them to be doubly owned.
         // this obj is useless after this funtion.
-        let sheet_1_contents = csv_buffers[0].to_owned(); // TODO, for initial testing purposes since I dont wanna deal with multisheets just yet.
-        let cursor = Cursor::new(sheet_1_contents);
+        let sheet_contents = csv_buffers[sheet_index].to_owned(); // TODO, for initial testing purposes since I dont wanna deal with multisheets just yet.
+        let cursor = Cursor::new(sheet_contents);
 
         // to polars dataframe.
         let df = CsvReader::new(cursor)

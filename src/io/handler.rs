@@ -62,11 +62,11 @@ pub fn get_cursor_from_any_path(path: &str) -> Result<Cursor<Vec<u8>>, DoraError
 // since you need to provide an additional argument
 pub fn read_excel_from_any_path(
     path: &str,
-    sheet_name: &str,
+    sheet_index: usize,
 ) -> Result<DataFrame, DoraErrors> {
     let cursor = get_cursor_from_any_path(path)?;
     
     let df = ExcelReader::new(cursor)
-        .read_sheet(sheet_name)?;
+        .read_sheet(sheet_index)?;
     Ok(df)
 }
