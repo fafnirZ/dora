@@ -31,10 +31,17 @@ impl App {
             }
         };
 
+        let mut dataframe_state = DataFrameState::new(file_path);
+        match page_state {
+            PageState::MultiSheetSelectionPage => {} // dataframe wont be evaluated until collect is called later
+            _ => {
+                dataframe_state.collect(); // will evaluate the dataframe upfront
+            }
+        }
 
         Self {
             input_handler: InputHandler::new(),
-            dataframe_state: DataFrameState::new(file_path),
+            dataframe_state: dataframe_state,
             search_result_state: SearchResultState::new(),
             config_state: ConfigState::new(),
             page_state: page_state,
