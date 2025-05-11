@@ -62,6 +62,9 @@ impl App {
     ///////////////
 
     fn render_frame(&mut self, frame: &mut Frame) {
+        self.render_table(frame);
+    }
+    fn render_table(&mut self, frame: &mut Frame) {
         let area = frame.area();
         let [top_banner, _, main_area, _, bottom_banner] = Layout::vertical([
             Constraint::Length(1),     // top banner
