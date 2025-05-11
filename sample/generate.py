@@ -11,4 +11,5 @@ new_df = df.with_columns(
 # new_df.write_csv("b.csv")
 # new_df.write_parquet("b.parquet")
 # new_df.write_ndjson("b.ndjson")
-new_df.write_ndjson("b.jsonl")
+# new_df.write_ndjson("b.jsonl")
+new_df.write_excel("b.xlsx")
