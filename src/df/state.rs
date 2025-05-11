@@ -185,7 +185,7 @@ impl DataFrameState {
             .min(MAX_ROWS_RENDERED as u16);
 
         let cols_renderable =
-            ((table_area[1] / config_state.cell_width)-minus_one_for_good_luck_because_it_needs_padding).min(MAX_COLS_RENDERED as u16);
+            (((table_area[1] / config_state.cell_width)as f64).floor() as u16).min(MAX_COLS_RENDERED as u16);
 
         self.rows_rendered = rows_renderable;
         self.cols_rendered = cols_renderable;
@@ -221,9 +221,11 @@ impl DataFrameState {
             curr_col_view_slice[0],
             (curr_col_view_slice[0]+self.rows_rendered).min(max_cols_in_table),
         ];
-        self.row_view_slice = new_row_view_slice;
-        self.col_view_slice = new_col_view_slice;
-
+        // self.row_view_slice = new_row_view_slice;
+        // self.col_view_slice = new_col_view_slice;
+        self.set_col_view_slice(new_col_view_slice);
+        self.set_row_view_slice(new_row_view_slice);
+        println!("rendered {},{}", self.rows_rendered, self.cols_rendered);
         // bound the cursors to be the upper bound
         // no need to do for lower bound since its lower bound centric
         // meaning its impossible for the lower bound to be mutated in
