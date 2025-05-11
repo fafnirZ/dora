@@ -35,7 +35,7 @@ pub fn read_from_any_path(path: &str) -> Result<DataFrame, DoraErrors> {
         PathLocation::Gcs => read_bytes_from_gcs_sync(path)?,
         PathLocation::Local => read_bytes_from_local_sync(path)?,
     };
-    
+
     return Ok(match extension {
         FileType::Csv => CsvReader::new(cursor)
             .finish()

@@ -13,7 +13,10 @@ use crate::{
     df::state::DataFrameState,
     errors::DoraResults,
     input::{Control, InputHandler},
-    io::{get_cursor_from_any_path, ExcelReader, ExcelSheetSelectorWidgetState},
+    io::{
+        ExcelReader, ExcelSheetSelectorPage, ExcelSheetSelectorWidgetState,
+        get_cursor_from_any_path,
+    },
     mode_banner::ModeBanner,
     page::{self, PageState},
     search::state::SearchResultState,
@@ -56,22 +59,17 @@ impl App {
             }
         }
 
-        // sheet_selector_state 
+        // sheet_selector_state
         let sheet_selector_state = match page_state {
             PageState::MultiSheetSelectionPage => {
-                let cursor = get_cursor_from_any_path(file_path)
-                    .unwrap();
-                let worksheet_names = ExcelReader::new(cursor)
-                    .get_worksheet_names()
-                    .unwrap();
-                ExcelSheetSelectorWidgetState{
+                let cursor = get_cursor_from_any_path(file_path).unwrap();
+                let worksheet_names = ExcelReader::new(cursor).get_worksheet_names().unwrap();
+                ExcelSheetSelectorWidgetState {
                     sheet_names: Some(worksheet_names),
                     cursor: 0,
                 }
             } // dataframe wont be evaluated until collect is called later
-            _ => {
-                ExcelSheetSelectorWidgetState::new()
-            }
+            _ => ExcelSheetSelectorWidgetState::new(),
         };
 
         Self {
@@ -114,7 +112,14 @@ impl App {
             PageState::TablePage => {
                 self.render_table(frame);
             }
-            PageState::MultiSheetSelectionPage => {}
+            PageState::MultiSheetSelectionPage => {
+                let page = ExcelSheetSelectorPage::new();
+                frame.render_stateful_widget(
+                    page,
+                    frame.area(),
+                    &mut self.sheet_selector_state,
+                );
+            }
         }
     }
     fn render_table(&mut self, frame: &mut Frame) {
