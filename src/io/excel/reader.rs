@@ -22,7 +22,7 @@ impl ExcelReader {
         Self { cursor: cursor }
     }
 
-    pub fn finish(&self) -> Result<DataFrame, DoraErrors> {
+    pub fn read_sheet(&self, sheet_name: &str) -> Result<DataFrame, DoraErrors> {
         let mut file_contents = open_workbook_auto_from_rs(self.cursor.clone())
             .map_err(|e| DoraErrors::IOError(e.to_string()))?;
 
