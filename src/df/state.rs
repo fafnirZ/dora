@@ -184,7 +184,7 @@ impl DataFrameState {
             .min(MAX_ROWS_RENDERED as u16);
 
         let cols_renderable =
-            (table_area[1] / config_state.cell_width).min(MAX_COLS_RENDERED as u16);
+            ((table_area[1] / config_state.cell_width)-minus_one_for_good_luck_because_it_needs_padding).min(MAX_COLS_RENDERED as u16);
 
         self.rows_rendered = rows_renderable;
         self.cols_rendered = cols_renderable;
