@@ -35,7 +35,9 @@ impl ExcelReader {
         let cursor = Cursor::new(sheet_contents);
 
         // to polars dataframe.
-        let df = CsvReader::new(cursor)
+        let df = CsvReadOptions::default()
+            .with_infer_schema_length(None) // infer schema with entire file.
+            .into_reader_with_file_handle(cursor)
             .finish()
             .map_err(|e| DoraErrors::IOError(e.to_string()))?;
         Ok(df)
