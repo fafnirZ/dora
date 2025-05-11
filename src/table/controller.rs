@@ -56,7 +56,7 @@ pub fn shift_displayed_df_value_slice_right(app_state: &mut App) {
     let df_col_len = df_state.get_df_shape().1;
     let df_state = &mut app_state.dataframe_state;
     let curr_view = df_state.get_col_view_slice();
-    if curr_view[1] >= df_col_len - 1 {
+    if curr_view[1] > df_col_len {
         return;
     }
     let sliding_window_increment = [
@@ -107,7 +107,7 @@ pub fn shift_column_cursor_right(app_state: &mut App) {
 
     let df_col_len = df_state.get_df_shape().1;
     let curr_x = df_state.get_cursor_x();
-    if *curr_x >= df_col_len - 1 {
+    if *curr_x >= df_col_len {
         return;
     }
     df_state.set_cursor_x(curr_x + STEP_SIZE);
