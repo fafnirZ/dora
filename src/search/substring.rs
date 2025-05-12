@@ -24,8 +24,22 @@ impl SearchAlgorithm for ExactSubstringSearch {
             return None;
         }
 
-        let bytes_a = pattern.as_bytes();
-        let bytes_b = input_str.as_bytes();
+        let insensitive_a = {
+            if case_insensitive {
+                pattern.to_lowercase()
+            } else {
+                pattern.to_string()
+            }
+        };
+        let insensitive_b = {
+            if case_insensitive {
+                input_str.to_lowercase()
+            } else {
+                input_str.to_string()
+            }
+        };
+        let bytes_a = insensitive_a.as_bytes();
+        let bytes_b = insensitive_b.as_bytes();
         let len_a = bytes_a.len();
 
         for i in 0..=(bytes_b.len() - len_a) {
