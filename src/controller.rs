@@ -4,7 +4,7 @@ use crate::{
     app::App,
     commands::controller::CommandHandler,
     df::state::CursorFocus,
-    input::{BufferState, Control},
+    input::{BufferState, Control, MsgBuffer},
     mode::AppMode,
     page::PageState,
     search::{
@@ -144,7 +144,7 @@ impl Controller {
         match control {
             Control::Esc => {
                 app_state.input_handler.reset_buffer();
-                app_state.input_handler.reset_error_buffer();
+                app_state.input_handler.reset_msg_buffer();
                 app_state.input_handler.mode_state = AppMode::Normal;
             }
             _ => {}
@@ -157,7 +157,7 @@ impl Controller {
         match control {
             Control::Esc => {
                 app_state.input_handler.reset_buffer();
-                app_state.input_handler.reset_error_buffer();
+                app_state.input_handler.reset_msg_buffer();
                 app_state.input_handler.mode_state = AppMode::Normal;
             }
             Control::Enter => {
@@ -229,14 +229,12 @@ impl Controller {
                 // TODO: control which algorithm to use
                 // right now itll be hardcoded.
                 // let algorithm = ExactSubstringSearch{};
-                let algorithm = SearchAlgorithmImplementations::SimpleApproximateSearch(
-                    SimpleApproximateSearch {},
-                );
+                // let algorithm = &app_state.search_result_state.search_algorithm;
 
-                match algorithm {
+                match &app_state.search_result_state.search_algorithm {
                     SearchAlgorithmImplementations::SimpleApproximateSearch(algo) => {
                         let results =
-                            par_find_substring_matches(&algo, &series, current_buffer_string)
+                            par_find_substring_matches(algo, &series, current_buffer_string)
                                 .into_iter() // owns the values now
                                 .map(|(idx, res)| {
                                     (idx, AnySearchResult::SimpleApproximateSearch(res))
@@ -248,9 +246,10 @@ impl Controller {
                     }
                     SearchAlgorithmImplementations::ExactSubstringSearch(algo) => {
                         let results =
-                            par_find_substring_matches(&algo, &series, current_buffer_string)
+                            par_find_substring_matches(algo, &series, current_buffer_string)
                                 .into_iter() // owns the values now
-                                .map(|(idx, res)| (idx, AnySearchResult::ExactSubstringSearch(res)))
+                                .map(|(idx, res)| 
+                                    (idx, AnySearchResult::ExactSubstringSearch(res)))
                                 .collect();
 
                         // set results
@@ -264,7 +263,7 @@ impl Controller {
         match control {
             Control::Esc => {
                 app_state.input_handler.reset_buffer();
-                app_state.input_handler.reset_error_buffer();
+                app_state.input_handler.reset_msg_buffer();
                 app_state.input_handler.mode_state = AppMode::Normal;
             }
             _ => {}
@@ -275,7 +274,7 @@ impl Controller {
         match control {
             Control::Esc => {
                 app_state.input_handler.reset_buffer();
-                app_state.input_handler.reset_error_buffer();
+                app_state.input_handler.reset_msg_buffer();
                 app_state.input_handler.mode_state = AppMode::Normal;
             }
             Control::Enter => {
@@ -289,11 +288,11 @@ impl Controller {
                     _ => String::new(),
                 };
                 match CommandHandler::try_execute(app_state, &buffer_value) {
-                    Ok(_) => {
-                        app_state.input_handler.error_buffer = String::new(); // clear previous error buffers
+                    Ok(msg) => {
+                        app_state.input_handler.msg_buffer= MsgBuffer::Normal(msg); // clear previous error buffers
                     }
                     Err(err) => {
-                        app_state.input_handler.error_buffer = err.to_string(); // sets error buffer
+                        app_state.input_handler.msg_buffer = MsgBuffer::Error(err.to_string()); // sets error buffer
                     }
                 }
             }

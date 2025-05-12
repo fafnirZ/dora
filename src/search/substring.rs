@@ -12,7 +12,7 @@ impl SearchAlgorithm for ExactSubstringSearch {
         &self,
         pattern: &str,
         input_str: &str,
-        _case_insensitive: bool,
+        case_insensitive: bool,
     ) -> Option<Self::Result> {
         // we consider empty input to return None
         // the buffer defaults as empty

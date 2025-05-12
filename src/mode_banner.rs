@@ -5,7 +5,7 @@ use ratatui::{
     widgets::{Paragraph, StatefulWidget, Widget},
 };
 
-use crate::{app::App, input::BufferState, mode::AppMode};
+use crate::{app::App, input::{BufferState, MsgBuffer}, mode::AppMode};
 
 pub struct ModeBanner {}
 
@@ -46,8 +46,16 @@ impl StatefulWidget for ModeBanner {
             Layout::horizontal([Constraint::Percentage(50), Constraint::Percentage(50)])
                 .areas(area);
 
-        let err_buf = &state.input_handler.error_buffer;
-        let is_err = { err_buf != "" };
+        let msg_buf = &state.input_handler.msg_buffer;
+        let mut is_err = false;
+
+        let msg = match msg_buf {
+            MsgBuffer::Normal(res) => res,
+            MsgBuffer::Error(res) => {
+                is_err = true;
+                res
+            },
+        };
 
         //
         // left side in app banner
@@ -71,7 +79,7 @@ impl StatefulWidget for ModeBanner {
         //
         // right side is for errors
         //
-        Paragraph::new(err_buf.clone())
+        Paragraph::new(msg.clone())
             .style(common_style)
             .alignment(Alignment::Right)
             .render(right_side, buf);
