@@ -222,7 +222,7 @@ impl DataFrameState {
         ];
         let new_col_view_slice = [
             curr_col_view_slice[0],
-            (curr_col_view_slice[0]+self.rows_rendered).min(max_cols_in_table),
+            (curr_col_view_slice[0]+self.cols_rendered).min(max_cols_in_table),
         ];
         // self.row_view_slice = new_row_view_slice;
         // self.col_view_slice = new_col_view_slice;
