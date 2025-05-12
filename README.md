@@ -9,10 +9,15 @@ It is an terminal based, interactive dataframe explorer built ontop of:
 - ratatui
 
 ## Supported File types: 
-- [x] csv (local|gcs)
-- [x] parquet (local|gcs)
-- [ ] xlsx
-- [ ] multisheet excel
+- [x] csv 
+- [x] parquet 
+- [x] xlsx
+- [x] multisheet excel
+- [x] ndjson
+
+## Supported file systems:
+- [x] local files
+- [x] gcs files using the `gs://` prefix
 
 ## App Modes:
 - [x] normal mode
@@ -20,6 +25,11 @@ It is an terminal based, interactive dataframe explorer built ontop of:
 - [x] command mode
 - [ ] help mode
 - [ ] filter mode
+
+## Documentation Links
+[Normal Mode Docs](./docs/normal.md)
+[Command Mode Docs](./docs/commands.md)
+[Search Mode Docs](./docs/search.md)
 
 
 ## Supported Operations (TODO)
