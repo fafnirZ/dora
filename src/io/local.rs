@@ -1,6 +1,6 @@
 use std::{
     fs::File,
-    io::{Bytes, Cursor, Read},
+    io::{Cursor, Read},
     path::Path,
 };
 

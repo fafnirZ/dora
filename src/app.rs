@@ -1,4 +1,3 @@
-use polars::prelude::file;
 use ratatui::{
     Frame, Terminal,
     layout::{Constraint, Layout},
@@ -12,14 +11,14 @@ use crate::{
     controller::Controller,
     df::state::DataFrameState,
     errors::DoraResults,
-    input::{self, Control, InputHandler},
+    input::{Control, InputHandler},
     io::{
         ExcelReader, ExcelSheetSelectorPage, ExcelSheetSelectorWidgetState,
         get_cursor_from_any_path,
     },
     mode::AppMode,
     mode_banner::ModeBanner,
-    page::{self, PageState},
+    page::{PageState},
     search::state::SearchResultState,
     table::table_ui::TableUI,
     utils::area::horizontal_pad_area,

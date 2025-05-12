@@ -7,7 +7,7 @@ use ratatui::{
     buffer::Buffer,
     layout::{Alignment, Constraint, Layout, Rect},
     style::{Color, Stylize},
-    widgets::{Block, Borders, Paragraph, StatefulWidget, Widget, Wrap},
+    widgets::{Paragraph, StatefulWidget, Widget, Wrap},
 };
 
 ///////////
@@ -49,13 +49,9 @@ impl ExcelSheetSelectorPage {
         let mut para = Paragraph::new(sheet_name).alignment(Alignment::Center);
 
         if is_selected {
-            para = para
-                .fg(Color::White)
-                .bg(Color::DarkGray);
+            para = para.fg(Color::White).bg(Color::DarkGray);
         } else {
-            para = para
-                .fg(Color::Black)
-                .bg(Color::Gray);
+            para = para.fg(Color::Black).bg(Color::Gray);
         }
 
         para.render(main, buf);

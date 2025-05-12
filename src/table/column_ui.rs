@@ -5,7 +5,7 @@ use ratatui::{
 };
 
 use crate::{
-    any_datetime, any_float, any_int, any_string, any_uint, app::App, df::state::CursorFocus,
+    app::App, df::state::CursorFocus,
     mode::AppMode, utils::cell::get_cell_area,
 };
 // NOTE: will never add the header to column, since I dont want to be able to navigate to
@@ -98,7 +98,7 @@ impl ColumnUI {
     fn is_search_result(
         column_index: u16,
         search_results_found_in_row: &Vec<usize>,
-        absolute_row_index: i64,
+        absolute_row_index: u16,
         state: &<ColumnUI as StatefulWidget>::State,
     ) -> bool {
         match state.input_handler.mode_state {
@@ -148,7 +148,7 @@ impl StatefulWidget for ColumnUI {
         let series = column
             .as_series()
             .unwrap()
-            .slice(*val_offset_start, length_taken)
+            .slice(*val_offset_start as i64, length_taken)
             .rechunk(); // added because of bug: https://github.com/fafnirZ/dora/issues/1
         let search_results = &state.search_result_state.result_indices;
 
@@ -161,7 +161,7 @@ impl StatefulWidget for ColumnUI {
         // so for search result indices which is an absolute index w.r.t.
         // the full size of the column this will be erroneous.
         for (idx, value) in series.iter().enumerate() {
-            let absolute_row_index = val_offset_start + (idx as i64);
+            let absolute_row_index = val_offset_start + (idx as u16);
 
             let x = start_x + self.column_index * config_state.cell_width; // WELL depends on what the x_offset is for this column.
 

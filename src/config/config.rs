@@ -1,4 +1,3 @@
-use crate::errors::DoraErrors;
 
 use super::{dotconfig::read_config_file, serde::Config};
 

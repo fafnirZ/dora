@@ -1,16 +1,23 @@
 use polars::prelude::DataType;
 
 use crate::{
-    app::App, commands::controller::CommandHandler, df::state::CursorFocus, input::{BufferState, Control}, io::read_excel_from_any_path, mode::AppMode, page::PageState, search::{
+    app::App,
+    commands::controller::CommandHandler,
+    df::state::CursorFocus,
+    input::{BufferState, Control},
+    mode::AppMode,
+    page::PageState,
+    search::{
         approximate_substring_v1::SimpleApproximateSearch,
         controller::shift_current_result_cursor_value_into_view,
         search::par_find_substring_matches,
         traits::{AnySearchResult, SearchAlgorithmImplementations},
-    }, table::controller::{
+    },
+    table::controller::{
         shift_column_cursor_left, shift_column_cursor_right, shift_displayed_df_value_slice_down,
         shift_displayed_df_value_slice_left, shift_displayed_df_value_slice_right,
         shift_displayed_df_value_slice_up, shift_row_cursor_down, shift_row_cursor_up,
-    }
+    },
 };
 
 // given input,
@@ -93,11 +100,12 @@ impl Controller {
             Control::ScrollRight => {
                 df_state.set_cursor_focus(CursorFocus::Column);
                 let cursor_x = df_state.get_cursor_x();
+                let cols_renderable = df_state.cols_rendered;
                 let col_view_slice = df_state.get_col_view_slice();
-                let slice_length = col_view_slice[1] - col_view_slice[0];
                 let df_max_cols = df_state.get_df_shape().1;
-                if *cursor_x == (slice_length - 1) {
-                    if col_view_slice[1] > df_max_cols {
+                if *cursor_x >= (cols_renderable - 1) {
+                    // println!("{},{},{},{},{}", cursor_x, col_view_slice[0], col_view_slice[1], cols_renderable, df_max_cols);
+                    if col_view_slice[1] >= df_max_cols {
                     }
                     // reached the very end of the table
                     else {
