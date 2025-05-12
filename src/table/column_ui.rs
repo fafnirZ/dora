@@ -5,7 +5,7 @@ use ratatui::{
 };
 
 use crate::{
-    any_datetime, any_float, any_int, any_string, any_uint, app::App, df::state::CursorFocus,
+    app::App, df::state::CursorFocus,
     mode::AppMode, utils::cell::get_cell_area,
 };
 // NOTE: will never add the header to column, since I dont want to be able to navigate to

@@ -4,7 +4,7 @@
 // csv string buffer.
 // then pass the cursor into polars dataframe.
 
-use std::{cell, io::Cursor};
+use std::io::Cursor;
 
 // use polars::error::PolarsError;
 use calamine::{Reader, Sheets, open_workbook_auto_from_rs};

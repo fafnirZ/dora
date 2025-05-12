@@ -5,7 +5,6 @@ use crate::{
     commands::controller::CommandHandler,
     df::state::CursorFocus,
     input::{BufferState, Control},
-    io::read_excel_from_any_path,
     mode::AppMode,
     page::PageState,
     search::{
