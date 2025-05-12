@@ -24,3 +24,18 @@ pub enum SearchAlgorithmImplementations {
     SimpleApproximateSearch(SimpleApproximateSearch),
     ExactSubstringSearch(ExactSubstringSearch),
 }
+
+
+impl SearchAlgorithmImplementations {
+    // cycle through all implementations.
+    pub fn next(
+        curr: SearchAlgorithmImplementations
+    ) -> Self {
+        match curr {
+            SearchAlgorithmImplementations::ExactSubstringSearch(_) =>
+                SearchAlgorithmImplementations::SimpleApproximateSearch(SimpleApproximateSearch {}),
+            SearchAlgorithmImplementations::SimpleApproximateSearch(_) => 
+                SearchAlgorithmImplementations::ExactSubstringSearch(ExactSubstringSearch {}),
+        }
+    }
+}

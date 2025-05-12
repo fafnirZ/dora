@@ -229,9 +229,7 @@ impl Controller {
                 // TODO: control which algorithm to use
                 // right now itll be hardcoded.
                 // let algorithm = ExactSubstringSearch{};
-                let algorithm = SearchAlgorithmImplementations::SimpleApproximateSearch(
-                    SimpleApproximateSearch {},
-                );
+                let algorithm = &app_state.search_result_state.search_algorithm;
 
                 match algorithm {
                     SearchAlgorithmImplementations::SimpleApproximateSearch(algo) => {
