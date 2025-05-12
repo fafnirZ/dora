@@ -10,6 +10,7 @@ impl CommandHandler {
         let args: Vec<&str> = command_str.split(' ').collect();
         match args[0] {
             "set" => return CommandHandler::handle_set_commands(app_state, args[1..].to_vec()),
+            "toggle" => return CommandHandler::handle_toggle_commands(app_state, args[1..].to_vec()),
             _ => {
                 return Err(DoraErrors::CommandError(format!(
                     "Unknown Command {}",
@@ -71,10 +72,43 @@ impl CommandHandler {
                 app_state.config_state.word_wrap = input;
                 return Ok("".to_string());
             }
-            "fzf" => {
+            _ => {
+                let command_str_reconstructed = command_prefix.to_owned() + " " + &args.join(" ");
+                Err(DoraErrors::CommandError(format!(
+                    "Unknown Command {}",
+                    command_str_reconstructed
+                )))
+            }
+        }
+    }
 
-               return Ok("".to_string()) 
+    fn handle_toggle_commands(app_state: &mut App, args: Vec<&str>) -> Result<String, DoraErrors> {
+        let command_prefix = "toggle";
+        match args[0] {
+            "word-wrap" | "wrap" => {
+                // toggle
+                if args.len() == 1 {
+                    app_state.config_state.word_wrap = !app_state.config_state.word_wrap;
+                    return Ok("".to_string());
+                }
+                let input = CommandHandler::try_get_argument(args, 1)?
+                    .parse::<bool>()
+                    .map_err(|e| DoraErrors::CommandError(e.to_string()))?;
+
+                app_state.config_state.word_wrap = input;
+                return Ok("".to_string());
+            }
+            "fzf" => {
+                app_state.search_result_state.search_algorithm = 
+                    app_state.search_result_state.search_algorithm.next();
+                
+                let new_search_mode = &app_state.search_result_state.search_algorithm;
+                return Ok(format!(
+                    "new search mode: {}",
+                    new_search_mode.name(),
+                )) 
             },
+
             _ => {
                 let command_str_reconstructed = command_prefix.to_owned() + " " + &args.join(" ");
                 Err(DoraErrors::CommandError(format!(
