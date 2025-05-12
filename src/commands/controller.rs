@@ -1,3 +1,5 @@
+use std::process;
+
 use crate::{app::App, errors::DoraErrors};
 
 pub struct CommandHandler {}
@@ -21,7 +23,7 @@ impl CommandHandler {
         let command_prefix = "set";
         match args[0] {
             // set cell_width 10
-            "cell-width" => {
+            "cell-width" | "width" => {
                 app_state.config_state.cell_width = CommandHandler::try_get_argument(args, 1)?
                     .parse::<u16>()
                     .map_err(|e| DoraErrors::CommandError(e.to_string()))?;
@@ -36,7 +38,7 @@ impl CommandHandler {
                 return Ok(());
             }
             // set cell_height 3
-            "cell-height" => {
+            "cell-height" | "height" => {
                 let input = CommandHandler::try_get_argument(args, 1)?
                     .parse::<u16>()
                     .map_err(|e| DoraErrors::CommandError(e.to_string()))?;
@@ -56,7 +58,7 @@ impl CommandHandler {
                     .refresh_renderable_table_size(config_state);
                 return Ok(());
             }
-            "word-wrap" => {
+            "word-wrap" | "wrap" => {
                 // toggle
                 if args.len() == 1 {
                     app_state.config_state.word_wrap = !app_state.config_state.word_wrap;
@@ -69,6 +71,9 @@ impl CommandHandler {
                 app_state.config_state.word_wrap = input;
                 return Ok(());
             }
+            "fzf" => {
+                
+            },
             _ => {
                 let command_str_reconstructed = command_prefix.to_owned() + " " + &args.join(" ");
                 Err(DoraErrors::CommandError(format!(

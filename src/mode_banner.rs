@@ -46,7 +46,7 @@ impl StatefulWidget for ModeBanner {
             Layout::horizontal([Constraint::Percentage(50), Constraint::Percentage(50)])
                 .areas(area);
 
-        let err_buf = &state.input_handler.error_buffer;
+        let err_buf = &state.input_handler.msg_buffer;
         let is_err = { err_buf != "" };
 
         //
