@@ -1,5 +1,9 @@
 // use polars::frame::DataFrame;
-use crate::{config::ConfigState, io::{read_excel_from_any_path, read_from_any_path}, table::header::Header};
+use crate::{
+    config::ConfigState,
+    io::{read_excel_from_any_path, read_from_any_path},
+    table::header::Header,
+};
 use polars::prelude::*;
 
 // only use these as initialisation values
@@ -28,8 +32,8 @@ pub struct DataFrameState {
     // not sure if it should be owned here
     // but we figure it out later.
     ///////////////////////////////////////
-    row_view_slice: [u16; 2],  // the current viewable slice.
-    col_view_slice: [u16; 2],  // the current viewable slice.
+    row_view_slice: [u16; 2], // the current viewable slice.
+    col_view_slice: [u16; 2], // the current viewable slice.
     // !!!!NOTE CURSORS ARE RELATIVE TO THE VIEW SLICE!!!!!
     cursor_x: u16, // dataframe cursor for col NOTE: is limited by the number of columns renderable
     cursor_y: u16, // dataframe cursor for row NOTE: is limited by the number of rows renderable
@@ -68,13 +72,9 @@ impl DataFrameState {
     // given an arbitrary df
     // set Df state's df
     // this is particularly useful
-    // for 
+    // for
     pub fn collect_from_excel_sheet(&mut self, sheet_index: usize) {
-        let df = read_excel_from_any_path(
-            &self.source_path,
-            sheet_index,
-        )
-        .unwrap();
+        let df = read_excel_from_any_path(&self.source_path, sheet_index).unwrap();
         self.dataframe = Some(df);
     }
 
@@ -178,23 +178,17 @@ impl DataFrameState {
         // calculate the number of rows  //
         // and columns we can render     //
         ///////////////////////////////////
-        let rows_renderable = 
-            ((
-                ((table_area[0] - config_state.header_height) / config_state.cell_height) as f64)
-                .floor() as u16
-            ).min(MAX_ROWS_RENDERED as u16);
+        let rows_renderable = ((((table_area[0] - config_state.header_height)
+            / config_state.cell_height) as f64)
+            .floor() as u16)
+            .min(MAX_ROWS_RENDERED as u16);
 
-        let cols_renderable =
-            ((
-                (table_area[1] / config_state.cell_width) as f64)
-                .floor() as u16
-            ).min(MAX_COLS_RENDERED as u16);
+        let cols_renderable = (((table_area[1] / config_state.cell_width) as f64).floor() as u16)
+            .min(MAX_COLS_RENDERED as u16);
 
         let (table_rows, table_cols) = self.get_df_shape();
-        self.rows_rendered = rows_renderable
-            .min(table_rows);
-        self.cols_rendered = cols_renderable
-            .min(table_cols);
+        self.rows_rendered = rows_renderable.min(table_rows);
+        self.cols_rendered = cols_renderable.min(table_cols);
     }
     pub fn recalculate_view_slices(&mut self) {
         ////////////////////////////////////
@@ -221,11 +215,11 @@ impl DataFrameState {
         //    actual table bounds
         let new_row_view_slice = [
             curr_row_view_slice[0],
-            (curr_row_view_slice[0]+self.rows_rendered).min(max_rows_in_table),
+            (curr_row_view_slice[0] + self.rows_rendered).min(max_rows_in_table),
         ];
         let new_col_view_slice = [
             curr_col_view_slice[0],
-            (curr_col_view_slice[0]+self.cols_rendered).min(max_cols_in_table),
+            (curr_col_view_slice[0] + self.cols_rendered).min(max_cols_in_table),
         ];
         self.set_col_view_slice(new_col_view_slice);
         self.set_row_view_slice(new_row_view_slice);
@@ -242,7 +236,6 @@ impl DataFrameState {
         if self.cursor_y >= self.rows_rendered {
             self.cursor_y = 0;
         }
-
     }
 
     pub fn refresh_renderable_table_size(&mut self, config_state: &ConfigState) {
@@ -269,7 +262,7 @@ impl DataFrameState {
         &self.cursor_x
     }
     pub fn set_cursor_x(&mut self, cursor_x: u16) {
-        if cursor_x as u16 > self.cols_rendered{
+        if cursor_x as u16 > self.cols_rendered {
             self.cursor_x = self.cols_rendered;
             return;
         }

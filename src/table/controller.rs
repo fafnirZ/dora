@@ -18,10 +18,7 @@ pub fn shift_displayed_df_value_slice_down(app_state: &mut App) {
     if curr_view[1] == df_row_len {
         return;
     }
-    let sliding_window_increment = [
-        curr_view[0] + STEP_SIZE,
-        curr_view[1] + STEP_SIZE,
-    ];
+    let sliding_window_increment = [curr_view[0] + STEP_SIZE, curr_view[1] + STEP_SIZE];
     df_state.set_row_view_slice(sliding_window_increment);
 }
 
@@ -31,10 +28,7 @@ pub fn shift_displayed_df_value_slice_up(app_state: &mut App) {
     if curr_view[0] == 0 {
         return;
     }
-    let sliding_window_increment = [
-        curr_view[0] - STEP_SIZE,
-        curr_view[1] - STEP_SIZE,
-    ];
+    let sliding_window_increment = [curr_view[0] - STEP_SIZE, curr_view[1] - STEP_SIZE];
     df_state.set_row_view_slice(sliding_window_increment);
 }
 
@@ -44,10 +38,7 @@ pub fn shift_displayed_df_value_slice_left(app_state: &mut App) {
     if curr_view[0] == 0 {
         return;
     }
-    let sliding_window_increment = [
-        curr_view[0] - STEP_SIZE,
-        curr_view[1] - STEP_SIZE,
-    ];
+    let sliding_window_increment = [curr_view[0] - STEP_SIZE, curr_view[1] - STEP_SIZE];
     df_state.set_col_view_slice(sliding_window_increment);
 }
 
@@ -59,10 +50,7 @@ pub fn shift_displayed_df_value_slice_right(app_state: &mut App) {
     if curr_view[1] > df_col_len {
         return;
     }
-    let sliding_window_increment = [
-        curr_view[0] + STEP_SIZE,
-        curr_view[1] + STEP_SIZE,
-    ];
+    let sliding_window_increment = [curr_view[0] + STEP_SIZE, curr_view[1] + STEP_SIZE];
     df_state.set_col_view_slice(sliding_window_increment);
 }
 

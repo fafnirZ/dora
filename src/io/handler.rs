@@ -14,10 +14,7 @@ use super::gcloud::read_bytes_from_gcs_sync;
 use super::local::read_bytes_from_local_sync;
 use super::path_location::PathLocation;
 
-
-pub fn read_from_any_path(
-    path: &str,
-) -> Result<DataFrame, DoraErrors> {
+pub fn read_from_any_path(path: &str) -> Result<DataFrame, DoraErrors> {
     let location = PathLocation::determine_location(path);
     let extension = match FileType::determine_extension(path) {
         Some(res) => res,
@@ -44,11 +41,12 @@ pub fn read_from_any_path(
             .with_json_format(JsonFormat::JsonLines)
             .finish()
             .map_err(|e| DoraErrors::IOError(e.to_string()))?,
-            
+
         FileType::Excel => {
-            panic!("Excel files should not be read using this function, the developer did a whoopsie!");
-        }
-        // _ => return Err(DoraErrors::FileNotFound("Invalid File Type".to_string())),
+            panic!(
+                "Excel files should not be read using this function, the developer did a whoopsie!"
+            );
+        } // _ => return Err(DoraErrors::FileNotFound("Invalid File Type".to_string())),
     });
 }
 
@@ -65,13 +63,9 @@ pub fn get_cursor_from_any_path(path: &str) -> Result<Cursor<Vec<u8>>, DoraError
 // excel sheets shouldnt be read
 // from read_from_any_path
 // since you need to provide an additional argument
-pub fn read_excel_from_any_path(
-    path: &str,
-    sheet_index: usize,
-) -> Result<DataFrame, DoraErrors> {
+pub fn read_excel_from_any_path(path: &str, sheet_index: usize) -> Result<DataFrame, DoraErrors> {
     let cursor = get_cursor_from_any_path(path)?;
-    
-    let df = ExcelReader::new(cursor)
-        .read_sheet(sheet_index)?;
+
+    let df = ExcelReader::new(cursor).read_sheet(sheet_index)?;
     Ok(df)
 }
