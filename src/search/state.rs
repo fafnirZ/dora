@@ -1,4 +1,4 @@
-use super::{approximate_substring_v1::SimpleApproximateSearch, traits::{AnySearchResult, SearchAlgorithmImplementations}};
+use super::{approximate_substring_v1::SimpleApproximateSearch, substring::ExactSubstringSearch, traits::{AnySearchResult, SearchAlgorithmImplementations}};
 
 pub struct SearchResultState {
     // assuming you're only performing on a single column
@@ -11,7 +11,9 @@ pub struct SearchResultState {
 impl SearchResultState {
     pub fn new() -> Self {
         Self {
-            search_algorithm: SearchAlgorithmImplementations::SimpleApproximateSearch(SimpleApproximateSearch{}),
+            search_algorithm: SearchAlgorithmImplementations::ExactSubstringSearch(
+                ExactSubstringSearch{}
+            ),
             result_indices: Vec::new(),
             result_cursor: None,
         }

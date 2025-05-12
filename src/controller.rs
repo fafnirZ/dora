@@ -229,12 +229,12 @@ impl Controller {
                 // TODO: control which algorithm to use
                 // right now itll be hardcoded.
                 // let algorithm = ExactSubstringSearch{};
-                let algorithm = &app_state.search_result_state.search_algorithm;
+                // let algorithm = &app_state.search_result_state.search_algorithm;
 
-                match algorithm {
+                match &app_state.search_result_state.search_algorithm {
                     SearchAlgorithmImplementations::SimpleApproximateSearch(algo) => {
                         let results =
-                            par_find_substring_matches(&algo, &series, current_buffer_string)
+                            par_find_substring_matches(algo, &series, current_buffer_string)
                                 .into_iter() // owns the values now
                                 .map(|(idx, res)| {
                                     (idx, AnySearchResult::SimpleApproximateSearch(res))
@@ -246,9 +246,10 @@ impl Controller {
                     }
                     SearchAlgorithmImplementations::ExactSubstringSearch(algo) => {
                         let results =
-                            par_find_substring_matches(&algo, &series, current_buffer_string)
+                            par_find_substring_matches(algo, &series, current_buffer_string)
                                 .into_iter() // owns the values now
-                                .map(|(idx, res)| (idx, AnySearchResult::ExactSubstringSearch(res)))
+                                .map(|(idx, res)| 
+                                    (idx, AnySearchResult::ExactSubstringSearch(res)))
                                 .collect();
 
                         // set results
