@@ -185,7 +185,10 @@ impl DataFrameState {
             ).min(MAX_ROWS_RENDERED as u16);
 
         let cols_renderable =
-            (((table_area[1] / config_state.cell_width)as f64).floor() as u16).min(MAX_COLS_RENDERED as u16);
+            ((
+                (table_area[1] / config_state.cell_width) as f64)
+                .floor() as u16
+            ).min(MAX_COLS_RENDERED as u16);
 
         let (table_rows, table_cols) = self.get_df_shape();
         self.rows_rendered = rows_renderable
