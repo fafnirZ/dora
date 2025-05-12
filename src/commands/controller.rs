@@ -98,7 +98,7 @@ impl CommandHandler {
                 app_state.config_state.word_wrap = input;
                 return Ok("".to_string());
             }
-            "fzf" => {
+            "search" | "search-mode" => {
                 app_state.search_result_state.search_algorithm = 
                     app_state.search_result_state.search_algorithm.next();
                 
