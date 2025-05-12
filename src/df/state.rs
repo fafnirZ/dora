@@ -187,8 +187,11 @@ impl DataFrameState {
         let cols_renderable =
             (((table_area[1] / config_state.cell_width)as f64).floor() as u16).min(MAX_COLS_RENDERED as u16);
 
-        self.rows_rendered = rows_renderable;
-        self.cols_rendered = cols_renderable;
+        let (table_rows, table_cols) = self.get_df_shape();
+        self.rows_rendered = rows_renderable
+            .min(table_rows);
+        self.cols_rendered = cols_renderable
+            .min(table_cols);
     }
     pub fn recalculate_view_slices(&mut self) {
         ////////////////////////////////////
