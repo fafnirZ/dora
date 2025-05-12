@@ -25,6 +25,11 @@ pub enum BufferState {
     Inactive,
 }
 
+pub enum MsgBuffer {
+    Normal(String),
+    Error(String),
+}
+
 pub struct InputHandler {
     events: Events,
     pub buffer_state: BufferState,
@@ -33,7 +38,7 @@ pub struct InputHandler {
     // this is the location
     // for storing the error messages the
     // app wishes to communicate to the user.
-    pub msg_buffer: String,
+    pub msg_buffer: MsgBuffer,
 }
 
 impl InputHandler {
@@ -42,7 +47,7 @@ impl InputHandler {
             events: Events::new(),
             buffer_state: BufferState::Inactive,
             mode_state: AppMode::Normal,
-            msg_buffer: String::new(),
+            msg_buffer: MsgBuffer::Normal(String::new()),
         }
     }
 
@@ -134,6 +139,6 @@ impl InputHandler {
 
     // error buffer
     pub fn reset_msg_buffer(&mut self) {
-        self.msg_buffer = String::new();
+        self.msg_buffer = MsgBuffer::Normal(String::new());
     }
 }

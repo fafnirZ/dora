@@ -4,7 +4,7 @@ use crate::{
     app::App,
     commands::controller::CommandHandler,
     df::state::CursorFocus,
-    input::{BufferState, Control},
+    input::{BufferState, Control, MsgBuffer},
     mode::AppMode,
     page::PageState,
     search::{
@@ -289,11 +289,11 @@ impl Controller {
                     _ => String::new(),
                 };
                 match CommandHandler::try_execute(app_state, &buffer_value) {
-                    Ok(_) => {
-                        app_state.input_handler.msg_buffer= String::new(); // clear previous error buffers
+                    Ok(msg) => {
+                        app_state.input_handler.msg_buffer= MsgBuffer::Normal(msg); // clear previous error buffers
                     }
                     Err(err) => {
-                        app_state.input_handler.msg_buffer = err.to_string(); // sets error buffer
+                        app_state.input_handler.msg_buffer = MsgBuffer::Error(err.to_string()); // sets error buffer
                     }
                 }
             }

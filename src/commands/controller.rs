@@ -5,7 +5,7 @@ use crate::{app::App, errors::DoraErrors};
 pub struct CommandHandler {}
 
 impl CommandHandler {
-    pub fn try_execute(app_state: &mut App, command_str: &str) -> Result<(), DoraErrors> {
+    pub fn try_execute(app_state: &mut App, command_str: &str) -> Result<String, DoraErrors> {
         // split string
         let args: Vec<&str> = command_str.split(' ').collect();
         match args[0] {
@@ -19,7 +19,7 @@ impl CommandHandler {
         }
     }
 
-    fn handle_set_commands(app_state: &mut App, args: Vec<&str>) -> Result<(), DoraErrors> {
+    fn handle_set_commands(app_state: &mut App, args: Vec<&str>) -> Result<String, DoraErrors> {
         let command_prefix = "set";
         match args[0] {
             // set cell_width 10
@@ -35,7 +35,7 @@ impl CommandHandler {
                 app_state
                     .dataframe_state
                     .refresh_renderable_table_size(config_state);
-                return Ok(());
+                return Ok("".to_string());
             }
             // set cell_height 3
             "cell-height" | "height" => {
@@ -56,23 +56,24 @@ impl CommandHandler {
                 app_state
                     .dataframe_state
                     .refresh_renderable_table_size(config_state);
-                return Ok(());
+                return Ok("".to_string());
             }
             "word-wrap" | "wrap" => {
                 // toggle
                 if args.len() == 1 {
                     app_state.config_state.word_wrap = !app_state.config_state.word_wrap;
-                    return Ok(());
+                    return Ok("".to_string());
                 }
                 let input = CommandHandler::try_get_argument(args, 1)?
                     .parse::<bool>()
                     .map_err(|e| DoraErrors::CommandError(e.to_string()))?;
 
                 app_state.config_state.word_wrap = input;
-                return Ok(());
+                return Ok("".to_string());
             }
             "fzf" => {
-                
+
+               return Ok("".to_string()) 
             },
             _ => {
                 let command_str_reconstructed = command_prefix.to_owned() + " " + &args.join(" ");
