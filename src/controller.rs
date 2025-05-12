@@ -93,13 +93,12 @@ impl Controller {
             Control::ScrollRight => {
                 df_state.set_cursor_focus(CursorFocus::Column);
                 let cursor_x = df_state.get_cursor_x();
+                let cols_renderable = df_state.cols_rendered;
                 let col_view_slice = df_state.get_col_view_slice();
-                // println!("{},{}", col_view_slice[0], col_view_slice[1]);
-                let slice_length = col_view_slice[1] - col_view_slice[0];
                 let df_max_cols = df_state.get_df_shape().1;
-                if *cursor_x >= ((slice_length-1) - 1) {
-                    // println!("{},{},{},{}", cursor_x, col_view_slice[0], col_view_slice[1], slice_length);
-                    if col_view_slice[1] > df_max_cols {
+                if *cursor_x >= (cols_renderable-1) {
+                    // println!("{},{},{},{},{}", cursor_x, col_view_slice[0], col_view_slice[1], cols_renderable, df_max_cols);
+                    if col_view_slice[1] >= df_max_cols {
                     }
                     // reached the very end of the table
                     else {

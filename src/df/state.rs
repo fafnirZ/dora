@@ -224,11 +224,8 @@ impl DataFrameState {
             curr_col_view_slice[0],
             (curr_col_view_slice[0]+self.cols_rendered).min(max_cols_in_table),
         ];
-        // self.row_view_slice = new_row_view_slice;
-        // self.col_view_slice = new_col_view_slice;
         self.set_col_view_slice(new_col_view_slice);
         self.set_row_view_slice(new_row_view_slice);
-        // println!("rendered {},{}", self.rows_rendered, self.cols_rendered);
 
         // for simplicitys sake
         // just set the cursor to 0
