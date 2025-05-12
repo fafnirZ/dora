@@ -1,5 +1,5 @@
 all:
-	cargo run ./sample/b.parquet
+	@echo "please run 'make <target>'"
 
 build_release:
 	cargo build --release
