@@ -21,8 +21,9 @@ pub fn go_out_of_folder(state: &mut ExplorerState) {
 
 pub fn go_into_folder(state: &mut ExplorerState) {
     let cwd = &state.cwd;
-    let cursor_pos = *(&state.cursor_y) as usize;
-    let selected_dir = &state.dents[cursor_pos]
+    let cursor_pos = *&state.cursor_y;
+    let absolute_pos = &state.view_slice[0] + cursor_pos;
+    let selected_dir = &state.dents[absolute_pos as usize]
         .path;
 
     let new_path = cwd.join(selected_dir);
