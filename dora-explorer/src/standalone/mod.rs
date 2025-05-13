@@ -4,3 +4,4 @@
 pub mod app;
 pub mod input;
 pub mod runner;
+pub mod events;

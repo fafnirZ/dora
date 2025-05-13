@@ -1,6 +1,5 @@
-use crate::{
+use super::{
     events::{Event, Events},
-    mode::AppMode,
 };
 use crossterm::event::{Event as CrossTermEvent, KeyCode, KeyEvent, KeyModifiers};
 use tui_input::{Input, backend::crossterm::EventHandler};
