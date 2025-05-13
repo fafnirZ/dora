@@ -10,7 +10,7 @@ impl ExplorerUI {
     pub fn new() -> Self { Self{} }
 }
 
-const CELL_HEIGHT: u16 = 1;
+pub const CELL_HEIGHT: u16 = 1;
 const CELL_WIDTH: u16 = 30;
 
 
@@ -92,6 +92,8 @@ impl StatefulWidget for ExplorerUI {
             Constraint::Length(1),
             Constraint::Fill(1),
         ]).areas(area);
+
+        state.update_table_area(main.clone());
 
         self.render_banner(banner, buf, state);
         self.render_entries(main, buf, state);
