@@ -1,4 +1,4 @@
-use super::{control::Control, navigator::local::go_into_folder, ExplorerState};
+use super::{control::Control, navigator::local::{go_into_folder, go_out_of_folder}, ExplorerState};
 
 // given input,
 // take a look at current state
@@ -29,6 +29,9 @@ impl Controller {
             }
             Control::ScrollRight => {
                 go_into_folder(state);
+            },
+            Control::ScrollLeft => {
+                go_out_of_folder(state);
             }
             _ => {}
         }

@@ -2,6 +2,20 @@ use std::path::{Path, PathBuf};
 
 use crate::library::ExplorerState;
 
+pub fn go_out_of_folder(state: &mut ExplorerState) {
+    let cwd = &state.cwd;
+
+    let new_path = match cwd.parent() {
+        Some(res) => res,
+        None => return, // exits function
+    };
+    
+    // updating cwd
+    state.cwd = new_path.to_path_buf();
+
+    // refresh dents
+    refresh_d_ents(state);
+}
 
 pub fn go_into_folder(state: &mut ExplorerState) {
     let cwd = &state.cwd;
