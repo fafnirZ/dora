@@ -35,7 +35,7 @@ impl Controller {
                 let num_renderable = &state.recalculate_renderable_rows();
                 if *cursor_pos == *num_renderable-1 {
                     let [start,end] = &state.view_slice;
-                    if *end == (*num_dents as u16)-1 {
+                    if *end == (*num_dents as u16) {
                         return;
                     } else {
                         // slide down 1
@@ -51,9 +51,11 @@ impl Controller {
             }
             Control::ScrollRight => {
                 go_into_folder(state);
+                state.recalculate_view_slice();
             },
             Control::ScrollLeft => {
                 go_out_of_folder(state);
+                state.recalculate_view_slice();
             }
             _ => {}
         }
