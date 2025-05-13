@@ -2,7 +2,7 @@ use std::ffi::OsStr;
 
 use ratatui::{buffer::Buffer, layout::{Constraint, Layout, Rect}, style::{Color, Stylize}, widgets::{Paragraph, StatefulWidget, Widget}};
 
-use super::ExplorerState;
+use super::{navigator::types::FileType, ExplorerState};
 
 pub struct ExplorerUI {}
 
@@ -38,6 +38,7 @@ impl ExplorerUI {
             let curr_y = start_y + (idx as u16) * CELL_HEIGHT;
             let rect = Rect::new(start_x, curr_y, CELL_WIDTH, CELL_HEIGHT);
             let entry_str = entry
+                .path
                 .as_path()
                 .file_name()
                 .unwrap_or(OsStr::new("Invalid FileName"))
@@ -46,17 +47,31 @@ impl ExplorerUI {
             let is_selected = {
                 (idx as u16) == state.cursor_y
             };
-            self.render_entry(entry_str, false, is_selected, rect, buf);
+            self.render_entry(entry_str, &entry.ftype, is_selected, rect, buf);
         }
     }
 
-    fn render_entry(&self, text: &str, is_dir: bool, is_selected: bool, area: Rect, buf: &mut Buffer) {
-        let mut para = Paragraph::new(text);
+    fn render_entry(&self, text: &str, dent_type: &FileType, is_selected: bool, area: Rect, buf: &mut Buffer) {
+        let is_dir = matches!(dent_type, FileType::Dir);
+        let text_to_render = {
+            if is_dir {
+                format!("{}/", text)
+            } else {
+                text.to_string()
+            }
+        };
+        let mut para = Paragraph::new(text_to_render);
 
         if is_selected {
             para = para.bg(Color::Rgb(40, 40, 80))
         } else {
             para = para.bg(Color::DarkGray)
+        }
+
+        if is_dir {
+            para = para.fg(Color::Rgb(152, 251, 152))
+        } else {
+            para = para.fg(Color::White)
         }
 
         para.render(area, buf)

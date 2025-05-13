@@ -7,13 +7,15 @@ pub enum FileType {
 }
 
 pub struct DEnt {
-    ftype: FileType,
-    path: PathBuf,
+    pub ftype: FileType,
+    pub path: PathBuf, // may need to change to string to accomodate for gs types.
 }
 
 impl DEnt {
-    pub fn new(path: PathBuf) -> Self {
-        // auto determines type by querying
-
+    pub fn new(path: PathBuf, ftype: FileType) -> Self {
+        Self {
+            ftype,
+            path,
+        }
     }
 }

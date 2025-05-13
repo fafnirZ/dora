@@ -2,6 +2,8 @@ use std::path::{Path, PathBuf};
 
 use crate::library::ExplorerState;
 
+use super::types::{DEnt, FileType};
+
 pub fn go_out_of_folder(state: &mut ExplorerState) {
     let cwd = &state.cwd;
 
@@ -20,7 +22,8 @@ pub fn go_out_of_folder(state: &mut ExplorerState) {
 pub fn go_into_folder(state: &mut ExplorerState) {
     let cwd = &state.cwd;
     let cursor_pos = *(&state.cursor_y) as usize;
-    let selected_dir = &state.dents[cursor_pos];
+    let selected_dir = &state.dents[cursor_pos]
+        .path;
 
     let new_path = cwd.join(selected_dir);
     
@@ -36,13 +39,27 @@ fn refresh_d_ents(state: &mut ExplorerState) {
     state.dents = getdents_from_path(cwd);
 }
 
-pub fn getdents_from_path(path: &Path) -> Vec<PathBuf>{
+pub fn getdents_from_path(path: &Path) -> Vec<DEnt>{
     // linux naming...
     let mut dents = Vec::new();
     for entry in path.read_dir().expect("Well this path should exist..") {
         if let Ok(entry) = entry {
+            let path = entry.path();
+            
+            let ftype = {
+                if path.is_dir() {
+                    FileType::Dir
+                } else if path.is_file() {
+                    FileType::File
+                } else if path.is_symlink() {
+                    FileType::Symlink
+                } else {
+                    panic!("Invalid file type, this should never be reachable?")
+                }
+            };
+
             dents.push(
-                entry.path()
+                DEnt::new(path, ftype)
             )
         }
     }
