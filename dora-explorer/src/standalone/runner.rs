@@ -6,7 +6,7 @@ use ratatui::{Terminal, prelude::CrosstermBackend};
 use std::thread::panicking;
 use std::{io::LineWriter, panic};
 
-use crate::app::App;
+use crate::standalone::app::App;
 
 fn restore_terminal_on_close_hook() {
     let original_panic_hook = panic::take_hook();
@@ -43,7 +43,7 @@ pub fn run_app(file_name: &str) {
     execute!(output, EnterAlternateScreen).unwrap();
     let backend = CrosstermBackend::new(LineWriter::new(output));
     let mut terminal = Terminal::new(backend).unwrap();
-    App::new(file_name).main_loop(&mut terminal).unwrap();
+    App::new().main_loop(&mut terminal).unwrap();
 
     // cleanup
     // in normal end
