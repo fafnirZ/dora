@@ -11,7 +11,7 @@ use ratatui::{
 use super::{
     input::{InputHandler},
 };
-use crate::library::{control::Control, Controller, ExplorerState};
+use crate::library::{control::Control, Controller, ExplorerState, ExplorerUI};
 
 // global app state.
 pub struct App {
@@ -55,6 +55,8 @@ impl App {
 
     fn render_frame(&mut self, frame: &mut Frame) {
         //
+        let ui = ExplorerUI::new();
+        frame.render_stateful_widget(ui, frame.area(), &mut self.explorer_state);
     }
    
 

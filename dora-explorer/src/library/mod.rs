@@ -6,4 +6,5 @@ mod controller;
 
 pub mod control;
 pub use state::ExplorerState;
+pub use ui::ExplorerUI;
 pub use controller::Controller;
