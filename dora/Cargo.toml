@@ -3,11 +3,6 @@ name = "dora"
 version = "0.1.0"
 edition = "2024"
 
-[lib]
-name = "dora"
-path ="./src/dora/lib.rs"
-
-
 [dependencies]
 color-eyre = "0.6.3"
 crossterm = "0.28.1"
