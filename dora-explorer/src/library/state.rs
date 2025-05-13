@@ -6,6 +6,9 @@ use std::{env, path::{Path, PathBuf}};
 pub struct ExplorerState{
     pub cwd: PathBuf,
     pub dents: Vec<PathBuf>, // directory entries
+
+    // visual states
+    pub cursor_y: u16,
 }
 
 impl ExplorerState {
@@ -27,6 +30,7 @@ impl ExplorerState {
         Self {
             cwd: path.to_path_buf(), // cwd
             dents: dents,
+            cursor_y: 0,
         }
     }
 }

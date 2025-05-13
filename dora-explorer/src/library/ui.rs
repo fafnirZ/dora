@@ -43,15 +43,23 @@ impl ExplorerUI {
                 .unwrap_or(OsStr::new("Invalid FileName"))
                 .to_str()
                 .expect("Invalid FileName");
-
-            self.render_entry(entry_str, false, rect, buf);
+            let is_selected = {
+                (idx as u16) == state.cursor_y
+            };
+            self.render_entry(entry_str, false, is_selected, rect, buf);
         }
     }
 
-    fn render_entry(&self, text: &str, is_dir: bool, area: Rect, buf: &mut Buffer) {
-        Paragraph::new(text)
-            .bg(Color::DarkGray)
-            .render(area, buf)
+    fn render_entry(&self, text: &str, is_dir: bool, is_selected: bool, area: Rect, buf: &mut Buffer) {
+        let mut para = Paragraph::new(text);
+
+        if is_selected {
+            para = para.bg(Color::Rgb(40, 40, 80))
+        } else {
+            para = para.bg(Color::DarkGray)
+        }
+
+        para.render(area, buf)
     }
 }
 
