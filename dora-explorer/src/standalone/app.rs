@@ -1,3 +1,5 @@
+use std::error::Error;
+
 use ratatui::{
     Frame, Terminal,
     layout::{Constraint, Layout},
@@ -7,21 +9,7 @@ use ratatui::{
 };
 
 use crate::{
-    config::ConfigState,
-    controller::Controller,
-    df::state::DataFrameState,
-    errors::DoraResults,
     input::{Control, InputHandler},
-    io::{
-        ExcelReader, ExcelSheetSelectorPage, ExcelSheetSelectorWidgetState,
-        get_cursor_from_any_path,
-    },
-    mode::AppMode,
-    mode_banner::ModeBanner,
-    page::{PageState},
-    search::state::SearchResultState,
-    table::table_ui::TableUI,
-    utils::area::horizontal_pad_area,
 };
 
 // global app state.
@@ -40,11 +28,11 @@ impl App {
     pub fn main_loop<B: Backend>(
         &mut self,
         terminal: &mut Terminal<B>,
-    ) -> DoraResults<Option<String>> {
+    ) -> Result<(), Box<dyn Error>> {
         loop {
             let control = self.input_handler.next();
             if matches!(control, Control::Quit) {
-                return Ok(None);
+                return Ok(());
             }
 
             self.step(&control);
