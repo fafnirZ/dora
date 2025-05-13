@@ -1,5 +1,7 @@
 use std::{env, path::{Path, PathBuf}};
 
+use super::navigator::local::getdents_from_path;
+
 
 // very primitive state right now
 // not optimised and not cached.
@@ -15,18 +17,8 @@ impl ExplorerState {
     pub fn new() -> Self {
         // initial path for testing purposes
         let cwd = &env::current_dir().unwrap();
-
         let path = cwd.as_path();
-        
-        // linux naming...
-        let mut dents = Vec::new();
-        for entry in cwd.read_dir().expect("Well this path should exist..") {
-            if let Ok(entry) = entry {
-                dents.push(
-                    entry.path()
-                )
-            }
-        }
+        let dents = getdents_from_path(&path); 
         Self {
             cwd: path.to_path_buf(), // cwd
             dents: dents,

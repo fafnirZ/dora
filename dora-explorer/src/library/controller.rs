@@ -1,6 +1,4 @@
-use super::{control::Control, ExplorerState};
-
-
+use super::{control::Control, navigator::local::go_into_folder, ExplorerState};
 
 // given input,
 // take a look at current state
@@ -28,6 +26,9 @@ impl Controller {
                 } else {
                     state.cursor_y += 1;
                 }
+            }
+            Control::ScrollRight => {
+                go_into_folder(state);
             }
             _ => {}
         }
