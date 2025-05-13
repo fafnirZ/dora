@@ -1,3 +1,5 @@
+use crossterm::cursor;
+
 use super::{control::Control, navigator::local::{go_into_folder, go_out_of_folder}, ExplorerState};
 
 // given input,
@@ -13,7 +15,16 @@ impl Controller {
             Control::ScrollUp => {
                 let cursor_pos = &state.cursor_y;
                 if *cursor_pos == 0 {
-                    return;
+                    let [start,end] = &state.view_slice;
+                    if *start == 0 {
+                        return;
+                    } else {
+                        // mutate to slide up 1
+                        state.view_slice = [
+                            start-1,
+                            end-1,
+                        ]
+                    }
                 } else {
                     state.cursor_y -= 1;
                 }
@@ -21,9 +32,20 @@ impl Controller {
             Control::ScrollDown => {
                 let cursor_pos = &state.cursor_y;
                 let num_dents = &state.dents.len();
-                if *cursor_pos == (*num_dents as u16)-1 {
-                    return;
-                } else {
+                let num_renderable = &state.recalculate_renderable_rows();
+                if *cursor_pos == *num_renderable-1 {
+                    let [start,end] = &state.view_slice;
+                    if *end == (*num_dents as u16)-1 {
+                        return;
+                    } else {
+                        // slide down 1
+                        state.view_slice = [
+                            start+1,
+                            end+1,
+                        ]
+                    }
+                }
+                else {
                     state.cursor_y += 1;
                 }
             }
