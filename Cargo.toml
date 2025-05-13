@@ -3,6 +3,22 @@ name = "dora"
 version = "0.1.0"
 edition = "2024"
 
+[lib]
+name = "dora"
+path ="./src/dora/lib.rs"
+
+# [[lib]]
+# name = "dora-explorer"
+
+[[bin]]
+name = "dora"
+path = "src/bins/dora.rs"
+
+[[bin]]
+name = "de"
+path = "src/bins/dora-explorer.rs"
+
+
 [dependencies]
 color-eyre = "0.6.3"
 crossterm = "0.28.1"
