@@ -3,11 +3,6 @@ name = "dora-explorer"
 version = "0.1.0"
 edition = "2024"
 
-[lib]
-name = "dora-explorer"
-path = "./src/dora-explorer/lib.rs"
-
-
 
 [dependencies]
 color-eyre = "0.6.3"
