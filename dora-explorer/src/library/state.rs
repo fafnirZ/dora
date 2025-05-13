@@ -1,13 +1,13 @@
 use std::{env, path::{Path, PathBuf}};
 
-use super::navigator::local::getdents_from_path;
+use super::navigator::{local::getdents_from_path, types::DEnt};
 
 
 // very primitive state right now
 // not optimised and not cached.
 pub struct ExplorerState{
     pub cwd: PathBuf,
-    pub dents: Vec<PathBuf>, // directory entries
+    pub dents: Vec<DEnt>, // directory entries
 
     // visual states
     pub cursor_y: u16,
