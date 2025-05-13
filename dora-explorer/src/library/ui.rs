@@ -36,6 +36,9 @@ impl ExplorerUI {
 
         for (idx,entry) in d_ents.iter().enumerate() {
             let curr_y = start_y + (idx as u16) * CELL_HEIGHT;
+
+            if curr_y+CELL_HEIGHT > start_y + area.height { return; } // dont render beyong bounds
+
             let rect = Rect::new(start_x, curr_y, CELL_WIDTH, CELL_HEIGHT);
             let entry_str = entry
                 .path
