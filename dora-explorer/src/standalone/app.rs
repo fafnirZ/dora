@@ -8,7 +8,7 @@ use ratatui::{
     widgets::Paragraph,
 };
 
-use crate::{
+use super::{
     input::{Control, InputHandler},
 };
 
