@@ -1,29 +1,10 @@
+use crate::library::control::Control;
+
 use super::{
     events::{Event, Events},
 };
 use crossterm::event::{Event as CrossTermEvent, KeyCode, KeyEvent, KeyModifiers};
 use tui_input::{Input, backend::crossterm::EventHandler};
-
-pub enum Control {
-    ScrollUp,
-    ScrollDown,
-    ScrollLeft,
-    ScrollRight,
-    Quit,
-    Nothing,
-    Esc,
-    Enter, // enter key the generic version, if there is more nuanced definitions of enter we can define that later, right now i need a control which expresses the enter key in its generic form.
-}
-
-// pub enum BufferState {
-//     Active(Input),
-//     Inactive,
-// }
-
-// pub enum MsgBuffer {
-//     Normal(String),
-//     Error(String),
-// }
 
 pub struct InputHandler {
     events: Events,

@@ -9,19 +9,22 @@ use ratatui::{
 };
 
 use super::{
-    input::{Control, InputHandler},
+    input::{InputHandler},
 };
+use crate::library::{control::Control, Controller, ExplorerState};
 
 // global app state.
 pub struct App {
     // global states (regardless of page)
     pub input_handler: InputHandler,
+    explorer_state: ExplorerState,
 }
 
 impl App {
     pub fn new() -> Self {
         Self {
             input_handler: InputHandler::new(),
+            explorer_state: ExplorerState::new(),
         }
     }
 
@@ -43,7 +46,7 @@ impl App {
     // the primary function for handling state conditionals
     // and updating state.
     fn step(&mut self, control: &Control) {
-        Controller::perform_actions(control, self);
+        Controller::perform_actions(control, &mut self.explorer_state);
     }
 
     ///////////////
@@ -51,7 +54,7 @@ impl App {
     ///////////////
 
     fn render_frame(&mut self, frame: &mut Frame) {
-        todo()
+        //
     }
    
 

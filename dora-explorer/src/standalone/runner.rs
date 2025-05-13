@@ -30,7 +30,7 @@ fn drop() {
     }
 }
 
-pub fn run_app(file_name: &str) {
+pub fn run_app() {
     // cleanup on panic hook
     restore_terminal_on_close_hook();
 
