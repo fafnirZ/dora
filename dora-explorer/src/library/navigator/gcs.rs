@@ -118,14 +118,14 @@ async fn getdents_from_path_async(client: Client, path: &str) ->Result<Vec<DEnt>
 
 // local path implementation
 pub fn getdents_from_path(client: Client, path: &str) -> Result<Vec<DEnt>, ExplorerError>{
-
     return Ok(tokio::runtime::Runtime::new()
-        .map_err(|e| ExplorerError::NotARemotePath(e.to_string())
+        .map_err(|e| ExplorerError::NotARemotePath(e.to_string()))
+        .unwrap()
         .block_on( async {
             getdents_from_path_async(client, path)
                 .await
                 .map_err(|e| ExplorerError::NotARemotePath(e.to_string()))
         })
         .unwrap()
-    ))
+    )
 }
