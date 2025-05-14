@@ -1,6 +1,6 @@
-use std::path::{Path, PathBuf};
+use std::{path::{Path, PathBuf}};
 
-use crate::library::ExplorerState;
+use crate::library::{errors::ExplorerError, ExplorerState};
 
 use super::types::{DEnt, FileType};
 
@@ -49,15 +49,19 @@ pub fn go_into_folder(state: &mut ExplorerState) {
     state.view_slice = [0, renderable_rows]
 }
 
-fn refresh_d_ents(state: &mut ExplorerState) {
+fn refresh_d_ents(state: &mut ExplorerState) -> Result<(), ExplorerError> {
     let cwd = &state.cwd;
-    state.dents = getdents_from_path(cwd);
+    state.dents = getdents_from_path(cwd)?;
+    Ok(())
 }
 
-pub fn getdents_from_path(path: &Path) -> Vec<DEnt>{
+pub fn getdents_from_path(path: &Path) -> Result<Vec<DEnt>, ExplorerError>{
     // linux naming...
     let mut dents = Vec::new();
-    for entry in path.read_dir().expect("Well this path should exist..") {
+    let dir_iter = path.read_dir()
+        .map_err(|e| ExplorerError::NotADirectoryError(e.to_string()))?;
+
+    for entry in dir_iter {
         if let Ok(entry) = entry {
             let path = entry.path();
             
@@ -78,5 +82,5 @@ pub fn getdents_from_path(path: &Path) -> Vec<DEnt>{
             )
         }
     }
-    dents
+    Ok(dents)
 }

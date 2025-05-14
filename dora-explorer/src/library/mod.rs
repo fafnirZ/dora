@@ -3,6 +3,7 @@ mod state; // model
 mod ui;    // view
 mod controller;
 mod navigator;
+mod errors;
 
 
 pub mod control;

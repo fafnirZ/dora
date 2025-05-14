@@ -22,7 +22,7 @@ impl ExplorerState {
         // initial path for testing purposes
         let cwd = &env::current_dir().unwrap();
         let path = cwd.as_path();
-        let dents = getdents_from_path(&path); 
+        let dents = getdents_from_path(&path).expect("Initial path is nto a directory"); 
         Self {
             cwd: path.to_path_buf(), // cwd
             dents: dents,
