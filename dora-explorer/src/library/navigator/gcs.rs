@@ -113,7 +113,7 @@ impl GCSNavigator {
 
             // TODO next page token.
             // havent figured out how to use it yet.
-
+            println!("{:?}", dents);
             Ok(dents)
 
         } else {

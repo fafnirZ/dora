@@ -10,6 +10,7 @@ pub trait Navigator {
 
 
 
+#[derive(Debug, Clone)]
 pub enum AnyPath {
     LocalPath(PathBuf),
     GSPath(String),
