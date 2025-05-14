@@ -1,6 +1,6 @@
 use std::{any::Any, f32::consts::E, path::{Path, PathBuf}};
 
-use google_cloud_storage::{client::Client, http::objects::list::ListObjectsRequest};
+use google_cloud_storage::{client::{Client, ClientConfig}, http::objects::list::ListObjectsRequest};
 
 use crate::library::{errors::ExplorerError, ExplorerState};
 
@@ -63,69 +63,96 @@ fn split_gs_path_split(path: &str) -> Option<(&str, &str, &str)> {
 }
 
 
-async fn getdents_from_path_async(client: Client, path: &str) ->Result<Vec<DEnt>, ExplorerError> {
-    let mut dents: Vec<DEnt> = Vec::new();
-    if let Some((prefix, bucket, cwd)) = split_gs_path_split(path) {
-        if prefix != "gs://" {
-            return Err(ExplorerError::NotARemotePath("expected gs:// prefix.".into()));
-        }
 
-        let request = ListObjectsRequest {
-            bucket: bucket.to_string(),
-            prefix: Some(cwd.to_string()),
-            delimiter: Some("/".to_string()),
-            ..Default::default()
-        };
+impl GCSNavigator {
 
-        let result = client
-            .list_objects(&request)
+
+    async fn getdents_from_path_async(client: &Client, path: &str) ->Result<Vec<DEnt>, ExplorerError> {
+        let mut dents: Vec<DEnt> = Vec::new();
+        if let Some((prefix, bucket, cwd)) = split_gs_path_split(path) {
+            if prefix != "gs://" {
+                return Err(ExplorerError::NotARemotePath("expected gs:// prefix.".into()));
+            }
+
+            let request = ListObjectsRequest {
+                bucket: bucket.to_string(),
+                prefix: Some(cwd.to_string()),
+                delimiter: Some("/".to_string()),
+                ..Default::default()
+            };
+
+            let result = client
+                .list_objects(&request)
+                .await
+                .map_err(|e| ExplorerError::NotARemotePath(e.to_string()))?;
+            
+            // get prefixes i.e. directories
+            if let Some(prefixes) = result.prefixes {
+                for prefix in prefixes {
+                    dents.push(
+                        DEnt::new(
+                            AnyPath::GSPath(prefix.to_string()),
+                            FileType::Dir,
+                        )
+                    )
+                }
+            } 
+
+            // get items i.e. Files
+            if let Some(items) = result.items {
+                for item in items {
+                    let item_name = item.name;
+                    dents.push(
+                        DEnt::new(
+                            AnyPath::GSPath(item_name),
+                            FileType::File,
+                        )
+                    )
+                }
+            } 
+
+            // TODO next page token.
+            // havent figured out how to use it yet.
+
+        } 
+        return Err(ExplorerError::NotARemotePath("Invalid gcs path".to_string()))
+    }
+
+
+    pub fn getdents_from_path(client: &Client, path: &str) -> Result<Vec<DEnt>, ExplorerError>{
+        return Ok(tokio::runtime::Runtime::new()
+            .map_err(|e| ExplorerError::NotARemotePath(e.to_string()))
+            .unwrap()
+            .block_on( async {
+                Self::getdents_from_path_async(client, path)
+                    .await
+                    .map_err(|e| ExplorerError::NotARemotePath(e.to_string()))
+            })
+            .unwrap()
+        )
+    }
+
+
+    async fn get_client_async() -> Result<Client, ExplorerError> {
+        let config = ClientConfig::default()
+            .with_auth()
             .await
             .map_err(|e| ExplorerError::NotARemotePath(e.to_string()))?;
-        
-        // get prefixes i.e. directories
-        if let Some(prefixes) = result.prefixes {
-            for prefix in prefixes {
-                dents.push(
-                    DEnt::new(
-                        AnyPath::GSPath(prefix.to_string()),
-                        FileType::Dir,
-                    )
-                )
-            }
-        } 
+        let client = Client::new(config);
+        Ok(client)
+    }
 
-        // get items i.e. Files
-        if let Some(items) = result.items {
-            for item in items {
-                let item_name = item.name;
-                dents.push(
-                    DEnt::new(
-                        AnyPath::GSPath(item_name),
-                        FileType::File,
-                    )
-                )
-            }
-        } 
-
-        // TODO next page token.
-        // havent figured out how to use it yet.
-
-    } 
-    return Err(ExplorerError::NotARemotePath("Invalid gcs path".to_string()))
-}
-
-
-
-// local path implementation
-pub fn getdents_from_path(client: Client, path: &str) -> Result<Vec<DEnt>, ExplorerError>{
-    return Ok(tokio::runtime::Runtime::new()
-        .map_err(|e| ExplorerError::NotARemotePath(e.to_string()))
-        .unwrap()
-        .block_on( async {
-            getdents_from_path_async(client, path)
-                .await
-                .map_err(|e| ExplorerError::NotARemotePath(e.to_string()))
-        })
-        .unwrap()
-    )
+    // local path implementation
+    pub fn get_client() -> Result<Client, ExplorerError>{
+        return Ok(tokio::runtime::Runtime::new()
+            .map_err(|e| ExplorerError::NotARemotePath(e.to_string()))
+            .unwrap()
+            .block_on( async {
+                Self::get_client_async()
+                    .await
+                    .map_err(|e| ExplorerError::NotARemotePath(e.to_string()))
+            })
+            .unwrap()
+        )
+    }
 }

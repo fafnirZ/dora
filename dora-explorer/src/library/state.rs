@@ -1,8 +1,9 @@
 use std::{env, path::{Path, PathBuf}};
 
+use google_cloud_storage::client::Client;
 use ratatui::layout::Rect;
 
-use super::{navigator::{local::getdents_from_path, traits::AnyPath, types::DEnt}, ui::CELL_HEIGHT};
+use super::{navigator::{ gcs::GCSNavigator, local::getdents_from_path, traits::AnyPath, types::DEnt}, ui::CELL_HEIGHT};
 
 
 // very primitive state right now
@@ -10,6 +11,7 @@ use super::{navigator::{local::getdents_from_path, traits::AnyPath, types::DEnt}
 pub struct ExplorerState{
     pub cwd: AnyPath,
     pub dents: Vec<DEnt>, // directory entries
+    pub cloud_client: Option<Client>,
 
     // visual states
     pub cursor_y: u16,
@@ -19,18 +21,43 @@ pub struct ExplorerState{
 
 impl ExplorerState {
     pub fn new(file_path: Option<String>) -> Self {
-        // initial path for testing purposes
-        // no remote path unless explicitly arg passed in begins with gs://
-        let local_cwd = env::current_dir().unwrap();
-        let cwd = AnyPath::LocalPath(local_cwd.clone());
-        let dents = getdents_from_path(&local_cwd).expect("Initial path is nto a directory"); 
-
-        Self {
-            cwd: cwd, // cwd
-            dents: dents,
-            cursor_y: 0,
-            view_slice: [0,10], // this will be overridden very quickly
-            available_area: [10, 10], // to be reset very soon.
+        
+        if let Some(path) = file_path {
+            if path.starts_with("gs://") {
+                let path_shadow = path.clone();
+                let gs_path = AnyPath::GSPath(path);
+                let cloud_client = GCSNavigator::get_client().unwrap();
+                let dents = GCSNavigator::getdents_from_path(
+                    &cloud_client,
+                    &path_shadow,
+                ).unwrap();
+                return Self {
+                    cwd: gs_path, // cwd
+                    dents: dents,
+                    cloud_client: Some(cloud_client),
+                    cursor_y: 0,
+                    view_slice: [0,10], // this will be overridden very quickly
+                    available_area: [10, 10], // to be reset very soon.
+                }
+            } else {
+                //
+                panic!("TODO");
+            }
+        } else {
+            // use cwd
+            // initial path for testing purposes
+            // no remote path unless explicitly arg passed in begins with gs://
+            let local_cwd = env::current_dir().unwrap();
+            let cwd = AnyPath::LocalPath(local_cwd.clone());
+            let dents = getdents_from_path(&local_cwd).expect("Initial path is nto a directory"); 
+            return Self {
+                cwd: cwd, // cwd
+                dents: dents,
+                cloud_client: None,
+                cursor_y: 0,
+                view_slice: [0,10], // this will be overridden very quickly
+                available_area: [10, 10], // to be reset very soon.
+            }
         }
     }
 
