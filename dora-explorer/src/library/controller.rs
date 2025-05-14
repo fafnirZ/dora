@@ -50,11 +50,15 @@ impl Controller {
                 }
             }
             Control::ScrollRight => {
-                go_into_folder(state);
+                go_into_folder(state).unwrap_or_else(|_| {
+                    return
+                }); // if not a directory do nothing for now:)
                 state.recalculate_view_slice();
             },
             Control::ScrollLeft => {
-                go_out_of_folder(state);
+                go_out_of_folder(state).unwrap_or_else(|_| {
+                    return
+                }); // if not a directory do nothing for now:)
                 state.recalculate_view_slice();
             }
             _ => {}
