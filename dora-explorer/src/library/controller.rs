@@ -1,6 +1,8 @@
+use std::any::Any;
+
 use crossterm::cursor;
 
-use super::{control::Control, navigator::{local::LocalNavigator, traits::Navigator}, ExplorerState};
+use super::{control::Control, navigator::{self, gcs::GCSNavigator, local::LocalNavigator, traits::{AnyNavigator, Navigator}}, ExplorerState};
 
 // given input,
 // take a look at current state
@@ -50,15 +52,38 @@ impl Controller {
                 }
             }
             Control::ScrollRight => {
-                LocalNavigator::go_into_folder(state).unwrap_or_else(|_| {
-                    return
-                }); // if not a directory do nothing for now:)
+
+                match &state.navigator {
+                    AnyNavigator::LocalNavigator => {
+                        LocalNavigator::go_into_folder(state)
+                        .unwrap_or_else(|_| {
+                            return
+                        }); // if not a directory do nothing for now:)
+                    },
+                    AnyNavigator::GCSNavigator => {
+                        GCSNavigator::go_into_folder(state)
+                        .unwrap_or_else(|_| {
+                            return
+                        }); // if not a directory do nothing for now:)
+                    },
+                }
                 state.recalculate_view_slice();
             },
             Control::ScrollLeft => {
-                LocalNavigator::go_out_of_folder(state).unwrap_or_else(|_| {
-                    return
-                }); // if not a directory do nothing for now:)
+                match &state.navigator {
+                    AnyNavigator::LocalNavigator => {
+                        LocalNavigator::go_into_folder(state)
+                        .unwrap_or_else(|_| {
+                            return
+                        }); // if not a directory do nothing for now:)
+                    },
+                    AnyNavigator::GCSNavigator => {
+                        GCSNavigator::go_into_folder(state)
+                        .unwrap_or_else(|_| {
+                            return
+                        }); // if not a directory do nothing for now:)
+                    },
+                }
                 state.recalculate_view_slice();
             }
             _ => {}

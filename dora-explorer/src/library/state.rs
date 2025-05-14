@@ -3,7 +3,7 @@ use std::{env, path::{Path, PathBuf}};
 use google_cloud_storage::client::Client;
 use ratatui::layout::Rect;
 
-use super::{navigator::{ gcs::GCSNavigator, local::getdents_from_path, traits::AnyPath, types::DEnt}, ui::CELL_HEIGHT};
+use super::{navigator::{ gcs::GCSNavigator, local::getdents_from_path, traits::{AnyNavigator, AnyPath, Navigator}, types::DEnt}, ui::CELL_HEIGHT};
 
 
 // very primitive state right now
@@ -12,6 +12,7 @@ pub struct ExplorerState{
     pub cwd: AnyPath,
     pub dents: Vec<DEnt>, // directory entries
     pub cloud_client: Option<Client>,
+    pub navigator: AnyNavigator,
 
     // visual states
     pub cursor_y: u16,
@@ -35,6 +36,7 @@ impl ExplorerState {
                     cwd: gs_path, // cwd
                     dents: dents,
                     cloud_client: Some(cloud_client),
+                    navigator: AnyNavigator::GCSNavigator,
                     cursor_y: 0,
                     view_slice: [0,10], // this will be overridden very quickly
                     available_area: [10, 10], // to be reset very soon.
@@ -54,6 +56,7 @@ impl ExplorerState {
                 cwd: cwd, // cwd
                 dents: dents,
                 cloud_client: None,
+                navigator: AnyNavigator::LocalNavigator,
                 cursor_y: 0,
                 view_slice: [0,10], // this will be overridden very quickly
                 available_area: [10, 10], // to be reset very soon.
