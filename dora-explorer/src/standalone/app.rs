@@ -1,3 +1,5 @@
+use std::error::Error;
+
 use ratatui::{
     Frame, Terminal,
     layout::{Constraint, Layout},
@@ -6,45 +8,34 @@ use ratatui::{
     widgets::Paragraph,
 };
 
-use crate::{
-    config::ConfigState,
-    controller::Controller,
-    df::state::DataFrameState,
-    errors::DoraResults,
-    input::{Control, InputHandler},
-    io::{
-        ExcelReader, ExcelSheetSelectorPage, ExcelSheetSelectorWidgetState,
-        get_cursor_from_any_path,
-    },
-    mode::AppMode,
-    mode_banner::ModeBanner,
-    page::{PageState},
-    search::state::SearchResultState,
-    table::table_ui::TableUI,
-    utils::area::horizontal_pad_area,
+use super::{
+    input::{InputHandler},
 };
+use crate::library::{control::Control, Controller, ExplorerState, ExplorerUI};
 
 // global app state.
 pub struct App {
     // global states (regardless of page)
     pub input_handler: InputHandler,
+    pub explorer_state: ExplorerState,
 }
 
 impl App {
     pub fn new() -> Self {
         Self {
             input_handler: InputHandler::new(),
+            explorer_state: ExplorerState::new(),
         }
     }
 
     pub fn main_loop<B: Backend>(
         &mut self,
         terminal: &mut Terminal<B>,
-    ) -> DoraResults<Option<String>> {
+    ) -> Result<(), Box<dyn Error>> {
         loop {
             let control = self.input_handler.next();
             if matches!(control, Control::Quit) {
-                return Ok(None);
+                return Ok(());
             }
 
             self.step(&control);
@@ -55,7 +46,7 @@ impl App {
     // the primary function for handling state conditionals
     // and updating state.
     fn step(&mut self, control: &Control) {
-        Controller::perform_actions(control, self);
+        Controller::perform_actions(control, &mut self.explorer_state);
     }
 
     ///////////////
@@ -63,7 +54,9 @@ impl App {
     ///////////////
 
     fn render_frame(&mut self, frame: &mut Frame) {
-        todo()
+        //
+        let ui = ExplorerUI::new();
+        frame.render_stateful_widget(ui, frame.area(), &mut self.explorer_state);
     }
    
 

@@ -6,7 +6,7 @@ use ratatui::{Terminal, prelude::CrosstermBackend};
 use std::thread::panicking;
 use std::{io::LineWriter, panic};
 
-use crate::app::App;
+use crate::standalone::app::App;
 
 fn restore_terminal_on_close_hook() {
     let original_panic_hook = panic::take_hook();
@@ -30,7 +30,7 @@ fn drop() {
     }
 }
 
-pub fn run_app(file_name: &str) {
+pub fn run_app() {
     // cleanup on panic hook
     restore_terminal_on_close_hook();
 
@@ -43,9 +43,17 @@ pub fn run_app(file_name: &str) {
     execute!(output, EnterAlternateScreen).unwrap();
     let backend = CrosstermBackend::new(LineWriter::new(output));
     let mut terminal = Terminal::new(backend).unwrap();
-    App::new(file_name).main_loop(&mut terminal).unwrap();
+    let mut app = App::new();
+    app
+        .main_loop(&mut terminal)
+        .unwrap();
 
     // cleanup
     // in normal end
     drop();
+
+    // print the path in cwd + current cursor on close.
+    let cursor_idx = &app.explorer_state.cursor_y;
+    let cursor_val = &app.explorer_state.dents[*cursor_idx as usize];
+    println!("{}",cursor_val.path.to_str().unwrap());
 }

@@ -1,0 +1,15 @@
+[package]
+name = "dora-explorer"
+version = "0.1.0"
+edition = "2024"
+
+
+[dependencies]
+color-eyre = "0.6.3"
+crossterm = "0.28.1"
+ratatui = "0.29.0"
+thiserror = "2.0.12"
+tui-input = { version = "0.12", features = ["crossterm"] }
+google-cloud-storage = { package = "gcloud-storage", version = "1.1.0" }
+directories = "6.0.0"
+
