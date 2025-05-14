@@ -43,9 +43,17 @@ pub fn run_app() {
     execute!(output, EnterAlternateScreen).unwrap();
     let backend = CrosstermBackend::new(LineWriter::new(output));
     let mut terminal = Terminal::new(backend).unwrap();
-    App::new().main_loop(&mut terminal).unwrap();
+    let mut app = App::new();
+    app
+        .main_loop(&mut terminal)
+        .unwrap();
 
     // cleanup
     // in normal end
     drop();
+
+    // print the path in cwd + current cursor on close.
+    let cursor_idx = &app.explorer_state.cursor_y;
+    let cursor_val = &app.explorer_state.dents[*cursor_idx as usize];
+    println!("{}",cursor_val.path.to_str().unwrap());
 }

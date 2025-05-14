@@ -17,7 +17,7 @@ use crate::library::{control::Control, Controller, ExplorerState, ExplorerUI};
 pub struct App {
     // global states (regardless of page)
     pub input_handler: InputHandler,
-    explorer_state: ExplorerState,
+    pub explorer_state: ExplorerState,
 }
 
 impl App {
