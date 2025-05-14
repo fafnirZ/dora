@@ -2,7 +2,7 @@ use std::ffi::OsStr;
 
 use ratatui::{buffer::Buffer, layout::{Constraint, Layout, Rect}, style::{Color, Stylize}, widgets::{Paragraph, StatefulWidget, Widget}};
 
-use super::{navigator::types::FileType, ExplorerState};
+use super::{navigator::types::{DEnt, FileType}, ExplorerState};
 
 pub struct ExplorerUI {}
 
@@ -33,7 +33,20 @@ impl ExplorerUI {
         let d_ents = &state.dents;
         let start_x = area.x;
         let start_y = area.y;
+        
+        let [vs_start, vs_end] = &state.view_slice;
+        // get slice from d_ents 
+        let d_ents: Vec<&DEnt> = d_ents
+            .iter()
+            .enumerate()
+            .filter(|(idx, _)| {
+                (*idx as u16) >= *vs_start
+                && (*idx as u16) < *vs_end
+            })
+            .map(|(_idx, val)| val)
+            .collect();
 
+        
         for (idx,entry) in d_ents.iter().enumerate() {
             let curr_y = start_y + (idx as u16) * CELL_HEIGHT;
 
