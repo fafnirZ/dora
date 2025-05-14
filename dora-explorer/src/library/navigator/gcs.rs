@@ -83,6 +83,9 @@ impl Navigator for GCSNavigator {
 
     fn refresh_d_ents(state: &mut ExplorerState) -> Result<(), ExplorerError> {
         if let AnyPath::GSPath(cwd) = &state.cwd {
+            let client = &state.cloud_client;
+            let unwrapped_client = client.as_ref().expect("Cloud client was not initialised");
+            state.dents = Self::getdents_from_path(&unwrapped_client, cwd)?;
             Ok(())
         } else {
             return Err(ExplorerError::NotARemotePath("Expected a local path.".to_string()))
