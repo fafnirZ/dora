@@ -2,13 +2,13 @@ use std::{env, path::{Path, PathBuf}};
 
 use ratatui::layout::Rect;
 
-use super::{navigator::{local::getdents_from_path, types::DEnt}, ui::CELL_HEIGHT};
+use super::{navigator::{local::getdents_from_path, traits::AnyPath, types::DEnt}, ui::CELL_HEIGHT};
 
 
 // very primitive state right now
 // not optimised and not cached.
 pub struct ExplorerState{
-    pub cwd: PathBuf,
+    pub cwd: AnyPath,
     pub dents: Vec<DEnt>, // directory entries
 
     // visual states
@@ -20,11 +20,13 @@ pub struct ExplorerState{
 impl ExplorerState {
     pub fn new() -> Self {
         // initial path for testing purposes
-        let cwd = &env::current_dir().unwrap();
-        let path = cwd.as_path();
-        let dents = getdents_from_path(&path).expect("Initial path is nto a directory"); 
+        // no remote path unless explicitly arg passed in begins with gs://
+        let local_cwd = env::current_dir().unwrap();
+        let cwd = AnyPath::LocalPath(local_cwd.clone());
+        let dents = getdents_from_path(&local_cwd).expect("Initial path is nto a directory"); 
+
         Self {
-            cwd: path.to_path_buf(), // cwd
+            cwd: cwd, // cwd
             dents: dents,
             cursor_y: 0,
             view_slice: [0,10], // this will be overridden very quickly
