@@ -13,8 +13,28 @@ pub struct GCSNavigator{}
 impl Navigator for GCSNavigator {
 
     fn go_out_of_folder(state: &mut ExplorerState) -> Result<(), ExplorerError> {
-
+    
         if let AnyPath::GSPath(cwd) = &state.cwd {
+            let new_path = Self::remove_last_segment_gs(cwd).expect("removing last segment shouldnt fail");
+             // check if the new path is a dir 
+            // propagates error early and exits fn
+            let client = &state.cloud_client;
+            let unwrapped_client = client.as_ref().expect("Cloud client was not initialised");
+            Self::getdents_from_path(&unwrapped_client, &new_path)?;
+            
+            // updating cwd
+            state.cwd = AnyPath::GSPath(new_path);
+
+            // refresh dents
+            Self::refresh_d_ents(state)?;
+
+            // refresh cursor
+            state.cursor_y = 0;
+
+            // refresh view slice
+            let renderable_rows = state.recalculate_renderable_rows();
+            state.view_slice = [0, renderable_rows];
+
             Ok(())
         } else {
             return Err(ExplorerError::NotARemotePath("Expected a local path.".to_string()))
@@ -25,7 +45,37 @@ impl Navigator for GCSNavigator {
     fn go_into_folder(state: &mut ExplorerState) -> Result<(), ExplorerError> {
         
         if let AnyPath::GSPath(cwd) = &state.cwd {
-            Ok(())
+
+            let cursor_pos = *&state.cursor_y;
+            let absolute_pos = &state.view_slice[0] + cursor_pos;
+            if let AnyPath::GSPath(selected_dir) = &state.dents[absolute_pos as usize].path {
+                let new_path = format!(
+                    "{}/{}",
+                    cwd, selected_dir,
+                );
+                let client = &state.cloud_client;
+                let unwrapped_client = client.as_ref().expect("Cloud client was not initialised");
+                // check if the new path is a dir 
+                // propagates error early and exits fn
+                Self::getdents_from_path(&unwrapped_client, &new_path)?;
+                
+                // updating cwd
+                state.cwd = AnyPath::GSPath(new_path);
+
+                // refresh dents
+                Self::refresh_d_ents(state)?;
+
+                // refresh cursor
+                state.cursor_y = 0;
+
+                // refresh view slice
+                let renderable_rows = state.recalculate_renderable_rows();
+                state.view_slice = [0, renderable_rows];
+
+                Ok(())
+            } else {
+                return Err(ExplorerError::NotARemotePath("Expected a local path.".to_string()))
+            }
         } else {
             return Err(ExplorerError::NotARemotePath("Expected a local path.".to_string()))
         }
@@ -163,5 +213,50 @@ impl GCSNavigator {
             })
             .unwrap()
         )
+    }
+
+    // assuming non trailing '/' allowed.
+    fn remove_last_segment_gs(path: &str) -> Option<String> {
+        if path.starts_with("gs://") {
+            let trimmed_path = &path[5..]; // Remove the "gs://" prefix
+            Self::remove_last_segment_inner(trimmed_path).map(|s| format!("gs://{}", s))
+        } else {
+            Self::remove_last_segment_inner(path).map(|s| s.to_string())
+        }
+    }
+
+    fn remove_last_segment_inner(path: &str) -> Option<&str> {
+        if path.is_empty() {
+            return None;
+        }
+        let chars: Vec<char> = path.chars().collect();
+        let mut last_slash_index = None;
+        for (i, _) in chars.iter().enumerate().rev() {
+            if chars[i] == '/' {
+                last_slash_index = Some(i);
+                break;
+            }
+        }
+
+        match last_slash_index {
+            Some(index) => {
+                if index == 0 {
+                    // Handle the case where the path starts with '/', resulting in just "/"
+                    Some("/")
+                } else {
+                    // Remove the last segment and any trailing slash
+                    let parent_path = &path[..index];
+                    if parent_path.ends_with('/') && parent_path.len() > 1 {
+                        Some(&parent_path[..parent_path.len() - 1])
+                    } else {
+                        Some(parent_path)
+                    }
+                }
+            }
+            None => {
+                // No slash found, meaning it's just a single element, so removing it results in an empty path
+                None
+            }
+        }
     }
 }
