@@ -69,8 +69,8 @@ impl GCSNavigator {
 
     async fn getdents_from_path_async(client: &Client, path: &str) ->Result<Vec<DEnt>, ExplorerError> {
         let mut dents: Vec<DEnt> = Vec::new();
-        if let Some((prefix, bucket, cwd)) = split_gs_path_split(path) {
-            if prefix != "gs://" {
+        if let Some((bucket_prefix, bucket, cwd)) = split_gs_path_split(path) {
+            if bucket_prefix != "gs://" {
                 return Err(ExplorerError::NotARemotePath("expected gs:// prefix.".into()));
             }
 
@@ -91,7 +91,11 @@ impl GCSNavigator {
                 for prefix in prefixes {
                     dents.push(
                         DEnt::new(
-                            AnyPath::GSPath(prefix.to_string()),
+                            AnyPath::GSPath(
+                                format!("{}{}/{}",
+                                    bucket_prefix.to_string(),
+                                    bucket.to_string(),
+                                    prefix.to_string())),
                             FileType::Dir,
                         )
                     )
