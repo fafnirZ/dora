@@ -48,34 +48,38 @@ impl Navigator for GCSNavigator {
 
             let cursor_pos = *&state.cursor_y;
             let absolute_pos = &state.view_slice[0] + cursor_pos;
-            if let AnyPath::GSPath(selected_dir) = &state.dents[absolute_pos as usize].path {
-                let new_path = format!(
-                    "{}/{}",
-                    cwd, selected_dir,
-                );
-                let client = &state.cloud_client;
-                let unwrapped_client = client.as_ref().expect("Cloud client was not initialised");
-                // check if the new path is a dir 
-                // propagates error early and exits fn
-                Self::getdents_from_path(&unwrapped_client, &new_path)?;
-                
-                // updating cwd
-                state.cwd = AnyPath::GSPath(new_path);
+            let selected_d_ent_name = &state
+                .dents[absolute_pos as usize]
+                .path
+                .file_name()
+                .expect("well it should not be null")
+                .to_string();
+            
+            let new_path = format!(
+                "{}/{}",
+                cwd, selected_d_ent_name,
+            );
+            let client = &state.cloud_client;
+            let unwrapped_client = client.as_ref().expect("Cloud client was not initialised");
+            // check if the new path is a dir 
+            // propagates error early and exits fn
+            Self::getdents_from_path(&unwrapped_client, &new_path)?;
+            
+            // updating cwd
+            state.cwd = AnyPath::GSPath(new_path);
 
-                // refresh dents
-                Self::refresh_d_ents(state)?;
+            // refresh dents
+            Self::refresh_d_ents(state)?;
 
-                // refresh cursor
-                state.cursor_y = 0;
+            // refresh cursor
+            state.cursor_y = 0;
 
-                // refresh view slice
-                let renderable_rows = state.recalculate_renderable_rows();
-                state.view_slice = [0, renderable_rows];
+            // refresh view slice
+            let renderable_rows = state.recalculate_renderable_rows();
+            state.view_slice = [0, renderable_rows];
 
-                Ok(())
-            } else {
-                return Err(ExplorerError::NotARemotePath("Expected a local path.".to_string()))
-            }
+            Ok(())
+            
         } else {
             return Err(ExplorerError::NotARemotePath("Expected a local path.".to_string()))
         }
@@ -122,6 +126,7 @@ impl GCSNavigator {
 
     async fn getdents_from_path_async(client: &Client, path: &str) ->Result<Vec<DEnt>, ExplorerError> {
         let mut dents: Vec<DEnt> = Vec::new();
+        println!("path: {:?}", path);
         if let Some((bucket_prefix, bucket, cwd)) = split_gs_path_split(path) {
             if bucket_prefix != "gs://" {
                 return Err(ExplorerError::NotARemotePath("expected gs:// prefix.".into()));
