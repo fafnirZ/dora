@@ -20,6 +20,10 @@ pub fn go_out_of_folder(state: &mut ExplorerState) {
 
     // refresh cursor
     state.cursor_y = 0;
+
+    // refresh view slice
+    let renderable_rows = state.recalculate_renderable_rows();
+    state.view_slice = [0, renderable_rows];
 }
 
 pub fn go_into_folder(state: &mut ExplorerState) {
@@ -39,6 +43,10 @@ pub fn go_into_folder(state: &mut ExplorerState) {
 
     // refresh cursor
     state.cursor_y = 0;
+
+    // refresh view slice
+    let renderable_rows = state.recalculate_renderable_rows();
+    state.view_slice = [0, renderable_rows]
 }
 
 fn refresh_d_ents(state: &mut ExplorerState) {
