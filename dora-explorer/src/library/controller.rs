@@ -40,8 +40,8 @@ impl Controller {
                     } else {
                         // slide down 1
                         state.view_slice = [
-                            start+1,
-                            end+1,
+                            *start+1,
+                            *end+1,
                         ]
                     }
                 }

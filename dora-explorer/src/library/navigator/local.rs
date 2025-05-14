@@ -17,6 +17,9 @@ pub fn go_out_of_folder(state: &mut ExplorerState) {
 
     // refresh dents
     refresh_d_ents(state);
+
+    // refresh cursor
+    state.cursor_y = 0;
 }
 
 pub fn go_into_folder(state: &mut ExplorerState) {
@@ -33,6 +36,9 @@ pub fn go_into_folder(state: &mut ExplorerState) {
 
     // refresh dents
     refresh_d_ents(state);
+
+    // refresh cursor
+    state.cursor_y = 0;
 }
 
 fn refresh_d_ents(state: &mut ExplorerState) {
