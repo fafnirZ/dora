@@ -89,6 +89,8 @@ impl GCSNavigator {
             // get prefixes i.e. directories
             if let Some(prefixes) = result.prefixes {
                 for prefix in prefixes {
+                    // remove trailing slash
+                    let prefix = prefix.trim_end_matches('/');
                     dents.push(
                         DEnt::new(
                             AnyPath::GSPath(
