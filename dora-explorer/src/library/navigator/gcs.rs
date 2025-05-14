@@ -24,7 +24,7 @@ impl Navigator for GCSNavigator {
 
     fn go_into_folder(state: &mut ExplorerState) -> Result<(), ExplorerError> {
         
-                if let AnyPath::GSPath(cwd) = &state.cwd {
+        if let AnyPath::GSPath(cwd) = &state.cwd {
             Ok(())
         } else {
             return Err(ExplorerError::NotARemotePath("Expected a local path.".to_string()))

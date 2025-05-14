@@ -18,7 +18,7 @@ pub struct ExplorerState{
 }
 
 impl ExplorerState {
-    pub fn new() -> Self {
+    pub fn new(file_path: Option<String>) -> Self {
         // initial path for testing purposes
         // no remote path unless explicitly arg passed in begins with gs://
         let local_cwd = env::current_dir().unwrap();

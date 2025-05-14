@@ -21,10 +21,10 @@ pub struct App {
 }
 
 impl App {
-    pub fn new() -> Self {
+    pub fn new(file_path: Option<String>) -> Self {
         Self {
             input_handler: InputHandler::new(),
-            explorer_state: ExplorerState::new(),
+            explorer_state: ExplorerState::new(file_path),
         }
     }
 
