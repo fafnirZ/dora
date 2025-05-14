@@ -114,8 +114,11 @@ impl GCSNavigator {
             // TODO next page token.
             // havent figured out how to use it yet.
 
-        } 
-        return Err(ExplorerError::NotARemotePath("Invalid gcs path".to_string()))
+            Ok(dents)
+
+        } else {
+            return Err(ExplorerError::NotARemotePath("Invalid gcs path".to_string()))
+        }
     }
 
 
