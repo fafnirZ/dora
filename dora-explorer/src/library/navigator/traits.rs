@@ -1,5 +1,14 @@
 use std::{ffi::OsStr, path::PathBuf};
 
+use crate::library::{errors::ExplorerError, ExplorerState};
+
+pub trait Navigator {
+    fn go_out_of_folder(state: &mut ExplorerState) -> Result<(), ExplorerError>;
+    fn go_into_folder(state: &mut ExplorerState) -> Result<(), ExplorerError>;
+    fn refresh_d_ents(state: &mut ExplorerState) -> Result<(), ExplorerError>;
+}
+
+
 
 pub enum AnyPath {
     LocalPath(PathBuf),

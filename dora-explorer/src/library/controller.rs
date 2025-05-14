@@ -1,6 +1,6 @@
 use crossterm::cursor;
 
-use super::{control::Control, navigator::local::{go_into_folder, go_out_of_folder}, ExplorerState};
+use super::{control::Control, navigator::{local::LocalNavigator, traits::Navigator}, ExplorerState};
 
 // given input,
 // take a look at current state
@@ -50,13 +50,13 @@ impl Controller {
                 }
             }
             Control::ScrollRight => {
-                go_into_folder(state).unwrap_or_else(|_| {
+                LocalNavigator::go_into_folder(state).unwrap_or_else(|_| {
                     return
                 }); // if not a directory do nothing for now:)
                 state.recalculate_view_slice();
             },
             Control::ScrollLeft => {
-                go_out_of_folder(state).unwrap_or_else(|_| {
+                LocalNavigator::go_out_of_folder(state).unwrap_or_else(|_| {
                     return
                 }); // if not a directory do nothing for now:)
                 state.recalculate_view_slice();
