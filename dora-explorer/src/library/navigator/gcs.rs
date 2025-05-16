@@ -25,13 +25,13 @@ impl Navigator for GCSNavigator {
         if let AnyPath::GSPath(cwd) = &state.cwd {
             let new_path = AnyPath::ensure_trailing_slash(
             Self::remove_last_segment_gs(cwd)
-                    .expect("removing last segment shouldnt fail")
+                    .expect(format!("failed to traverse up a directory from {} you're possibly in the root directory already?", cwd).as_str())
             );
              // check if the new path is a dir 
             // propagates error early and exits fn
-            let client = &state.cloud_client;
-            let unwrapped_client = client.as_ref().expect("Cloud client was not initialised");
-            Self::getdents_from_path(&unwrapped_client, &new_path)?;
+            // let client = &state.cloud_client;
+            // let unwrapped_client = client.as_ref().expect("Cloud client was not initialised");
+            // Self::getdents_from_path(&unwrapped_client, &new_path)?;
             
             // updating cwd
             state.set_cwd(AnyPath::GSPath(new_path));
@@ -70,11 +70,12 @@ impl Navigator for GCSNavigator {
                 "{}{}",
                 cwd, selected_d_ent_name,
             ));
-            let client = &state.cloud_client;
-            let unwrapped_client = client.as_ref().expect("Cloud client was not initialised");
-            // check if the new path is a dir 
-            // propagates error early and exits fn
-            Self::getdents_from_path(&unwrapped_client, &new_path)?;
+            // let client = &state.cloud_client;
+            // let unwrapped_client = client.as_ref().expect("Cloud client was not initialised");
+            // // check if the new path is a dir 
+            // // propagates error early and exits fn
+            // // but causes a redundant network call.......
+            // Self::getdents_from_path(&unwrapped_client, &new_path)?;
             
             // updating cwd
             state.set_cwd(AnyPath::GSPath(new_path));
@@ -141,9 +142,6 @@ impl GCSNavigator {
             if bucket_prefix != "gs://" {
                 return Err(ExplorerError::NotARemotePath("expected gs:// prefix.".into()));
             }
-            // println!("bucket_prefix: {:?}", bucket_prefix);
-            // println!("bucket: {:?}", bucket);
-            // println!("cwd: {:?}", cwd);
             let request = ListObjectsRequest {
                 bucket: bucket.to_string(),
                 prefix: Some(cwd.to_string()), 
@@ -244,6 +242,7 @@ impl GCSNavigator {
     // THIS IS A REQUIREMENT OF THE LOGIC such that CWD always has a trailing slash
     // so this is a fair assumption to make
     fn remove_last_segment_gs(path: &str) -> Option<String> {
+
         // precondition: path must end with a trailing slash
         if !path.ends_with('/') {
             return None; // Invalid path
