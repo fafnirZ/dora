@@ -6,7 +6,7 @@ use ratatui::{Terminal, prelude::CrosstermBackend};
 use std::thread::panicking;
 use std::{io::LineWriter, panic};
 
-use crate::standalone::app::App;
+use crate::{library::exit::print_results, standalone::app::App};
 
 fn restore_terminal_on_close_hook() {
     let original_panic_hook = panic::take_hook();
@@ -52,8 +52,6 @@ pub fn run_app(file_path: Option<String>) {
     // in normal end
     drop();
 
-    // print the path in cwd + current cursor on close.
-    let cursor_idx = &app.explorer_state.cursor_y;
-    let cursor_val = &app.explorer_state.dents[*cursor_idx as usize];
-    println!("{}",cursor_val.path.to_str().unwrap());
+    // print final results
+    print_results(&app.explorer_state);
 }

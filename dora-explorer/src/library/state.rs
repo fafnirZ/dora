@@ -18,6 +18,11 @@ pub struct ExplorerState{
     pub cursor_y: u16,
     pub view_slice: [u16;2],
     available_area: [u16;2], // height, width
+
+
+    // trap signals
+    pub sig_user_input_exit: bool,
+    pub sig_file_selected_exit: bool,
 }
 
 impl ExplorerState {
@@ -42,6 +47,8 @@ impl ExplorerState {
                     cursor_y: 0,
                     view_slice: [0,10], // this will be overridden very quickly
                     available_area: [10, 10], // to be reset very soon.
+                    sig_user_input_exit: false,
+                    sig_file_selected_exit: false,
                 }
             } else {
                 //
@@ -62,6 +69,8 @@ impl ExplorerState {
                 cursor_y: 0,
                 view_slice: [0,10], // this will be overridden very quickly
                 available_area: [10, 10], // to be reset very soon.
+                sig_user_input_exit: false,
+                sig_file_selected_exit: false,
             }
         }
     }
