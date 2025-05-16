@@ -244,14 +244,20 @@ impl GCSNavigator {
     // THIS IS A REQUIREMENT OF THE LOGIC such that CWD always has a trailing slash
     // so this is a fair assumption to make
     fn remove_last_segment_gs(path: &str) -> Option<String> {
+        // precondition: path must end with a trailing slash
+        if !path.ends_with('/') {
+            return None; // Invalid path
+        }
+
         if path.starts_with("gs://") {
-            let trimmed_path = &path[5..]; // Remove the "gs://" prefix
+            let pos_before_trailing_slash = path.len() - 1;
+            let trimmed_path = &path[5..pos_before_trailing_slash]; // Remove the "gs://" prefix
             Self::remove_last_segment_inner(trimmed_path).map(|s| format!("gs://{}", s))
         } else {
             Self::remove_last_segment_inner(path).map(|s| s.to_string())
         }
     }
-
+    
     fn remove_last_segment_inner(path: &str) -> Option<&str> {
         if path.is_empty() {
             return None;
