@@ -27,11 +27,6 @@ impl Navigator for GCSNavigator {
             Self::remove_last_segment_gs(cwd)
                     .expect(format!("failed to traverse up a directory from {} you're possibly in the root directory already?", cwd).as_str())
             );
-             // check if the new path is a dir 
-            // propagates error early and exits fn
-            // let client = &state.cloud_client;
-            // let unwrapped_client = client.as_ref().expect("Cloud client was not initialised");
-            // Self::getdents_from_path(&unwrapped_client, &new_path)?;
             
             // updating cwd
             state.set_cwd(AnyPath::GSPath(new_path));
@@ -58,6 +53,10 @@ impl Navigator for GCSNavigator {
         if let AnyPath::GSPath(cwd) = &state.cwd {
             let cursor_pos = *&state.cursor_y;
             let absolute_pos = &state.view_slice[0] + cursor_pos;
+            let selected_d_ent = &state.dents[absolute_pos as usize];
+            if !matches!(selected_d_ent.ftype, FileType::Dir) {
+                return Err(ExplorerError::NotARemotePath("Expected a directory.".to_string()))
+            }
             let selected_d_ent_name = &state
                 .dents[absolute_pos as usize]
                 .path
@@ -70,6 +69,7 @@ impl Navigator for GCSNavigator {
                 "{}{}",
                 cwd, selected_d_ent_name,
             ));
+            
             // let client = &state.cloud_client;
             // let unwrapped_client = client.as_ref().expect("Cloud client was not initialised");
             // // check if the new path is a dir 
