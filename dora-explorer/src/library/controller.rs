@@ -2,7 +2,7 @@ use std::any::Any;
 
 use crossterm::cursor;
 
-use super::{control::Control, navigator::{self, gcs::GCSNavigator, local::LocalNavigator, traits::{AnyNavigator, Navigator}}, ExplorerState};
+use super::{control::Control, navigator::{self, gcs::GCSNavigator, local::LocalNavigator, traits::{AnyNavigator, Navigator}, types::FileType}, ExplorerState};
 
 // given input,
 // take a look at current state
@@ -85,6 +85,37 @@ impl Controller {
                     },
                 }
                 state.recalculate_view_slice();
+            }
+            Control::Enter => {
+                // match file type
+                // if its a directory, go into it
+                // if its a file, exit program and return file path.
+                let curr_pos = &state.cursor_y;
+                let absolute_pos = &state.view_slice[0] + curr_pos;
+                let selected_dent = &state.dents[absolute_pos as usize];
+                match selected_dent.ftype {
+                    FileType::Dir => {
+                        match &state.navigator {
+                            AnyNavigator::LocalNavigator => {
+                                LocalNavigator::go_into_folder(state)
+                                .unwrap_or_else(|_| {
+                                    return
+                                }); // if not a directory do nothing for now:)
+                            },
+                            AnyNavigator::GCSNavigator => {
+                                GCSNavigator::go_into_folder(state)
+                                .unwrap_or_else(|_| {
+                                    return
+                                }); // if not a directory do nothing for now:)
+                            },
+                        }
+                    },
+                    FileType::File => {
+                        // exit program and return file path
+                    },
+                    _ => {},
+                }
+                
             }
             _ => {}
         }
