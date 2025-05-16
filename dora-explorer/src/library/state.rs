@@ -1,35 +1,83 @@
 use std::{env, path::{Path, PathBuf}};
 
+use google_cloud_storage::client::Client;
 use ratatui::layout::Rect;
 
-use super::{navigator::{local::getdents_from_path, types::DEnt}, ui::CELL_HEIGHT};
+use super::{navigator::{ gcs::GCSNavigator, local::getdents_from_path, traits::{AnyNavigator, AnyPath, Navigator}, types::DEnt}, ui::CELL_HEIGHT};
 
 
 // very primitive state right now
 // not optimised and not cached.
 pub struct ExplorerState{
-    pub cwd: PathBuf,
+    pub cwd: AnyPath,
     pub dents: Vec<DEnt>, // directory entries
+    pub cloud_client: Option<Client>,
+    pub navigator: AnyNavigator,
 
     // visual states
     pub cursor_y: u16,
     pub view_slice: [u16;2],
     available_area: [u16;2], // height, width
+
+
+    // trap signals
+    pub sig_user_input_exit: bool,
+    pub sig_file_selected_exit: bool,
 }
 
 impl ExplorerState {
-    pub fn new() -> Self {
-        // initial path for testing purposes
-        let cwd = &env::current_dir().unwrap();
-        let path = cwd.as_path();
-        let dents = getdents_from_path(&path).expect("Initial path is nto a directory"); 
-        Self {
-            cwd: path.to_path_buf(), // cwd
-            dents: dents,
-            cursor_y: 0,
-            view_slice: [0,10], // this will be overridden very quickly
-            available_area: [10, 10], // to be reset very soon.
+    pub fn new(file_path: Option<String>) -> Self {
+        
+        if let Some(path) = file_path {
+            if path.starts_with("gs://") {
+                let path_shadow = path.clone();
+                let gs_path = AnyPath::GSPath(
+                    AnyPath::ensure_trailing_slash(path)
+                );
+                let cloud_client = GCSNavigator::get_client().unwrap();
+                let dents = GCSNavigator::getdents_from_path(
+                    &cloud_client,
+                    &path_shadow,
+                ).unwrap();
+                return Self {
+                    cwd: gs_path, // cwd
+                    dents: dents,
+                    cloud_client: Some(cloud_client),
+                    navigator: AnyNavigator::GCSNavigator,
+                    cursor_y: 0,
+                    view_slice: [0,10], // this will be overridden very quickly
+                    available_area: [10, 10], // to be reset very soon.
+                    sig_user_input_exit: false,
+                    sig_file_selected_exit: false,
+                }
+            } else {
+                //
+                panic!("TODO");
+            }
+        } else {
+            // use cwd
+            // initial path for testing purposes
+            // no remote path unless explicitly arg passed in begins with gs://
+            let local_cwd = env::current_dir().unwrap();
+            let cwd = AnyPath::LocalPath(local_cwd.clone());
+            let dents = getdents_from_path(&local_cwd).expect("Initial path is nto a directory"); 
+            return Self {
+                cwd: cwd, // cwd
+                dents: dents,
+                cloud_client: None,
+                navigator: AnyNavigator::LocalNavigator,
+                cursor_y: 0,
+                view_slice: [0,10], // this will be overridden very quickly
+                available_area: [10, 10], // to be reset very soon.
+                sig_user_input_exit: false,
+                sig_file_selected_exit: false,
+            }
         }
+    }
+
+    pub fn should_exit(&self) -> bool {
+        return self.sig_user_input_exit 
+        || self.sig_file_selected_exit;
     }
 
     pub fn update_table_area(&mut self, main_table_area: Rect) {
@@ -53,5 +101,15 @@ impl ExplorerState {
         let [start, _] = &self.view_slice;
         // let renderable_rows = self.recalculate_renderable_rows();
         self.view_slice = [*start, start+self.recalculate_renderable_rows()];
+    }
+
+    pub fn set_cwd(&mut self, new_cwd: AnyPath) {
+        if let AnyPath::GSPath(path_str) = &new_cwd {
+            // assert ends with /
+            if !path_str.ends_with('/') {
+                panic!("GCS path must end with / otherwise list_objects logic will fail.");
+            }
+        } else {};
+        self.cwd = new_cwd;
     }
 }

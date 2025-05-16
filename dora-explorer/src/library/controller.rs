@@ -1,6 +1,8 @@
+use std::any::Any;
+
 use crossterm::cursor;
 
-use super::{control::Control, navigator::local::{go_into_folder, go_out_of_folder}, ExplorerState};
+use super::{control::Control, navigator::{self, gcs::GCSNavigator, local::LocalNavigator, traits::{AnyNavigator, Navigator}, types::FileType}, ExplorerState};
 
 // given input,
 // take a look at current state
@@ -12,6 +14,9 @@ impl Controller {
     // this function mutates the app state
     pub fn perform_actions(control: &Control, state: &mut ExplorerState) {
         match control {
+            Control::Quit => {
+                state.sig_user_input_exit = true;
+            },
             Control::ScrollUp => {
                 let cursor_pos = &state.cursor_y;
                 if *cursor_pos == 0 {
@@ -50,16 +55,71 @@ impl Controller {
                 }
             }
             Control::ScrollRight => {
-                go_into_folder(state).unwrap_or_else(|_| {
-                    return
-                }); // if not a directory do nothing for now:)
+
+                match &state.navigator {
+                    AnyNavigator::LocalNavigator => {
+                        LocalNavigator::go_into_folder(state)
+                        .unwrap_or_else(|_| {
+                            return
+                        }); // if not a directory do nothing for now:)
+                    },
+                    AnyNavigator::GCSNavigator => {
+                        GCSNavigator::go_into_folder(state)
+                        .unwrap_or_else(|_| {
+                            return
+                        }); // if not a directory do nothing for now:)
+                    },
+                }
                 state.recalculate_view_slice();
             },
             Control::ScrollLeft => {
-                go_out_of_folder(state).unwrap_or_else(|_| {
-                    return
-                }); // if not a directory do nothing for now:)
+                match &state.navigator {
+                    AnyNavigator::LocalNavigator => {
+                        LocalNavigator::go_out_of_folder(state)
+                        .unwrap_or_else(|_| {
+                            return
+                        }); // if not a directory do nothing for now:)
+                    },
+                    AnyNavigator::GCSNavigator => {
+                        GCSNavigator::go_out_of_folder(state)
+                        .unwrap_or_else(|_| {
+                            return
+                        }); // if not a directory do nothing for now:)
+                    },
+                }
                 state.recalculate_view_slice();
+            }
+            Control::Enter => {
+                // match file type
+                // if its a directory, go into it
+                // if its a file, exit program and return file path.
+                let curr_pos = &state.cursor_y;
+                let absolute_pos = &state.view_slice[0] + curr_pos;
+                let selected_dent = &state.dents[absolute_pos as usize];
+                match selected_dent.ftype {
+                    FileType::Dir => {
+                        match &state.navigator {
+                            AnyNavigator::LocalNavigator => {
+                                LocalNavigator::go_into_folder(state)
+                                .unwrap_or_else(|_| {
+                                    return
+                                }); // if not a directory do nothing for now:)
+                            },
+                            AnyNavigator::GCSNavigator => {
+                                GCSNavigator::go_into_folder(state)
+                                .unwrap_or_else(|_| {
+                                    return
+                                }); // if not a directory do nothing for now:)
+                            },
+                        }
+                    },
+                    FileType::File => {
+                        // exit program and return file path
+                        state.sig_file_selected_exit = true;
+                    },
+                    _ => {},
+                }
+                
             }
             _ => {}
         }

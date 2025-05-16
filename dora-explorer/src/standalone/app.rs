@@ -21,10 +21,10 @@ pub struct App {
 }
 
 impl App {
-    pub fn new() -> Self {
+    pub fn new(file_path: Option<String>) -> Self {
         Self {
             input_handler: InputHandler::new(),
-            explorer_state: ExplorerState::new(),
+            explorer_state: ExplorerState::new(file_path),
         }
     }
 
@@ -34,7 +34,7 @@ impl App {
     ) -> Result<(), Box<dyn Error>> {
         loop {
             let control = self.input_handler.next();
-            if matches!(control, Control::Quit) {
+            if self.explorer_state.should_exit() {
                 return Ok(());
             }
 

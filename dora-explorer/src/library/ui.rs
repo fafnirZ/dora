@@ -55,11 +55,8 @@ impl ExplorerUI {
             let rect = Rect::new(start_x, curr_y, CELL_WIDTH, CELL_HEIGHT);
             let entry_str = entry
                 .path
-                .as_path()
                 .file_name()
-                .unwrap_or(OsStr::new("Invalid FileName"))
-                .to_str()
-                .expect("Invalid FileName");
+                .unwrap_or("<Invalid Entry Name>");
             let is_selected = {
                 (idx as u16) == state.cursor_y
             };
@@ -71,7 +68,7 @@ impl ExplorerUI {
         let is_dir = matches!(dent_type, FileType::Dir);
         let text_to_render = {
             if is_dir {
-                format!("{}/", text)
+                format!("{}", text.to_string())
             } else {
                 text.to_string()
             }

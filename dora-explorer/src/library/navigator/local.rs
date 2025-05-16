@@ -1,73 +1,96 @@
-use std::{path::{Path, PathBuf}};
+use std::{any::Any, f32::consts::E, path::{Path, PathBuf}};
 
 use crate::library::{errors::ExplorerError, ExplorerState};
 
-use super::types::{DEnt, FileType};
+use super::{traits::{AnyPath, Navigator}, types::{DEnt, FileType}};
 
-pub fn go_out_of_folder(state: &mut ExplorerState) -> Result<(), ExplorerError> {
-    let cwd = &state.cwd;
 
-    let new_path = match cwd.parent() {
-        Some(res) => res,
-        None => return Ok(()), // exits function without error? just doesnt do much
-    };
-    
-    // check if the new path is a dir 
-    // propagates error early and exits fn
-    getdents_from_path(&new_path)?;
-    
-    // updating cwd
-    state.cwd = new_path.to_path_buf();
+pub struct LocalNavigator{}
 
-    // refresh dents
-    refresh_d_ents(state)?;
 
-    // refresh cursor
-    state.cursor_y = 0;
+impl Navigator for LocalNavigator {
 
-    // refresh view slice
-    let renderable_rows = state.recalculate_renderable_rows();
-    state.view_slice = [0, renderable_rows];
+    fn go_out_of_folder(state: &mut ExplorerState) -> Result<(), ExplorerError> {
 
-    Ok(())
+        if let AnyPath::LocalPath(cwd) = &state.cwd {
+            let new_path = match cwd.parent() {
+                Some(res) => res,
+                None => return Ok(()), // exits function without error? just doesnt do much
+            };
+            
+            // check if the new path is a dir 
+            // propagates error early and exits fn
+            getdents_from_path(&new_path)?;
+            
+            // updating cwd
+            state.cwd = AnyPath::LocalPath(new_path.to_path_buf());
+
+            // refresh dents
+            Self::refresh_d_ents(state)?;
+
+            // refresh cursor
+            state.cursor_y = 0;
+
+            // refresh view slice
+            let renderable_rows = state.recalculate_renderable_rows();
+            state.view_slice = [0, renderable_rows];
+
+            Ok(())
+        } else {
+            return Err(ExplorerError::NotALocalPath("Expected a local path.".to_string()))
+        }
+        
+    }
+
+    fn go_into_folder(state: &mut ExplorerState) -> Result<(), ExplorerError> {
+        
+        if let AnyPath::LocalPath(cwd) = &state.cwd {
+            let cursor_pos = *&state.cursor_y;
+            let absolute_pos = &state.view_slice[0] + cursor_pos;
+            if let AnyPath::LocalPath(selected_dir) = &state.dents[absolute_pos as usize].path {
+                let new_path = cwd.join(selected_dir);
+
+                // check if the new path is a dir 
+                // propagates error early and exits fn
+                getdents_from_path(&new_path)?;
+                
+                // updating cwd
+                state.cwd = AnyPath::LocalPath(new_path);
+
+                // refresh dents
+                Self::refresh_d_ents(state)?;
+
+                // refresh cursor
+                state.cursor_y = 0;
+
+                // refresh view slice
+                let renderable_rows = state.recalculate_renderable_rows();
+                state.view_slice = [0, renderable_rows];
+
+                Ok(())
+            } else {
+                return Err(ExplorerError::NotALocalPath("Expected a local path.".to_string()))
+            }
+        } else {
+            return Err(ExplorerError::NotALocalPath("Expected a local path.".to_string()))
+        }
+    }
+
+    fn refresh_d_ents(state: &mut ExplorerState) -> Result<(), ExplorerError> {
+        if let AnyPath::LocalPath(cwd) = &state.cwd {
+            state.dents = getdents_from_path(cwd)?;
+            Ok(())
+        } else {
+            return Err(ExplorerError::NotALocalPath("Expected a local path.".to_string()))
+        }
+    }
 }
 
-pub fn go_into_folder(state: &mut ExplorerState) -> Result<(), ExplorerError> {
-    let cwd = &state.cwd;
-    let cursor_pos = *&state.cursor_y;
-    let absolute_pos = &state.view_slice[0] + cursor_pos;
-    let selected_dir = &state.dents[absolute_pos as usize]
-        .path;
 
-    let new_path = cwd.join(selected_dir);
 
-    // check if the new path is a dir 
-    // propagates error early and exits fn
-    getdents_from_path(&new_path)?;
-    
-    // updating cwd
-    state.cwd = new_path;
-
-    // refresh dents
-    refresh_d_ents(state)?;
-
-    // refresh cursor
-    state.cursor_y = 0;
-
-    // refresh view slice
-    let renderable_rows = state.recalculate_renderable_rows();
-    state.view_slice = [0, renderable_rows];
-
-    Ok(())
-}
-
-fn refresh_d_ents(state: &mut ExplorerState) -> Result<(), ExplorerError> {
-    let cwd = &state.cwd;
-    state.dents = getdents_from_path(cwd)?;
-    Ok(())
-}
-
+// local path implementation
 pub fn getdents_from_path(path: &Path) -> Result<Vec<DEnt>, ExplorerError>{
+
     // linux naming...
     let mut dents = Vec::new();
     let dir_iter = path.read_dir()
@@ -90,7 +113,10 @@ pub fn getdents_from_path(path: &Path) -> Result<Vec<DEnt>, ExplorerError>{
             };
 
             dents.push(
-                DEnt::new(path, ftype)
+                DEnt::new(
+                    AnyPath::LocalPath(path), 
+                    ftype
+                )
             )
         }
     }
