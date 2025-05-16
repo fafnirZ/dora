@@ -26,7 +26,9 @@ impl ExplorerState {
         if let Some(path) = file_path {
             if path.starts_with("gs://") {
                 let path_shadow = path.clone();
-                let gs_path = AnyPath::GSPath(path);
+                let gs_path = AnyPath::GSPath(
+                    AnyPath::ensure_trailing_slash(path)
+                );
                 let cloud_client = GCSNavigator::get_client().unwrap();
                 let dents = GCSNavigator::getdents_from_path(
                     &cloud_client,
@@ -85,5 +87,15 @@ impl ExplorerState {
         let [start, _] = &self.view_slice;
         // let renderable_rows = self.recalculate_renderable_rows();
         self.view_slice = [*start, start+self.recalculate_renderable_rows()];
+    }
+
+    pub fn set_cwd(&mut self, new_cwd: AnyPath) {
+        if let AnyPath::GSPath(path_str) = &new_cwd {
+            // assert ends with /
+            if !path_str.ends_with('/') {
+                panic!("GCS path must end with / otherwise list_objects logic will fail.");
+            }
+        } else {};
+        self.cwd = new_cwd;
     }
 }

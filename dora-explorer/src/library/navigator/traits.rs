@@ -43,6 +43,14 @@ impl AnyPath {
             }
         }
     }
+
+    pub fn ensure_trailing_slash(path: String) -> String {
+        if path.ends_with('/') {
+            path
+        } else {
+            format!("{}/", path)
+        }
+    }
 }
 
 fn extract_file_name_str(path_str: &str) -> Option<&str> {

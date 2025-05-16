@@ -68,7 +68,7 @@ impl ExplorerUI {
         let is_dir = matches!(dent_type, FileType::Dir);
         let text_to_render = {
             if is_dir {
-                format!("{}/", text.to_string())
+                format!("{}", text.to_string())
             } else {
                 text.to_string()
             }

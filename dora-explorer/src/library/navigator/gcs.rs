@@ -31,7 +31,7 @@ impl Navigator for GCSNavigator {
             Self::getdents_from_path(&unwrapped_client, &new_path)?;
             
             // updating cwd
-            state.cwd = AnyPath::GSPath(new_path);
+            state.set_cwd(AnyPath::GSPath(new_path));
 
             // refresh dents
             Self::refresh_d_ents(state)?;
@@ -53,7 +53,6 @@ impl Navigator for GCSNavigator {
     fn go_into_folder(state: &mut ExplorerState) -> Result<(), ExplorerError> {
         
         if let AnyPath::GSPath(cwd) = &state.cwd {
-
             let cursor_pos = *&state.cursor_y;
             let absolute_pos = &state.view_slice[0] + cursor_pos;
             let selected_d_ent_name = &state
@@ -63,8 +62,9 @@ impl Navigator for GCSNavigator {
                 .expect("well it should not be null")
                 .to_string();
             
+            // NOTE: assumes cwd has a trailing '/'.
             let new_path = format!(
-                "{}/{}",
+                "{}{}/", // NOTE: trailing '/' is important
                 cwd, selected_d_ent_name,
             );
             let client = &state.cloud_client;
@@ -74,7 +74,7 @@ impl Navigator for GCSNavigator {
             Self::getdents_from_path(&unwrapped_client, &new_path)?;
             
             // updating cwd
-            state.cwd = AnyPath::GSPath(new_path);
+            state.set_cwd(AnyPath::GSPath(new_path));
 
             // refresh dents
             Self::refresh_d_ents(state)?;
@@ -134,7 +134,6 @@ impl GCSNavigator {
 
     async fn getdents_from_path_async(client: &Client, path: &str) ->Result<Vec<DEnt>, ExplorerError> {
         let mut dents: Vec<DEnt> = Vec::new();
-        println!("path: {:?}", path);
         if let Some((bucket_prefix, bucket, cwd)) = split_gs_path_split(path) {
             if bucket_prefix != "gs://" {
                 return Err(ExplorerError::NotARemotePath("expected gs:// prefix.".into()));
@@ -157,10 +156,13 @@ impl GCSNavigator {
             // get prefixes i.e. directories
             if let Some(prefixes) = result.prefixes {
                 for prefix in prefixes {
-                    println!("result prefix: {:?}", prefix);
-                    // NOTE: ensure prefix i.e. directories end
-                    // with a trailing slash
-                    // 
+                    // note stipping the trailing '/' from the prefix
+                    // we strip it when storing. 
+                    // but we add it back when setting CWD, otherwise the 
+                    // new getdents_from_path will fail. see IMPORTANT NOTES
+                    // at the top of this file. for more details on why
+                    // we need to add the trailing '/' back.
+                    let prefix = prefix.trim_end_matches('/');
                     dents.push(
                         DEnt::new(
                             AnyPath::GSPath(
@@ -189,7 +191,7 @@ impl GCSNavigator {
 
             // TODO next page token.
             // havent figured out how to use it yet.
-            println!("{:?}", dents);
+            // println!("{:?}", dents);
             Ok(dents)
 
         } else {
