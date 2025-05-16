@@ -23,7 +23,10 @@ impl Navigator for GCSNavigator {
     fn go_out_of_folder(state: &mut ExplorerState) -> Result<(), ExplorerError> {
     
         if let AnyPath::GSPath(cwd) = &state.cwd {
-            let new_path = Self::remove_last_segment_gs(cwd).expect("removing last segment shouldnt fail");
+            let new_path = AnyPath::ensure_trailing_slash(
+            Self::remove_last_segment_gs(cwd)
+                    .expect("removing last segment shouldnt fail")
+            );
              // check if the new path is a dir 
             // propagates error early and exits fn
             let client = &state.cloud_client;
@@ -63,10 +66,10 @@ impl Navigator for GCSNavigator {
                 .to_string();
             
             // NOTE: assumes cwd has a trailing '/'.
-            let new_path = format!(
-                "{}{}/", // NOTE: trailing '/' is important
+            let new_path = AnyPath::ensure_trailing_slash(format!(
+                "{}{}",
                 cwd, selected_d_ent_name,
-            );
+            ));
             let client = &state.cloud_client;
             let unwrapped_client = client.as_ref().expect("Cloud client was not initialised");
             // check if the new path is a dir 
@@ -237,7 +240,9 @@ impl GCSNavigator {
         )
     }
 
-    // assuming non trailing '/' allowed.
+    // assuming cwd has a trailing slash
+    // THIS IS A REQUIREMENT OF THE LOGIC such that CWD always has a trailing slash
+    // so this is a fair assumption to make
     fn remove_last_segment_gs(path: &str) -> Option<String> {
         if path.starts_with("gs://") {
             let trimmed_path = &path[5..]; // Remove the "gs://" prefix

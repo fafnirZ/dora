@@ -72,13 +72,13 @@ impl Controller {
             Control::ScrollLeft => {
                 match &state.navigator {
                     AnyNavigator::LocalNavigator => {
-                        LocalNavigator::go_into_folder(state)
+                        LocalNavigator::go_out_of_folder(state)
                         .unwrap_or_else(|_| {
                             return
                         }); // if not a directory do nothing for now:)
                     },
                     AnyNavigator::GCSNavigator => {
-                        GCSNavigator::go_into_folder(state)
+                        GCSNavigator::go_out_of_folder(state)
                         .unwrap_or_else(|_| {
                             return
                         }); // if not a directory do nothing for now:)
