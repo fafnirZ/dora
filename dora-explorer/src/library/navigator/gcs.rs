@@ -9,7 +9,15 @@ use super::{traits::{AnyPath, Navigator}, types::{DEnt, FileType}};
 
 pub struct GCSNavigator{}
 
-
+/// IMPORTANT NOTES for GCS list_blobs (list_objects):
+/// In order for you to list objects in a bucket, in a directory 
+/// like manner. i.e. only showing things that are in the current directory
+/// You must do the following:
+/// 1. Set the prefix to the current directory (you wish to list)
+/// 2. Set the delimiter to "/" (without this you will list all objects under this directory **exhaustively**)
+/// 3. ensure that the prefix ends with "/" (i.e. a trailing slash)
+///     FAILURE to do this step will yield only 1 result. i.e. the bucket name itself
+///     THIS is the problem I dealt with for 2 days.
 impl Navigator for GCSNavigator {
 
     fn go_out_of_folder(state: &mut ExplorerState) -> Result<(), ExplorerError> {
@@ -136,7 +144,7 @@ impl GCSNavigator {
             // println!("cwd: {:?}", cwd);
             let request = ListObjectsRequest {
                 bucket: bucket.to_string(),
-                prefix: Some(cwd.to_string()),
+                prefix: Some(cwd.to_string()), 
                 delimiter: Some("/".to_string()),
                 ..Default::default()
             };
@@ -150,8 +158,9 @@ impl GCSNavigator {
             if let Some(prefixes) = result.prefixes {
                 for prefix in prefixes {
                     println!("result prefix: {:?}", prefix);
-                    // remove trailing slash
-                    let prefix = prefix.trim_end_matches('/');
+                    // NOTE: ensure prefix i.e. directories end
+                    // with a trailing slash
+                    // 
                     dents.push(
                         DEnt::new(
                             AnyPath::GSPath(
