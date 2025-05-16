@@ -4,11 +4,11 @@ use super::ExplorerState;
 
 pub fn print_results(state: &ExplorerState) {
 
+    let cwd = &state.cwd;
     let user_input_exit = &state.sig_user_input_exit;
     if *user_input_exit {
         // should print cwd since no file selected
         // should print the current directory we are in instead
-        let cwd = &state.cwd;
         println!("{}", cwd.to_str().unwrap());
     }
 
@@ -20,7 +20,7 @@ pub fn print_results(state: &ExplorerState) {
         let cursor_idx = &state.cursor_y;
         let absolute_idx = &state.view_slice[0] + *cursor_idx;
         let selected_dent= &state.dents[absolute_idx as usize];
-        println!("{}",selected_dent.path.to_str().unwrap());
+        println!("{}{}", cwd.to_str().unwrap(),selected_dent.path.to_str().unwrap());
     }
 
 }
