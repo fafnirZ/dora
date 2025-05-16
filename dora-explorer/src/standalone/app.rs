@@ -34,7 +34,7 @@ impl App {
     ) -> Result<(), Box<dyn Error>> {
         loop {
             let control = self.input_handler.next();
-            if matches!(control, Control::Quit) {
+            if self.explorer_state.should_exit() {
                 return Ok(());
             }
 

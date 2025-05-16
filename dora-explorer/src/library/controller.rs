@@ -14,6 +14,9 @@ impl Controller {
     // this function mutates the app state
     pub fn perform_actions(control: &Control, state: &mut ExplorerState) {
         match control {
+            Control::Quit => {
+                state.sig_user_input_exit = true;
+            },
             Control::ScrollUp => {
                 let cursor_pos = &state.cursor_y;
                 if *cursor_pos == 0 {
@@ -112,6 +115,7 @@ impl Controller {
                     },
                     FileType::File => {
                         // exit program and return file path
+                        state.sig_file_selected_exit = true;
                     },
                     _ => {},
                 }

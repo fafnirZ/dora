@@ -75,6 +75,11 @@ impl ExplorerState {
         }
     }
 
+    pub fn should_exit(&self) -> bool {
+        return self.sig_user_input_exit 
+        || self.sig_file_selected_exit;
+    }
+
     pub fn update_table_area(&mut self, main_table_area: Rect) {
         let [curr_height, curr_width] = &self.available_area;
         if !(main_table_area.height == *curr_height && main_table_area.width == *curr_width) {
