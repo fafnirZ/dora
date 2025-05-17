@@ -20,6 +20,20 @@ impl Controller {
             Control::ToggleShowDotFiles => {
                 let curr = &state.show_dotfiles;
                 state.show_dotfiles = !curr;
+                match &state.navigator {
+                    AnyNavigator::LocalNavigator => {
+                        LocalNavigator::refresh_d_ents(state)
+                        .unwrap_or_else(|_| {
+                            return
+                        }); // if not a directory do nothing for now:)
+                    },
+                    AnyNavigator::GCSNavigator => {
+                        GCSNavigator::refresh_d_ents(state)
+                        .unwrap_or_else(|_| {
+                            return
+                        }); // if not a directory do nothing for now:)
+                    },
+                }
             },
             Control::ScrollUp => {
                 let cursor_pos = &state.cursor_y;
