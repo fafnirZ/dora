@@ -2,7 +2,7 @@ use std::ffi::OsStr;
 
 use ratatui::{buffer::Buffer, layout::{Constraint, Layout, Rect}, style::{Color, Stylize}, widgets::{Paragraph, StatefulWidget, Widget}};
 
-use super::{colours::{DARK_BLUE_GRAY, PALE_GREEN}, navigator::types::{DEnt, FileType}, ExplorerState};
+use super::{colours::*, navigator::types::{DEnt, FileType}, ExplorerState};
 
 pub struct ExplorerUI {}
 
@@ -82,7 +82,7 @@ impl ExplorerUI {
         }
 
         if is_dir {
-            para = para.fg(PALE_GREEN.to_ratatui_color_rgb())
+            para = para.fg(LIGHT_TEAL.to_ratatui_color_rgb())
         } else {
             para = para.fg(Color::White)
         }

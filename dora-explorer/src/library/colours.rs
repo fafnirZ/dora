@@ -107,3 +107,9 @@ pub const PALE_GREEN: Colour = Colour {
     hex: "#98fb98",
     rgb: (152, 251, 152),
 };
+
+pub const DEEP_SKY_BLUE: Colour = Colour {
+    name: "Deep Sky Blue",
+    hex: "#00bfff",
+    rgb: (0, 191, 255),
+};
