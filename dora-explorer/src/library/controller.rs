@@ -28,10 +28,7 @@ impl Controller {
                         }); // if not a directory do nothing for now:)
                     },
                     AnyNavigator::GCSNavigator => {
-                        GCSNavigator::refresh_d_ents(state)
-                        .unwrap_or_else(|_| {
-                            return
-                        }); // if not a directory do nothing for now:)
+                        // NOTE: don't support hiding .dotfiles in gcs
                     },
                 }
             },
