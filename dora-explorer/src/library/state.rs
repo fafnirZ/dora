@@ -30,12 +30,12 @@ pub struct ExplorerState{
 impl ExplorerState {
     pub fn new(file_path: Option<String>) -> Self {
         
-        if let Some(path) = file_path {
-            if path.starts_with("gs://") {
-                return ExplorerState::handle_init_gcs_path(path);
+        if let Some(path_str) = file_path {
+            if path_str.starts_with("gs://") {
+                return ExplorerState::handle_init_gcs_path(path_str);
             } else {
-                //
-                panic!("TODO");
+                let path = Path::new(&path_str);
+                return ExplorerState::handle_init_local_path(path);
             }
         } else {
             // use cwd
