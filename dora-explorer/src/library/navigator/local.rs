@@ -78,7 +78,17 @@ impl Navigator for LocalNavigator {
 
     fn refresh_d_ents(state: &mut ExplorerState) -> Result<(), ExplorerError> {
         if let AnyPath::LocalPath(cwd) = &state.cwd {
-            state.dents = getdents_from_path(cwd)?;
+            state.dents = {
+                if state.hide_dotfiles {
+                    getdents_from_path(cwd)?
+                    .into_iter()
+                    .filter(|entry| filter_dot_dent(&entry))
+                    .collect()
+                }
+                else {
+                    getdents_from_path(cwd)?
+                }
+            };
             Ok(())
         } else {
             return Err(ExplorerError::NotALocalPath("Expected a local path.".to_string()))

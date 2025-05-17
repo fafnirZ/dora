@@ -14,11 +14,13 @@ pub struct ExplorerState{
     pub cloud_client: Option<Client>,
     pub navigator: AnyNavigator,
 
+    // configs
+    pub hide_dotfiles: bool,
+
     // visual states
     pub cursor_y: u16,
     pub view_slice: [u16;2],
     available_area: [u16;2], // height, width
-
 
     // trap signals
     pub sig_user_input_exit: bool,
@@ -44,6 +46,7 @@ impl ExplorerState {
                     dents: dents,
                     cloud_client: Some(cloud_client),
                     navigator: AnyNavigator::GCSNavigator,
+                    hide_dotfiles: false,
                     cursor_y: 0,
                     view_slice: [0,10], // this will be overridden very quickly
                     available_area: [10, 10], // to be reset very soon.
@@ -66,6 +69,7 @@ impl ExplorerState {
                 dents: dents,
                 cloud_client: None,
                 navigator: AnyNavigator::LocalNavigator,
+                hide_dotfiles: false,
                 cursor_y: 0,
                 view_slice: [0,10], // this will be overridden very quickly
                 available_area: [10, 10], // to be reset very soon.
