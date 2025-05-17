@@ -1,7 +1,7 @@
 # dora
 like dora...the explorer, exploring data files like csv/parquet/xlsx in the terminal
 
-![](./assets/screenshot.png)
+![](../assets/screenshot.png)
 
 ## what does the app do?
 It is an terminal based, interactive dataframe explorer built ontop of:
@@ -27,9 +27,9 @@ It is an terminal based, interactive dataframe explorer built ontop of:
 - [ ] filter mode
 
 ## Documentation Links
-- [Normal Mode Docs](./docs/normal.md)
-- [Command Mode Docs](./docs/commands.md)
-- [Search Mode Docs](./docs/search.md)
+- [Normal Mode Docs](../docs/normal.md)
+- [Command Mode Docs](../docs/commands.md)
+- [Search Mode Docs](../docs/search.md)
 
 
 ## Supported Operations (TODO)
@@ -39,7 +39,7 @@ It is an terminal based, interactive dataframe explorer built ontop of:
 - [ ] display the current query expression
 
 ## Commands
-[link](./docs/commands.md)
+[link](../docs/commands.md)
 
 ## References
 Code structure and functionality heavily inspired from https://github.com/YS-L/csvlens
