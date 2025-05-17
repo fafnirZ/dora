@@ -1,4 +1,4 @@
-use std::{env, path::{Path, PathBuf}};
+use std::{any::Any, env, path::{Path, PathBuf}};
 
 use google_cloud_storage::client::Client;
 use ratatui::layout::Rect;
@@ -32,27 +32,7 @@ impl ExplorerState {
         
         if let Some(path) = file_path {
             if path.starts_with("gs://") {
-                let path_shadow = path.clone();
-                let gs_path = AnyPath::GSPath(
-                    AnyPath::ensure_trailing_slash(path)
-                );
-                let cloud_client = GCSNavigator::get_client().unwrap();
-                let dents = GCSNavigator::getdents_from_path(
-                    &cloud_client,
-                    &path_shadow,
-                ).unwrap();
-                return Self {
-                    cwd: gs_path, // cwd
-                    dents: dents,
-                    cloud_client: Some(cloud_client),
-                    navigator: AnyNavigator::GCSNavigator,
-                    show_dotfiles: true,
-                    cursor_y: 0,
-                    view_slice: [0,10], // this will be overridden very quickly
-                    available_area: [10, 10], // to be reset very soon.
-                    sig_user_input_exit: false,
-                    sig_file_selected_exit: false,
-                }
+                return ExplorerState::handle_init_gcs_path(path);
             } else {
                 //
                 panic!("TODO");
@@ -62,28 +42,54 @@ impl ExplorerState {
             // initial path for testing purposes
             // no remote path unless explicitly arg passed in begins with gs://
             let local_cwd = env::current_dir().unwrap();
-            let cwd = AnyPath::LocalPath(local_cwd.clone());
+            return ExplorerState::handle_init_local_path(&local_cwd);           
+        }
+    }
 
-            // for local we start the program off filtering off .files
-            // since its a visual hindrance. default ls does not show .files either
-            let dents = getdents_from_path(&local_cwd)
-                .expect("Initial path is not a directory")
-                .into_iter()
-                .filter(|entry | filter_dot_dent(&entry))
-                .collect();
+    fn handle_init_gcs_path(path: String) -> Self {
+        let path_shadow = path.clone();
+        let gs_path = AnyPath::GSPath(
+            AnyPath::ensure_trailing_slash(path)
+        );
+        let cloud_client = GCSNavigator::get_client().unwrap();
+        let dents = GCSNavigator::getdents_from_path(
+            &cloud_client,
+            &path_shadow,
+        ).unwrap();
+        return Self {
+            cwd: gs_path, // cwd
+            dents: dents,
+            cloud_client: Some(cloud_client),
+            navigator: AnyNavigator::GCSNavigator,
+            show_dotfiles: true,
+            cursor_y: 0,
+            view_slice: [0,10], // this will be overridden very quickly
+            available_area: [10, 10], // to be reset very soon.
+            sig_user_input_exit: false,
+            sig_file_selected_exit: false,
+        }
+    }
 
-            return Self {
-                cwd: cwd, // cwd
-                dents: dents,
-                cloud_client: None,
-                navigator: AnyNavigator::LocalNavigator,
-                show_dotfiles: false, // defaults to not showing dotfiles because its a visual hindrance
-                cursor_y: 0,
-                view_slice: [0,10], // this will be overridden very quickly
-                available_area: [10, 10], // to be reset very soon.
-                sig_user_input_exit: false,
-                sig_file_selected_exit: false,
-            }
+    fn handle_init_local_path(path: &Path) -> Self {
+        // for local we start the program off filtering off .files
+        // since its a visual hindrance. default ls does not show .files either
+        let dents = getdents_from_path(path)
+            .expect("Initial path is not a directory")
+            .into_iter()
+            .filter(|entry | filter_dot_dent(&entry))
+            .collect();
+
+        return Self {
+            cwd: AnyPath::LocalPath(path.to_path_buf()), // cwd
+            dents: dents,
+            cloud_client: None,
+            navigator: AnyNavigator::LocalNavigator,
+            show_dotfiles: false, // defaults to not showing dotfiles because its a visual hindrance
+            cursor_y: 0,
+            view_slice: [0,10], // this will be overridden very quickly
+            available_area: [10, 10], // to be reset very soon.
+            sig_user_input_exit: false,
+            sig_file_selected_exit: false,
         }
     }
 
