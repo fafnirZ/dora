@@ -4,6 +4,7 @@ mod ui;    // view
 mod controller;
 mod navigator;
 mod errors;
+mod colours;
 
 
 pub mod control;
