@@ -122,3 +122,17 @@ pub fn getdents_from_path(path: &Path) -> Result<Vec<DEnt>, ExplorerError>{
     }
     Ok(dents)
 }
+
+// fn to be applied to a filter op
+// returns true if not a .file
+pub fn filter_dot_dent(entry: &DEnt) -> bool {
+    let fname = entry
+        .path
+        .file_name()
+        .unwrap_or("");
+
+    if fname.starts_with(".") {
+        return false
+    }
+    true
+}
