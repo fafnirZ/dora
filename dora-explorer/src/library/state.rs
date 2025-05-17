@@ -34,7 +34,7 @@ impl ExplorerState {
             if path_str.starts_with("gs://") {
                 return ExplorerState::handle_init_gcs_path(path_str);
             } else {
-                let path = Path::new(&path_str);
+                let path = Path::new(&path_str); // NOTE: ~ and $HOME alias works, as well as any env variables which resolves into paths :)
                 return ExplorerState::handle_init_local_path(path);
             }
         } else {
