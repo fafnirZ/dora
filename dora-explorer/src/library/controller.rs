@@ -17,6 +17,10 @@ impl Controller {
             Control::Quit => {
                 state.sig_user_input_exit = true;
             },
+            Control::ToggleShowDotFiles => {
+                let curr = &state.show_dotfiles;
+                state.show_dotfiles = !curr;
+            },
             Control::ScrollUp => {
                 let cursor_pos = &state.cursor_y;
                 if *cursor_pos == 0 {

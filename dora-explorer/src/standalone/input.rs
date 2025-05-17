@@ -44,6 +44,7 @@ impl InputHandler {
                 _ => Control::Nothing,
             },
             KeyModifiers::CONTROL => match key_event.code {
+                KeyCode::Char('h') => Control::ToggleShowDotFiles,
                 _ => Control::Nothing,
             },
             _ => Control::Nothing,
