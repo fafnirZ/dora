@@ -78,7 +78,17 @@ impl Navigator for LocalNavigator {
 
     fn refresh_d_ents(state: &mut ExplorerState) -> Result<(), ExplorerError> {
         if let AnyPath::LocalPath(cwd) = &state.cwd {
-            state.dents = getdents_from_path(cwd)?;
+            state.dents = {
+                if !state.show_dotfiles {
+                    getdents_from_path(cwd)?
+                    .into_iter()
+                    .filter(|entry| filter_dot_dent(&entry))
+                    .collect()
+                }
+                else {
+                    getdents_from_path(cwd)?
+                }
+            };
             Ok(())
         } else {
             return Err(ExplorerError::NotALocalPath("Expected a local path.".to_string()))
@@ -121,4 +131,18 @@ pub fn getdents_from_path(path: &Path) -> Result<Vec<DEnt>, ExplorerError>{
         }
     }
     Ok(dents)
+}
+
+// fn to be applied to a filter op
+// returns true if not a .file
+pub fn filter_dot_dent(entry: &DEnt) -> bool {
+    let fname = entry
+        .path
+        .file_name()
+        .unwrap_or("");
+
+    if fname.starts_with(".") {
+        return false
+    }
+    true
 }

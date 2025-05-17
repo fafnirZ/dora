@@ -4,6 +4,7 @@ pub enum Control {
     ScrollDown,
     ScrollLeft,
     ScrollRight,
+    ToggleShowDotFiles,
     Quit,
     Nothing,
     Esc,
