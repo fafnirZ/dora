@@ -1,5 +1,7 @@
 use std::{any::Any, f32::consts::E, path::{Path, PathBuf}};
 
+use itertools::sorted;
+
 use crate::library::{errors::ExplorerError, ExplorerState};
 
 use super::{traits::{AnyPath, Navigator}, types::{DEnt, FileType}};
@@ -130,7 +132,11 @@ pub fn getdents_from_path(path: &Path) -> Result<Vec<DEnt>, ExplorerError>{
             )
         }
     }
-    Ok(dents)
+
+    // sort dents
+    let sorted_dents = sorted(dents).collect();
+
+    Ok(sorted_dents)
 }
 
 // fn to be applied to a filter op

@@ -15,7 +15,7 @@ pub trait Navigator {
 
 
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Eq, PartialEq, PartialOrd)]
 pub enum AnyPath {
     LocalPath(PathBuf),
     GSPath(String),
