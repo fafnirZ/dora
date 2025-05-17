@@ -79,7 +79,7 @@ impl Navigator for LocalNavigator {
     fn refresh_d_ents(state: &mut ExplorerState) -> Result<(), ExplorerError> {
         if let AnyPath::LocalPath(cwd) = &state.cwd {
             state.dents = {
-                if state.hide_dotfiles {
+                if !state.show_dotfiles {
                     getdents_from_path(cwd)?
                     .into_iter()
                     .filter(|entry| filter_dot_dent(&entry))

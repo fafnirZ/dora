@@ -3,7 +3,7 @@ use std::{env, path::{Path, PathBuf}};
 use google_cloud_storage::client::Client;
 use ratatui::layout::Rect;
 
-use super::{navigator::{ gcs::GCSNavigator, local::getdents_from_path, traits::{AnyNavigator, AnyPath, Navigator}, types::DEnt}, ui::CELL_HEIGHT};
+use super::{navigator::{ gcs::GCSNavigator, local::{filter_dot_dent, getdents_from_path}, traits::{AnyNavigator, AnyPath, Navigator}, types::DEnt}, ui::CELL_HEIGHT};
 
 
 // very primitive state right now
@@ -15,7 +15,7 @@ pub struct ExplorerState{
     pub navigator: AnyNavigator,
 
     // configs
-    pub hide_dotfiles: bool,
+    pub show_dotfiles: bool,
 
     // visual states
     pub cursor_y: u16,
@@ -46,7 +46,7 @@ impl ExplorerState {
                     dents: dents,
                     cloud_client: Some(cloud_client),
                     navigator: AnyNavigator::GCSNavigator,
-                    hide_dotfiles: false,
+                    show_dotfiles: true,
                     cursor_y: 0,
                     view_slice: [0,10], // this will be overridden very quickly
                     available_area: [10, 10], // to be reset very soon.
@@ -63,13 +63,21 @@ impl ExplorerState {
             // no remote path unless explicitly arg passed in begins with gs://
             let local_cwd = env::current_dir().unwrap();
             let cwd = AnyPath::LocalPath(local_cwd.clone());
-            let dents = getdents_from_path(&local_cwd).expect("Initial path is nto a directory"); 
+
+            // for local we start the program off filtering off .files
+            // since its a visual hindrance. default ls does not show .files either
+            let dents = getdents_from_path(&local_cwd)
+                .expect("Initial path is not a directory")
+                .into_iter()
+                .filter(|entry | filter_dot_dent(&entry))
+                .collect();
+
             return Self {
                 cwd: cwd, // cwd
                 dents: dents,
                 cloud_client: None,
                 navigator: AnyNavigator::LocalNavigator,
-                hide_dotfiles: false,
+                show_dotfiles: false, // defaults to not showing dotfiles because its a visual hindrance
                 cursor_y: 0,
                 view_slice: [0,10], // this will be overridden very quickly
                 available_area: [10, 10], // to be reset very soon.
