@@ -16,7 +16,7 @@ impl InfoBarUI {
     fn render_search_info_area(&self, area: Rect, buf: &mut Buffer, state: &mut <InfoBarUI as StatefulWidget>::State) {
         // assuming no pagination RIGHT NOW.
         // cbb dealing with pagination yet.
-        let total_dent_values = &state.dents.len();
+        let total_dent_values = &state.get_dents_auto().len();
         let absolute_cursor_pos = &state.cursor_y + &state.view_slice[0];
         let curr_dent_val = {
             if *total_dent_values > (0 as usize) {
