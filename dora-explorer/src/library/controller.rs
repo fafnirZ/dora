@@ -185,7 +185,9 @@ impl Controller {
                 };
 
                 if current_buffer_string == "" {
-                    return
+                    // reset filter view to be equal to unsullied dents
+                    state.dents_filterview = Some(state.dents.clone());
+                    return;
                 }
 
                 // keeps applying filter on original dents
