@@ -158,6 +158,15 @@ impl Controller {
             Control::Esc => {
                 state.mode = Mode::Normal;
                 state.input_handler.reset_input_buffer();
+
+                // reverts filter
+            }
+
+            Control::Enter => {
+                state.mode = Mode::Normal;
+                state.input_handler.reset_input_buffer();
+
+                // keeps filter
             }
             _ => {}
         }
