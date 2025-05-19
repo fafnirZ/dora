@@ -57,8 +57,10 @@ impl Navigator for GCSNavigator {
             if !matches!(selected_d_ent.ftype, FileType::Dir) {
                 return Err(ExplorerError::NotARemotePath("Expected a directory.".to_string()))
             }
-            let selected_d_ent_name = &state
-                .dents[absolute_pos as usize]
+
+            
+
+            let selected_d_ent_name = &state.get_dents_auto()[absolute_pos as usize]
                 .path
                 .file_name()
                 .expect("well it should not be null")
@@ -102,6 +104,7 @@ impl Navigator for GCSNavigator {
             let client = &state.cloud_client;
             let unwrapped_client = client.as_ref().expect("Cloud client was not initialised");
             state.dents = Self::getdents_from_path(&unwrapped_client, cwd)?;
+            state.dents_filterview = None; // whenever this gets called, should remove filters
             Ok(())
         } else {
             return Err(ExplorerError::NotARemotePath("Expected a local path.".to_string()))

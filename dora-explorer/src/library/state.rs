@@ -3,14 +3,17 @@ use std::{any::Any, env, path::{Path, PathBuf}};
 use google_cloud_storage::client::Client;
 use ratatui::layout::Rect;
 
-use super::{navigator::{ gcs::GCSNavigator, local::{filter_dot_dent, getdents_from_path}, traits::{AnyNavigator, AnyPath, Navigator}, types::DEnt}, ui::CELL_HEIGHT};
+use super::{input::InputHandler, mode::Mode, navigator::{ gcs::GCSNavigator, local::{filter_dot_dent, getdents_from_path}, traits::{AnyNavigator, AnyPath, Navigator}, types::DEnt}, ui::CELL_HEIGHT};
 
 
 // very primitive state right now
 // not optimised and not cached.
 pub struct ExplorerState{
+
+    // navigator states
     pub cwd: AnyPath,
     pub dents: Vec<DEnt>, // directory entries
+    pub dents_filterview: Option<Vec<DEnt>>, // shadows dents..it is used when a filter is being applied, it will clone the original dents value in case we want to revert, which we very well may want to.
     pub cloud_client: Option<Client>,
     pub navigator: AnyNavigator,
 
@@ -22,7 +25,12 @@ pub struct ExplorerState{
     pub view_slice: [u16;2],
     available_area: [u16;2], // height, width
 
+    // input handler
+    pub input_handler: InputHandler,
+    pub mode: Mode,
+
     // trap signals
+    // when these gets flagged, it will exit.
     pub sig_user_input_exit: bool,
     pub sig_file_selected_exit: bool,
 }
@@ -59,6 +67,7 @@ impl ExplorerState {
         return Self {
             cwd: gs_path, // cwd
             dents: dents,
+            dents_filterview: None,
             cloud_client: Some(cloud_client),
             navigator: AnyNavigator::GCSNavigator,
             show_dotfiles: true,
@@ -67,6 +76,8 @@ impl ExplorerState {
             available_area: [10, 10], // to be reset very soon.
             sig_user_input_exit: false,
             sig_file_selected_exit: false,
+            input_handler: InputHandler::new(),
+            mode: Mode::Normal,
         }
     }
 
@@ -82,6 +93,7 @@ impl ExplorerState {
         return Self {
             cwd: AnyPath::LocalPath(path.to_path_buf()), // cwd
             dents: dents,
+            dents_filterview: None,
             cloud_client: None,
             navigator: AnyNavigator::LocalNavigator,
             show_dotfiles: false, // defaults to not showing dotfiles because its a visual hindrance
@@ -90,6 +102,8 @@ impl ExplorerState {
             available_area: [10, 10], // to be reset very soon.
             sig_user_input_exit: false,
             sig_file_selected_exit: false,
+            input_handler: InputHandler::new(),
+            mode: Mode::Normal,
         }
     }
 
@@ -108,9 +122,11 @@ impl ExplorerState {
         }
     }
 
-    pub fn recalculate_renderable_rows(& self) -> u16 {
+    pub fn recalculate_renderable_rows(&self) -> u16 {
         let [curr_height, _] = &self.available_area;
-        let max_entries = &self.dents.len();
+        
+
+        let max_entries = &self.get_dents_auto().len();
         return (curr_height / CELL_HEIGHT)
             .min(*max_entries as u16);
     }
@@ -129,5 +145,22 @@ impl ExplorerState {
             }
         } else {};
         self.cwd = new_cwd;
+    }
+
+
+    // will return self.dents_filterview if not null
+    // else will return dents
+    pub fn get_dents_auto(&self) -> &Vec<DEnt> {
+        let dents = {
+            if self.dents_filterview.is_some() {
+                &self
+                    .dents_filterview
+                    .as_ref()
+                    .unwrap()
+            }else {
+                &self.dents
+            }
+        };
+        return dents;
     }
 }

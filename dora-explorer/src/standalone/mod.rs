@@ -3,5 +3,3 @@
 // therefore need to instantiate a ratatui instance
 pub mod app;
 pub mod runner;
-pub mod input;
-pub mod events;

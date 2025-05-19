@@ -49,7 +49,8 @@ impl Navigator for LocalNavigator {
         if let AnyPath::LocalPath(cwd) = &state.cwd {
             let cursor_pos = *&state.cursor_y;
             let absolute_pos = &state.view_slice[0] + cursor_pos;
-            if let AnyPath::LocalPath(selected_dir) = &state.dents[absolute_pos as usize].path {
+            
+            if let AnyPath::LocalPath(selected_dir) = &state.get_dents_auto()[absolute_pos as usize].path {
                 let new_path = cwd.join(selected_dir);
 
                 // check if the new path is a dir 
@@ -91,6 +92,7 @@ impl Navigator for LocalNavigator {
                     getdents_from_path(cwd)?
                 }
             };
+            state.dents_filterview = None; // whenever this gets called, should remove filters
             Ok(())
         } else {
             return Err(ExplorerError::NotALocalPath("Expected a local path.".to_string()))

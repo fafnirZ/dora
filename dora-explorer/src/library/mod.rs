@@ -5,7 +5,10 @@ mod controller;
 mod navigator;
 mod errors;
 mod colours;
-
+mod infobar;
+mod input;
+mod mode;
+mod filter;
 
 pub mod control;
 pub use state::ExplorerState;

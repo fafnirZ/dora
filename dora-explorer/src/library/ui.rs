@@ -2,7 +2,7 @@ use std::ffi::OsStr;
 
 use ratatui::{buffer::Buffer, layout::{Constraint, Layout, Rect}, style::{Color, Stylize}, widgets::{Paragraph, StatefulWidget, Widget}};
 
-use super::{colours::*, navigator::types::{DEnt, FileType}, ExplorerState};
+use super::{colours::*, infobar::ui::InfoBarUI, navigator::types::{DEnt, FileType}, ExplorerState};
 
 pub struct ExplorerUI {}
 
@@ -11,32 +11,37 @@ impl ExplorerUI {
 }
 
 pub const CELL_HEIGHT: u16 = 1;
-const CELL_WIDTH: u16 = 30;
+// const CELL_WIDTH: u16 = 30;
 
 
 // contain a top banner for current path
 // then the left contains cwd paths.
 
 impl ExplorerUI {
-    fn render_banner(&self, area: Rect, buf: &mut Buffer, state: &mut <ExplorerUI as StatefulWidget>::State) {
+    fn render_top_banner(&self, area: Rect, buf: &mut Buffer, state: &mut <ExplorerUI as StatefulWidget>::State) {
         let cwd = &state.cwd;
         let path = cwd
             .to_str()
             .unwrap_or("<invalid path>");
 
         Paragraph::new(path)
-            .bg(Color::Rgb(67, 67, 113))
+            .bg(MAIN_PURPLE.to_ratatui_color_rgb())
             .render(area, buf);
+    }
+    fn render_bottom_banner(&self, area: Rect, buf: &mut Buffer, state: &mut <ExplorerUI as StatefulWidget>::State) {
+
+        let infobar = InfoBarUI::new();
+        infobar.render(area, buf, state);
     }
 
     fn render_entries(&self, area: Rect, buf: &mut Buffer, state: &mut <ExplorerUI as StatefulWidget>::State) {
-        let d_ents = &state.dents;
         let start_x = area.x;
         let start_y = area.y;
         
         let [vs_start, vs_end] = &state.view_slice;
         // get slice from d_ents 
-        let d_ents: Vec<&DEnt> = d_ents
+        let d_ents: Vec<&DEnt> = state
+            .get_dents_auto()
             .iter()
             .enumerate()
             .filter(|(idx, _)| {
@@ -52,7 +57,7 @@ impl ExplorerUI {
 
             if curr_y+CELL_HEIGHT > start_y + area.height { return; } // dont render beyong bounds
 
-            let rect = Rect::new(start_x, curr_y, CELL_WIDTH, CELL_HEIGHT);
+            let rect = Rect::new(start_x, curr_y, area.width, CELL_HEIGHT);
             let entry_str = entry
                 .path
                 .file_name()
@@ -96,16 +101,19 @@ impl StatefulWidget for ExplorerUI {
 
     fn render(self, area: Rect, buf: &mut Buffer, state: &mut Self::State) {
         let [
-            banner,
+            top_banner,
             main,
+            bottom_banner,
         ] = Layout::vertical([
             Constraint::Length(1),
             Constraint::Fill(1),
+            Constraint::Length(1),
         ]).areas(area);
 
         state.update_table_area(main.clone());
 
-        self.render_banner(banner, buf, state);
+        self.render_top_banner(top_banner, buf, state);
         self.render_entries(main, buf, state);
+        self.render_bottom_banner(bottom_banner, buf, state);
     }
 }

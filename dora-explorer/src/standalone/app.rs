@@ -8,22 +8,17 @@ use ratatui::{
     widgets::Paragraph,
 };
 
-use super::{
-    input::{InputHandler},
-};
 use crate::library::{control::Control, Controller, ExplorerState, ExplorerUI};
 
 // global app state.
 pub struct App {
     // global states (regardless of page)
-    pub input_handler: InputHandler,
     pub explorer_state: ExplorerState,
 }
 
 impl App {
     pub fn new(file_path: Option<String>) -> Self {
         Self {
-            input_handler: InputHandler::new(),
             explorer_state: ExplorerState::new(file_path),
         }
     }
@@ -33,7 +28,7 @@ impl App {
         terminal: &mut Terminal<B>,
     ) -> Result<(), Box<dyn Error>> {
         loop {
-            let control = self.input_handler.next();
+            let control = self.explorer_state.input_handler.next();
             if self.explorer_state.should_exit() {
                 return Ok(());
             }

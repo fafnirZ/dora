@@ -113,3 +113,10 @@ pub const DEEP_SKY_BLUE: Colour = Colour {
     hex: "#00bfff",
     rgb: (0, 191, 255),
 };
+
+
+pub const MAIN_PURPLE: Colour = Colour {
+    name: "Dora Main Purple",
+    hex: "?",
+    rgb: (67, 67, 113),
+};

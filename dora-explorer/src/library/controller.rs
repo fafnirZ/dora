@@ -2,7 +2,7 @@ use std::any::Any;
 
 use crossterm::cursor;
 
-use super::{control::Control, navigator::{self, gcs::GCSNavigator, local::LocalNavigator, traits::{AnyNavigator, Navigator}, types::FileType}, ExplorerState};
+use super::{control::Control, filter::ExactSubstringSearch, input::InputBuffer, mode::Mode, navigator::{self, gcs::GCSNavigator, local::LocalNavigator, traits::{AnyNavigator, Navigator}, types::{DEnt, FileType}}, ExplorerState};
 
 // given input,
 // take a look at current state
@@ -13,9 +13,24 @@ pub struct Controller {}
 impl Controller {
     // this function mutates the app state
     pub fn perform_actions(control: &Control, state: &mut ExplorerState) {
+        match &state.mode {
+            Mode::Normal => Controller::handle_normal_mode_control(control, state),
+            Mode::Filter => Controller::handle_filter_mode_control(control, state),
+        }
+    }
+
+    fn handle_normal_mode_control(control: &Control, state: &mut ExplorerState) {
         match control {
             Control::Quit => {
                 state.sig_user_input_exit = true;
+            },
+            Control::Filter => {
+                state.mode = Mode::Filter;
+                state.input_handler.init_input_buffer();
+
+                // // need to initialise dent_shadow var 
+                // // by cloning dents in the current state.
+                // state.dents_filterview = Some(state.dents.clone());
             },
             Control::ToggleShowDotFiles => {
                 let curr = &state.show_dotfiles;
@@ -51,7 +66,7 @@ impl Controller {
             }
             Control::ScrollDown => {
                 let cursor_pos = &state.cursor_y;
-                let num_dents = &state.dents.len();
+                let num_dents = &state.get_dents_auto().len();
                 let num_renderable = &state.recalculate_renderable_rows();
                 if *cursor_pos == *num_renderable-1 {
                     let [start,end] = &state.view_slice;
@@ -139,5 +154,65 @@ impl Controller {
             _ => {}
         }
     }
+    fn handle_filter_mode_control(control: &Control, state: &mut ExplorerState) {
+        match control {
+            Control::Quit => {
+                state.sig_user_input_exit = true;
+            },
+            Control::Esc => {
+                state.mode = Mode::Normal;
+                state.input_handler.reset_input_buffer();
 
+                // reverts filter
+                state.dents_filterview = None;
+
+            }
+
+            Control::Enter => {
+                state.mode = Mode::Normal;
+                state.input_handler.reset_input_buffer();
+
+                // keeps filter
+                // so does nothing. ui will continue to 
+                // use filterview so long as its not a nullvalue
+            }
+            _ => {
+                let current_buffer_string = {
+                    match &state.input_handler.input_buffer {
+                        InputBuffer::Active(input) => input.value(),
+                        InputBuffer::Inactive => "",
+                    }
+                };
+
+                if current_buffer_string == "" {
+                    // reset filter view to be equal to unsullied dents
+                    state.dents_filterview = Some(state.dents.clone());
+                    return;
+                }
+
+                // keeps applying filter on original dents
+                // value.
+                let dents_fview: Vec<DEnt> = state
+                    .dents
+                    .clone()
+                    .into_iter()
+                    .filter(|entry|                 
+                        ExactSubstringSearch{}.search(
+                            current_buffer_string,
+                            &*entry
+                                .path
+                                .file_name()
+                                .unwrap_or(""),
+                            true,
+                        ).is_some())
+                    .collect();
+
+                state.dents_filterview = Some(dents_fview);
+
+                // recalculate renderable
+
+                state.recalculate_view_slice();
+            }
+        }
+    }
 }
