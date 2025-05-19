@@ -61,6 +61,7 @@ impl InputHandler {
                 KeyCode::Char('j') | KeyCode::Down => Control::ScrollDown,
                 KeyCode::Char('h') | KeyCode::Left => Control::ScrollLeft,
                 KeyCode::Char('l') | KeyCode::Right => Control::ScrollRight,
+                KeyCode::Char('/') => Control::Filter,
                 KeyCode::Esc => Control::Esc, // depends on context for esc handling
                 KeyCode::Enter => Control::Enter,
                 _ => Control::Nothing,
