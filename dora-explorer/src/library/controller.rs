@@ -28,9 +28,9 @@ impl Controller {
                 state.mode = Mode::Filter;
                 state.input_handler.init_input_buffer();
 
-                // need to initialise dent_shadow var 
-                // by cloning dents in the current state.
-                state.dents_shadow = Some(state.dents.clone());
+                // // need to initialise dent_shadow var 
+                // // by cloning dents in the current state.
+                // state.dents_filterview = Some(state.dents.clone());
             },
             Control::ToggleShowDotFiles => {
                 let curr = &state.show_dotfiles;
@@ -164,11 +164,7 @@ impl Controller {
                 state.input_handler.reset_input_buffer();
 
                 // reverts filter
-                state.dents = state
-                    .dents_shadow
-                    .clone()
-                    .unwrap();
-                state.dents_shadow = None;
+                state.dents_filterview = None;
 
             }
 
@@ -177,9 +173,8 @@ impl Controller {
                 state.input_handler.reset_input_buffer();
 
                 // keeps filter
-                // note theres no way to revert this
-                // unless u go into a dir and go back out
-                state.dents_shadow = None;
+                // so does nothing. ui will continue to 
+                // use filterview so long as its not a nullvalue
             }
             _ => {
                 let current_buffer_string = {
@@ -193,9 +188,12 @@ impl Controller {
                     return
                 }
 
-                let dents: Vec<&DEnt> = state
+                // keeps applying filter on original dents
+                // value.
+                let dents_fview: Vec<DEnt> = state
                     .dents
-                    .iter()
+                    .clone()
+                    .into_iter()
                     .filter(|entry|                 
                         ExactSubstringSearch{}.search(
                             current_buffer_string,
@@ -207,7 +205,7 @@ impl Controller {
                         ).is_some())
                     .collect();
 
-                        
+                state.dents_filterview = Some(dents_fview);
             }
         }
     }
