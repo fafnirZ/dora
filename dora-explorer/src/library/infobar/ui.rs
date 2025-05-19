@@ -13,7 +13,7 @@ impl InfoBarUI {
 
     fn render_search_info_area(&self, area: Rect, buf: &mut Buffer, state: &mut <InfoBarUI as StatefulWidget>::State) {
         let absolute_cursor_pos = &state.cursor_y + &state.view_slice[0];
-        let curr_dent_val = absolute_cursor_pos+1;
+        let curr_dent_val = (absolute_cursor_pos+1).min(0); // print 0 if non exists
 
         // assuming no pagination RIGHT NOW.
         // cbb dealing with pagination yet.
