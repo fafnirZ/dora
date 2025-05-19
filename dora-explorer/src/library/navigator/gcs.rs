@@ -58,18 +58,9 @@ impl Navigator for GCSNavigator {
                 return Err(ExplorerError::NotARemotePath("Expected a directory.".to_string()))
             }
 
-            let dents = {
-                if state.dents_filterview.is_some() {
-                    &state
-                        .dents_filterview
-                        .as_ref()
-                        .unwrap()
-                }else {
-                    &state.dents
-                }
-            };
+            
 
-            let selected_d_ent_name = &dents[absolute_pos as usize]
+            let selected_d_ent_name = &state.get_dents_auto()[absolute_pos as usize]
                 .path
                 .file_name()
                 .expect("well it should not be null")

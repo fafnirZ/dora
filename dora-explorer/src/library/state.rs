@@ -124,18 +124,9 @@ impl ExplorerState {
 
     pub fn recalculate_renderable_rows(&self) -> u16 {
         let [curr_height, _] = &self.available_area;
-        let dents = {
-            if self.dents_filterview.is_some() {
-                self
-                    .dents_filterview
-                    .as_ref()
-                    .unwrap()
-            }else {
-                &self.dents
-            }
-        };
+        
 
-        let max_entries = &dents.len();
+        let max_entries = &self.get_dents_auto().len();
         return (curr_height / CELL_HEIGHT)
             .min(*max_entries as u16);
     }
@@ -154,5 +145,22 @@ impl ExplorerState {
             }
         } else {};
         self.cwd = new_cwd;
+    }
+
+
+    // will return self.dents_filterview if not null
+    // else will return dents
+    pub fn get_dents_auto(&self) -> &Vec<DEnt> {
+        let dents = {
+            if self.dents_filterview.is_some() {
+                &self
+                    .dents_filterview
+                    .as_ref()
+                    .unwrap()
+            }else {
+                &self.dents
+            }
+        };
+        return dents;
     }
 }

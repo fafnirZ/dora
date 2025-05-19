@@ -35,22 +35,13 @@ impl ExplorerUI {
     }
 
     fn render_entries(&self, area: Rect, buf: &mut Buffer, state: &mut <ExplorerUI as StatefulWidget>::State) {
-        let d_ents = {
-            if state.dents_filterview.is_some() {
-                &state
-                .dents_filterview
-                .as_ref()
-                .unwrap()
-            } else {
-                &state.dents
-            }
-        };
         let start_x = area.x;
         let start_y = area.y;
         
         let [vs_start, vs_end] = &state.view_slice;
         // get slice from d_ents 
-        let d_ents: Vec<&DEnt> = d_ents
+        let d_ents: Vec<&DEnt> = state
+            .get_dents_auto()
             .iter()
             .enumerate()
             .filter(|(idx, _)| {

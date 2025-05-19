@@ -49,17 +49,8 @@ impl Navigator for LocalNavigator {
         if let AnyPath::LocalPath(cwd) = &state.cwd {
             let cursor_pos = *&state.cursor_y;
             let absolute_pos = &state.view_slice[0] + cursor_pos;
-            let dents = {
-                if state.dents_filterview.is_some() {
-                    &state
-                        .dents_filterview
-                        .as_ref()
-                        .unwrap()
-                }else {
-                    &state.dents
-                }
-            };
-            if let AnyPath::LocalPath(selected_dir) = &dents[absolute_pos as usize].path {
+            
+            if let AnyPath::LocalPath(selected_dir) = &state.get_dents_auto()[absolute_pos as usize].path {
                 let new_path = cwd.join(selected_dir);
 
                 // check if the new path is a dir 
