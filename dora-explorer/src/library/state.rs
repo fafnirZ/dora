@@ -13,6 +13,7 @@ pub struct ExplorerState{
     // navigator states
     pub cwd: AnyPath,
     pub dents: Vec<DEnt>, // directory entries
+    pub dents_shadow: Option<Vec<DEnt>>, // shadows dents..it is used when a filter is being applied, it will clone the original dents value in case we want to revert, which we very well may want to.
     pub cloud_client: Option<Client>,
     pub navigator: AnyNavigator,
 
@@ -66,6 +67,7 @@ impl ExplorerState {
         return Self {
             cwd: gs_path, // cwd
             dents: dents,
+            dents_shadow: None,
             cloud_client: Some(cloud_client),
             navigator: AnyNavigator::GCSNavigator,
             show_dotfiles: true,
@@ -91,6 +93,7 @@ impl ExplorerState {
         return Self {
             cwd: AnyPath::LocalPath(path.to_path_buf()), // cwd
             dents: dents,
+            dents_shadow: None,
             cloud_client: None,
             navigator: AnyNavigator::LocalNavigator,
             show_dotfiles: false, // defaults to not showing dotfiles because its a visual hindrance
