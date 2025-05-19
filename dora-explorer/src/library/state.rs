@@ -122,9 +122,20 @@ impl ExplorerState {
         }
     }
 
-    pub fn recalculate_renderable_rows(& self) -> u16 {
+    pub fn recalculate_renderable_rows(&self) -> u16 {
         let [curr_height, _] = &self.available_area;
-        let max_entries = &self.dents.len();
+        let dents = {
+            if self.dents_filterview.is_some() {
+                self
+                    .dents_filterview
+                    .as_ref()
+                    .unwrap()
+            }else {
+                &self.dents
+            }
+        };
+
+        let max_entries = &dents.len();
         return (curr_height / CELL_HEIGHT)
             .min(*max_entries as u16);
     }

@@ -66,7 +66,17 @@ impl Controller {
             }
             Control::ScrollDown => {
                 let cursor_pos = &state.cursor_y;
-                let num_dents = &state.dents.len();
+                let dents = {
+                    if state.dents_filterview.is_some() {
+                        &state
+                            .dents_filterview
+                            .as_ref()
+                            .unwrap()
+                    }else {
+                        &state.dents
+                    }
+                };
+                let num_dents = &dents.len();
                 let num_renderable = &state.recalculate_renderable_rows();
                 if *cursor_pos == *num_renderable-1 {
                     let [start,end] = &state.view_slice;
@@ -208,6 +218,10 @@ impl Controller {
                     .collect();
 
                 state.dents_filterview = Some(dents_fview);
+
+                // recalculate renderable
+
+                state.recalculate_view_slice();
             }
         }
     }
