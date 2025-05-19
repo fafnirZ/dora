@@ -23,8 +23,8 @@ pub struct InputHandler {
     events: Events,
 
     // buffer states
-    input_buffer: InputBuffer,
-    output_buffer: OutputBuffer,
+    pub input_buffer: InputBuffer,
+    pub output_buffer: OutputBuffer,
 }
 
 

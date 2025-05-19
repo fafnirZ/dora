@@ -2,7 +2,7 @@ use std::any::Any;
 
 use crossterm::cursor;
 
-use super::{control::Control, mode::Mode, navigator::{self, gcs::GCSNavigator, local::LocalNavigator, traits::{AnyNavigator, Navigator}, types::FileType}, ExplorerState};
+use super::{control::Control, input::InputBuffer, mode::Mode, navigator::{self, gcs::GCSNavigator, local::LocalNavigator, traits::{AnyNavigator, Navigator}, types::FileType}, ExplorerState};
 
 // given input,
 // take a look at current state
@@ -15,7 +15,7 @@ impl Controller {
     pub fn perform_actions(control: &Control, state: &mut ExplorerState) {
         match &state.mode {
             Mode::Normal => Controller::handle_normal_mode_control(control, state),
-            Mode::Filter => {}
+            Mode::Filter => Controller::handle_filter_mode_control(control, state),
         }
     }
 
@@ -23,6 +23,10 @@ impl Controller {
         match control {
             Control::Quit => {
                 state.sig_user_input_exit = true;
+            },
+            Control::Filter => {
+                state.mode = Mode::Filter;
+                state.input_handler.init_input_buffer();
             },
             Control::ToggleShowDotFiles => {
                 let curr = &state.show_dotfiles;
@@ -146,5 +150,16 @@ impl Controller {
             _ => {}
         }
     }
-
+    fn handle_filter_mode_control(control: &Control, state: &mut ExplorerState) {
+        match control {
+            Control::Quit => {
+                state.sig_user_input_exit = true;
+            },
+            Control::Esc => {
+                state.mode = Mode::Normal;
+                state.input_handler.reset_input_buffer();
+            }
+            _ => {}
+        }
+    }
 }

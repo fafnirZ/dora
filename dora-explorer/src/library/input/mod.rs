@@ -1,4 +1,4 @@
 mod input;
 mod events;
 
-pub use input::InputHandler;
+pub use input::{InputHandler, InputBuffer, OutputBuffer};
