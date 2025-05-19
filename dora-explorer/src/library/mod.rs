@@ -5,6 +5,7 @@ mod controller;
 mod navigator;
 mod errors;
 mod colours;
+mod infobar;
 
 
 pub mod control;

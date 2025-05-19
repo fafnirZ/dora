@@ -2,7 +2,7 @@ use std::ffi::OsStr;
 
 use ratatui::{buffer::Buffer, layout::{Constraint, Layout, Rect}, style::{Color, Stylize}, widgets::{Paragraph, StatefulWidget, Widget}};
 
-use super::{colours::*, navigator::types::{DEnt, FileType}, ExplorerState};
+use super::{colours::*, infobar::ui::InfoBarUI, navigator::types::{DEnt, FileType}, ExplorerState};
 
 pub struct ExplorerUI {}
 
@@ -30,9 +30,8 @@ impl ExplorerUI {
     }
     fn render_bottom_banner(&self, area: Rect, buf: &mut Buffer, state: &mut <ExplorerUI as StatefulWidget>::State) {
 
-        Paragraph::new("")
-            .bg(MAIN_PURPLE.to_ratatui_color_rgb())
-            .render(area, buf);
+        let infobar = InfoBarUI::new();
+        infobar.render(area, buf, state);
     }
 
     fn render_entries(&self, area: Rect, buf: &mut Buffer, state: &mut <ExplorerUI as StatefulWidget>::State) {
