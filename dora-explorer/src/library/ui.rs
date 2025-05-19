@@ -35,7 +35,16 @@ impl ExplorerUI {
     }
 
     fn render_entries(&self, area: Rect, buf: &mut Buffer, state: &mut <ExplorerUI as StatefulWidget>::State) {
-        let d_ents = &state.dents;
+        let d_ents = {
+            if state.dents_filterview.is_some() {
+                &state
+                .dents_filterview
+                .as_ref()
+                .unwrap()
+            } else {
+                &state.dents
+            }
+        };
         let start_x = area.x;
         let start_y = area.y;
         
