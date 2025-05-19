@@ -11,7 +11,7 @@ impl ExplorerUI {
 }
 
 pub const CELL_HEIGHT: u16 = 1;
-const CELL_WIDTH: u16 = 30;
+// const CELL_WIDTH: u16 = 30;
 
 
 // contain a top banner for current path
@@ -52,7 +52,7 @@ impl ExplorerUI {
 
             if curr_y+CELL_HEIGHT > start_y + area.height { return; } // dont render beyong bounds
 
-            let rect = Rect::new(start_x, curr_y, CELL_WIDTH, CELL_HEIGHT);
+            let rect = Rect::new(start_x, curr_y, area.width, CELL_HEIGHT);
             let entry_str = entry
                 .path
                 .file_name()
