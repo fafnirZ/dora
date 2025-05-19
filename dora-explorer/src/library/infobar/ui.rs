@@ -11,11 +11,22 @@ impl InfoBarUI {
     pub fn new() -> Self { Self{} }
 
 
-    fn render_search_info_area(self, area: Rect, buf: &mut Buffer, state: &mut <InfoBarUI as StatefulWidget>::State) {
+    fn render_search_info_area(&self, area: Rect, buf: &mut Buffer, state: &mut <InfoBarUI as StatefulWidget>::State) {
+        let absolute_cursor_pos = &state.cursor_y + &state.view_slice[0];
+        let curr_dent_val = absolute_cursor_pos+1;
+
+        // assuming no pagination RIGHT NOW.
+        // cbb dealing with pagination yet.
+        let total_dent_values = &state.dents.len();
+
+        let fmtted_str = format!("{}/{} Entries", curr_dent_val, total_dent_values);
+
+        Paragraph::new(fmtted_str)
+            .render(area, buf);
     }
-    fn render_input_buffer_area(self, area: Rect, buf: &mut Buffer, state: &mut <InfoBarUI as StatefulWidget>::State) {
+    fn render_input_buffer_area(&self, area: Rect, buf: &mut Buffer, state: &mut <InfoBarUI as StatefulWidget>::State) {
     }
-    fn render_output_buffer_area(self, area: Rect, buf: &mut Buffer, state: &mut <InfoBarUI as StatefulWidget>::State) {
+    fn render_output_buffer_area(&self, area: Rect, buf: &mut Buffer, state: &mut <InfoBarUI as StatefulWidget>::State) {
     }
 
 }
