@@ -101,7 +101,7 @@ impl Navigator for LocalNavigator {
                     getdents_from_path(cwd)?
                 }
             };
-            state.dents_filterview = None;
+            state.dents_filterview = None; // whenever this gets called, should remove filters
             Ok(())
         } else {
             return Err(ExplorerError::NotALocalPath("Expected a local path.".to_string()))
