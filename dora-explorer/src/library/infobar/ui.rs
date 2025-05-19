@@ -3,6 +3,8 @@
 
 use ratatui::{buffer::Buffer, layout::{Constraint, Layout, Rect}, style::{Color, Stylize}, widgets::{Paragraph, StatefulWidget, Widget}};
 
+use crate::library::input::InputBuffer;
+
 use super::super::{colours::*, navigator::types::{DEnt, FileType}, ExplorerState};
 
 pub struct InfoBarUI{}
@@ -25,6 +27,18 @@ impl InfoBarUI {
             .render(area, buf);
     }
     fn render_input_buffer_area(&self, area: Rect, buf: &mut Buffer, state: &mut <InfoBarUI as StatefulWidget>::State) {
+        let input_buffer_str = {
+            match &state.input_handler.input_buffer {
+                InputBuffer::Active(buffer) => {   
+                    format!("Filter:{}", buffer.value())
+                },
+                InputBuffer::Inactive => "".to_string(),
+            }
+        };
+        
+
+        Paragraph::new(input_buffer_str)
+            .render(area, buf);
     }
     fn render_output_buffer_area(&self, area: Rect, buf: &mut Buffer, state: &mut <InfoBarUI as StatefulWidget>::State) {
     }
@@ -53,8 +67,8 @@ impl StatefulWidget for InfoBarUI {
         ]).areas(area);
 
         self.render_search_info_area(search_info_area, buf, state);
-        self.render_input_buffer_area(search_info_area, buf, state);
-        self.render_output_buffer_area(search_info_area, buf, state);
+        self.render_input_buffer_area(input_buffer_area, buf, state);
+        self.render_output_buffer_area(output_buffer_area, buf, state);
         
     }
 }
