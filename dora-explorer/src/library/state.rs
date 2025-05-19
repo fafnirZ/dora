@@ -3,7 +3,7 @@ use std::{any::Any, env, path::{Path, PathBuf}};
 use google_cloud_storage::client::Client;
 use ratatui::layout::Rect;
 
-use super::{iobuf::{InputBuffer, OutputBuffer}, navigator::{ gcs::GCSNavigator, local::{filter_dot_dent, getdents_from_path}, traits::{AnyNavigator, AnyPath, Navigator}, types::DEnt}, ui::CELL_HEIGHT};
+use super::{navigator::{ gcs::GCSNavigator, local::{filter_dot_dent, getdents_from_path}, traits::{AnyNavigator, AnyPath, Navigator}, types::DEnt}, ui::CELL_HEIGHT};
 
 
 // very primitive state right now
