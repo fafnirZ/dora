@@ -2,7 +2,7 @@ use std::any::Any;
 
 use crossterm::cursor;
 
-use super::{control::Control, navigator::{self, gcs::GCSNavigator, local::LocalNavigator, traits::{AnyNavigator, Navigator}, types::FileType}, ExplorerState};
+use super::{control::Control, mode::Mode, navigator::{self, gcs::GCSNavigator, local::LocalNavigator, traits::{AnyNavigator, Navigator}, types::FileType}, ExplorerState};
 
 // given input,
 // take a look at current state
@@ -13,6 +13,13 @@ pub struct Controller {}
 impl Controller {
     // this function mutates the app state
     pub fn perform_actions(control: &Control, state: &mut ExplorerState) {
+        match &state.mode {
+            Mode::Normal => Controller::handle_normal_mode_control(control, state),
+            Mode::Filter => {}
+        }
+    }
+
+    fn handle_normal_mode_control(control: &Control, state: &mut ExplorerState) {
         match control {
             Control::Quit => {
                 state.sig_user_input_exit = true;

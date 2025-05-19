@@ -3,7 +3,7 @@ use std::{any::Any, env, path::{Path, PathBuf}};
 use google_cloud_storage::client::Client;
 use ratatui::layout::Rect;
 
-use super::{input::InputHandler, navigator::{ gcs::GCSNavigator, local::{filter_dot_dent, getdents_from_path}, traits::{AnyNavigator, AnyPath, Navigator}, types::DEnt}, ui::CELL_HEIGHT};
+use super::{input::InputHandler, mode::Mode, navigator::{ gcs::GCSNavigator, local::{filter_dot_dent, getdents_from_path}, traits::{AnyNavigator, AnyPath, Navigator}, types::DEnt}, ui::CELL_HEIGHT};
 
 
 // very primitive state right now
@@ -26,6 +26,7 @@ pub struct ExplorerState{
 
     // input handler
     pub input_handler: InputHandler,
+    pub mode: Mode,
 
     // trap signals
     // when these gets flagged, it will exit.
@@ -74,6 +75,7 @@ impl ExplorerState {
             sig_user_input_exit: false,
             sig_file_selected_exit: false,
             input_handler: InputHandler::new(),
+            mode: Mode::Normal,
         }
     }
 
@@ -98,6 +100,7 @@ impl ExplorerState {
             sig_user_input_exit: false,
             sig_file_selected_exit: false,
             input_handler: InputHandler::new(),
+            mode: Mode::Normal,
         }
     }
 

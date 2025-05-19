@@ -7,6 +7,7 @@ mod errors;
 mod colours;
 mod infobar;
 mod input;
+mod mode;
 
 pub mod control;
 pub use state::ExplorerState;
