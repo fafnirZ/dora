@@ -8,6 +8,7 @@ mod colours;
 mod infobar;
 mod input;
 mod mode;
+mod filter;
 
 pub mod control;
 pub use state::ExplorerState;

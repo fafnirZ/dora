@@ -1,19 +1,17 @@
-use super::traits::SearchAlgorithm;
 
 pub struct ExactSubstringSearch {}
 
 impl ExactSubstringSearch {
-    type Result = [usize; 2];
     // if A is substring of B -> [start,end]
     // pattern is the substring we wish to search for
     // input_str is the target string we with to check for substring containment
     // else None
-    fn search(
+    pub fn search(
         &self,
         pattern: &str,
         input_str: &str,
         case_insensitive: bool,
-    ) -> Option<Self::Result> {
+    ) -> Option<[usize;2]> {
         // we consider empty input to return None
         // the buffer defaults as empty
         // we don't want everything to match when that occurs

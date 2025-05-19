@@ -2,7 +2,7 @@ use std::any::Any;
 
 use crossterm::cursor;
 
-use super::{control::Control, input::InputBuffer, mode::Mode, navigator::{self, gcs::GCSNavigator, local::LocalNavigator, traits::{AnyNavigator, Navigator}, types::FileType}, ExplorerState};
+use super::{control::Control, filter::ExactSubstringSearch, input::InputBuffer, mode::Mode, navigator::{self, gcs::GCSNavigator, local::LocalNavigator, traits::{AnyNavigator, Navigator}, types::{DEnt, FileType}}, ExplorerState};
 
 // given input,
 // take a look at current state
@@ -27,6 +27,10 @@ impl Controller {
             Control::Filter => {
                 state.mode = Mode::Filter;
                 state.input_handler.init_input_buffer();
+
+                // need to initialise dent_shadow var 
+                // by cloning dents in the current state.
+                state.dents_shadow = Some(state.dents.clone());
             },
             Control::ToggleShowDotFiles => {
                 let curr = &state.show_dotfiles;
@@ -160,6 +164,12 @@ impl Controller {
                 state.input_handler.reset_input_buffer();
 
                 // reverts filter
+                state.dents = state
+                    .dents_shadow
+                    .clone()
+                    .unwrap();
+                state.dents_shadow = None;
+
             }
 
             Control::Enter => {
@@ -167,8 +177,38 @@ impl Controller {
                 state.input_handler.reset_input_buffer();
 
                 // keeps filter
+                // note theres no way to revert this
+                // unless u go into a dir and go back out
+                state.dents_shadow = None;
             }
-            _ => {}
+            _ => {
+                let current_buffer_string = {
+                    match &state.input_handler.input_buffer {
+                        InputBuffer::Active(input) => input.value(),
+                        InputBuffer::Inactive => "",
+                    }
+                };
+
+                if current_buffer_string == "" {
+                    return
+                }
+
+                let dents: Vec<&DEnt> = state
+                    .dents
+                    .iter()
+                    .filter(|entry|                 
+                        ExactSubstringSearch{}.search(
+                            current_buffer_string,
+                            &*entry
+                                .path
+                                .file_name()
+                                .unwrap_or(""),
+                            true,
+                        ).is_some())
+                    .collect();
+
+                        
+            }
         }
     }
 }
