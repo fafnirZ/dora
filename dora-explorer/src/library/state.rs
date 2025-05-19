@@ -3,12 +3,14 @@ use std::{any::Any, env, path::{Path, PathBuf}};
 use google_cloud_storage::client::Client;
 use ratatui::layout::Rect;
 
-use super::{navigator::{ gcs::GCSNavigator, local::{filter_dot_dent, getdents_from_path}, traits::{AnyNavigator, AnyPath, Navigator}, types::DEnt}, ui::CELL_HEIGHT};
+use super::{iobuf::{InputBuffer, OutputBuffer}, navigator::{ gcs::GCSNavigator, local::{filter_dot_dent, getdents_from_path}, traits::{AnyNavigator, AnyPath, Navigator}, types::DEnt}, ui::CELL_HEIGHT};
 
 
 // very primitive state right now
 // not optimised and not cached.
 pub struct ExplorerState{
+
+    // navigator states
     pub cwd: AnyPath,
     pub dents: Vec<DEnt>, // directory entries
     pub cloud_client: Option<Client>,
@@ -22,7 +24,12 @@ pub struct ExplorerState{
     pub view_slice: [u16;2],
     available_area: [u16;2], // height, width
 
+    // buffer states
+    input_buffer: InputBuffer,
+    output_buffer: OutputBuffer,
+
     // trap signals
+    // when these gets flagged, it will exit.
     pub sig_user_input_exit: bool,
     pub sig_file_selected_exit: bool,
 }
@@ -65,6 +72,8 @@ impl ExplorerState {
             cursor_y: 0,
             view_slice: [0,10], // this will be overridden very quickly
             available_area: [10, 10], // to be reset very soon.
+            input_buffer: InputBuffer::Inactive,
+            output_buffer: OutputBuffer::Normal("".to_string()),
             sig_user_input_exit: false,
             sig_file_selected_exit: false,
         }
@@ -88,6 +97,8 @@ impl ExplorerState {
             cursor_y: 0,
             view_slice: [0,10], // this will be overridden very quickly
             available_area: [10, 10], // to be reset very soon.
+            input_buffer: InputBuffer::Inactive,
+            output_buffer: OutputBuffer::Normal("".to_string()),
             sig_user_input_exit: false,
             sig_file_selected_exit: false,
         }
