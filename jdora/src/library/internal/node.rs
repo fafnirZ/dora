@@ -16,7 +16,7 @@ pub struct Node {
     children: Vec<(String, Node)>,
 
     // hidden_children:
-    hidden_children: Vec<u16>,
+    pub hidden_children: Vec<u16>,
 }
 
 impl Node {
@@ -88,6 +88,9 @@ impl Node {
 
         // print children
         for (idx, child ) in self.children.iter().enumerate() {
+            if self.hidden_children.contains(&(idx as u16)) {
+                continue;
+            }
             let (key, chld) = child;
             result += &self.num_spaces((self.indent_level+1)*INDENT_SIZE);
             result += &format!("\"{}\":", key);

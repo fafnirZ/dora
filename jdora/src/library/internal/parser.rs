@@ -33,5 +33,20 @@ mod tests {
         assert!( 1 == 0 );
     }
 
+    #[test]
+    fn test_b() {
+        let data = r#"
+        {
+            "name": "abc",
+            "hello": 1,
+            "nested": {
+                "attr": 2
+            }
+        }"#;
+        let mut n = parse(data);
+        n.hidden_children.push(0);
+        println!("{}", n.pprint());
 
+        assert!( 1 == 0 );
+    }
 }
