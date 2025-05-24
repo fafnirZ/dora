@@ -66,16 +66,25 @@ impl Node {
         ) = self.parse();
 
         // open brace
-        result += &self.num_spaces(self.indent_level*INDENT_SIZE);
+        // result += &self.num_spaces(self.indent_level*INDENT_SIZE);
         result += "{\n";
 
         // print primitives first
         for prim_attr in primitive.iter() {
             let (key, val) = prim_attr.clone();
             result += &self.num_spaces((self.indent_level+1)*INDENT_SIZE);
-            result += &format!("\"{}\":\"{}\"", key, val.to_string());
+            result += &format!("\"{}\":{}", key, val.to_string());
             result += ",\n"
         }
+
+        // print children
+        for child in nested_children.iter() {
+            let (key, chld) = child;
+            result += &self.num_spaces((self.indent_level+1)*INDENT_SIZE);
+            result += &format!("\"{}\":", key);
+            result += &chld.pprint();
+        }
+
         result += &self.num_spaces(self.indent_level*INDENT_SIZE);
         result += "}\n";
         
