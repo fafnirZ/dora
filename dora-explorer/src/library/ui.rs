@@ -83,7 +83,7 @@ impl ExplorerUI {
         if is_selected {
             para = para.bg(DARK_BLUE_GRAY.to_ratatui_color_rgb())
         } else {
-            para = para.bg(Color::DarkGray)
+            // para = para.bg(Color::DarkGray)
         }
 
         if is_dir {
