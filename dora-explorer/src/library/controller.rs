@@ -220,14 +220,24 @@ impl Controller {
     fn scroll_up(n: u16, state: &mut ExplorerState) {
         let cursor_pos = &state.cursor_y;
         if *cursor_pos == 0 {
-            let [start,end] = &state.view_slice;
+            let [start,_] = &state.view_slice;
             if *start == 0 {
                 return;
             } else {
-                // mutate to slide up 1
+                // mutate to slide up n
+                // prevent overflow
+                let view_start = {
+                    if ((start-n) as i16) < 0  {
+                        0
+                    } else {
+                        start -n
+                    }
+                };
+                let num_renderable = &state.recalculate_renderable_rows();
+                let view_end = view_start + num_renderable; 
                 state.view_slice = [
-                    start-n,
-                    end-n,
+                    view_start,
+                    view_end,
                 ]
             }
         } else {
