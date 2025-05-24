@@ -227,10 +227,10 @@ impl Controller {
                 // mutate to slide up n
                 // prevent overflow
                 let view_start = {
-                    if ((start-n) as i16) < 0  {
+                    if *start < n { // need to do this way in order to prevent u16 subtraction overflow
                         0
                     } else {
-                        start -n
+                        start-n
                     }
                 };
                 let num_renderable = &state.recalculate_renderable_rows();
@@ -241,7 +241,13 @@ impl Controller {
                 ]
             }
         } else {
-            state.cursor_y -= n;
+            state.cursor_y = {
+                if *cursor_pos < n {
+                    0
+                } else {
+                    *cursor_pos - n
+                }
+            };
         }
     }
 }
