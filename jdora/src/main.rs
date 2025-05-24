@@ -1,6 +1,6 @@
 use std::ffi::OsString;
 
-use dora_explorer::run_app;
+use jdora::run_app;
 
 fn main() {
     let args: Vec<OsString> = std::env::args_os().skip(1).collect();
