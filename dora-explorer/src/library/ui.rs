@@ -87,7 +87,7 @@ impl ExplorerUI {
         }
 
         if is_dir {
-            para = para.fg(LIGHT_TEAL.to_ratatui_color_rgb())
+            para = para.fg(PALE_GREEN.to_ratatui_color_rgb())
         } else {
             para = para.fg(Color::White)
         }

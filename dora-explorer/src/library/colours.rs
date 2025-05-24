@@ -120,3 +120,36 @@ pub const MAIN_PURPLE: Colour = Colour {
     hex: "?",
     rgb: (67, 67, 113),
 };
+
+pub const TEA_GREEN: Colour = Colour {
+    name: "",
+    hex: "#def2c8",
+    rgb: (222,242,200),
+};
+pub const MAUVE: Colour = Colour {
+    name: "",
+    hex: "#baa5ff",
+    rgb: (186,165, 255),
+};
+pub const PINE_GREEN: Colour = Colour {
+    name: "",
+    hex: "#157a6e",
+    rgb: (21,122,110),
+};
+pub const DEFT_BLUE: Colour = Colour {
+    name: "",
+    hex: "#40476d",
+    rgb: (64,71,109),
+};
+
+pub const ARGENTINA_BLUE: Colour = Colour {
+    name: "",
+    hex: "#60afff",
+    rgb: (96,176,255),
+};
+
+pub const RASPBERRY_ROSE: Colour = Colour {
+    name: "",
+    hex: "#b74f6f",
+    rgb: (183,79,110),
+};
