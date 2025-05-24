@@ -67,14 +67,17 @@ impl Node {
 
         // open brace
         result += &self.num_spaces(self.indent_level*INDENT_SIZE);
-        result += "{";
+        result += "{\n";
 
         // print primitives first
         for prim_attr in primitive.iter() {
             let (key, val) = prim_attr.clone();
             result += &self.num_spaces((self.indent_level+1)*INDENT_SIZE);
-            result += &format!("\"{}\":\"{}\"\n", key, val);
+            result += &format!("\"{}\":\"{}\"", key, val.to_string());
+            result += ",\n"
         }
+        result += &self.num_spaces(self.indent_level*INDENT_SIZE);
+        result += "}\n";
         
         result
     }

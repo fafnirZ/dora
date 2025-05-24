@@ -7,7 +7,7 @@ use super::node::Node;
 
 pub fn parse(data: &str) -> Node {
     let v: Value = serde_json::from_str(data).unwrap();
-    return Node::new(v).unwrap();
+    return Node::new(v, 0).unwrap();
 }
 
 
@@ -28,7 +28,7 @@ mod tests {
             }
         }"#;
         let n = parse(data);
-        println!("{:?}", n.parse());
+        println!("{}", n.pprint());
 
         assert!( 1 == 0 );
     }
