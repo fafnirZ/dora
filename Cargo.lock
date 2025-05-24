@@ -1525,6 +1525,7 @@ dependencies = [
  "gcloud-storage",
  "itertools 0.14.0",
  "ratatui 0.29.0",
+ "serde_json",
  "thiserror 2.0.12",
  "tokio",
  "tui-input",
