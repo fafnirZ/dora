@@ -25,7 +25,7 @@ impl Node {
             return None
         }
 
-        let (primitives, children) = Node::parse(&val);
+        let (primitives, children) = Node::parse(&val, indent_level);
         Some(Self{
             serde_node: val,
             indent_level: indent_level,
@@ -35,7 +35,7 @@ impl Node {
         })
     }
 
-    pub fn parse(serde_node: &Value) -> (
+    pub fn parse(serde_node: &Value, indent_level: u16) -> (
         Vec<(String, Value)>, // primitives
         Vec<(String, Node)>,  // nested nodes 
     ){
@@ -50,7 +50,7 @@ impl Node {
                         children.push(
                             (
                                 key.to_string(), 
-                                Node::new(val.clone(), self.indent_level+1).unwrap()
+                                Node::new(val.clone(), indent_level+1).unwrap()
                             )
                         )
                     }
