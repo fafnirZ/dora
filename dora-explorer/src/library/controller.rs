@@ -55,10 +55,10 @@ impl Controller {
             Control::ScrollDown => {
                 Controller::scroll_down(1, state);
             }
-            Control::ExtendedScrollUp=> {
+            Control::ExtendedScrollUp => {
                 Controller::scroll_up(EXTENDED_SCROLL_SIZE, state);
             }
-            Control::ScrollDown => {
+            Control::ExtendedScrollDown => {
                 Controller::scroll_down(EXTENDED_SCROLL_SIZE, state);
             }
             Control::ScrollRight => {
