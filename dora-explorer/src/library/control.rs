@@ -1,7 +1,9 @@
 
 pub enum Control {
     ScrollUp,
+    ExtendedScrollUp,
     ScrollDown,
+    ExtendedScrollDown,
     ScrollLeft,
     ScrollRight,
     ToggleShowDotFiles,
