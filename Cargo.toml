@@ -1,2 +1,2 @@
 [workspace]
-members = ["dora","dora-explorer"]
+members = ["dora","dora-explorer", "jdora"]
