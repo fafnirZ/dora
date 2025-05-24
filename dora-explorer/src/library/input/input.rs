@@ -67,8 +67,8 @@ impl InputHandler {
                 _ => Control::Nothing,
             },
             KeyModifiers::SHIFT => match key_event.code {
-                KeyCode::Char('k') | KeyCode::Up => Control::ExtendedScrollUp,
-                KeyCode::Char('j') | KeyCode::Down => Control::ExtendedScrollDown,
+                KeyCode::Char('K') | KeyCode::Up => Control::ExtendedScrollUp,
+                KeyCode::Char('J') | KeyCode::Down => Control::ExtendedScrollDown,
                 _ => Control::Nothing,
             },
             KeyModifiers::CONTROL => match key_event.code {
