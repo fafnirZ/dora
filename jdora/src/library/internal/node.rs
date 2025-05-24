@@ -3,6 +3,8 @@ use serde_json::{Map, Value};
 
 // i only consider
 // Dictionaries as nodes.
+
+#[derive(Debug)]
 pub struct Node {
     serde_node: Value, // forwards to serde node
 }
@@ -15,7 +17,10 @@ impl Node {
         Some(Self{serde_node: val})
     }
 
-    pub fn parse(&self) {
+    pub fn parse(&self) -> (
+        Vec<(String, Value)>, // primitives
+        Vec<(String, Node)>,  // nested nodes 
+    ){
         if let Value::Object(map) = &self.serde_node {
             // node primitives
             let mut primitives: Vec<(String, Value)> = Vec::new();
@@ -35,15 +40,15 @@ impl Node {
                     }
                 }
             }
+            return (
+                primitives,
+                children,
+            )
+        } else {
+            panic!("parse failed? node is not an object")
         }
     }
 
-    // // filters out children nodes
-    // pub fn get_node_primitives(&self) -> Map<String, Value> {
 
-    // }
-    // pub fn get_children_nodes(&self) -> Vec<Node> {
-
-    // }
 }
 
