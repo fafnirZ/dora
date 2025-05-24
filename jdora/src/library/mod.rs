@@ -7,6 +7,7 @@ mod colours;
 mod input;
 mod mode;
 mod filter;
+mod internal;
 
 pub mod control;
 pub use state::ExplorerState;

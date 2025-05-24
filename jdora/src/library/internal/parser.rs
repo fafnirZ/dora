@@ -1,6 +1,15 @@
+use std::any::Any;
+
 // parse json into nodes
+use serde_json::{Result, Value};
 
 pub fn parse(data: &str) {
+    let v: Value = serde_json::from_str(data).unwrap();
+
+    println!("{}", v.keys());
+}
+
+fn create_node(serda_val: Value) -> Node {
 
 }
 
@@ -22,7 +31,7 @@ mod tests {
             }
         }"#;
         parse(data);
-        assert_eq!(1==0);
+        assert!( 1 == 0 );
     }
 
 
