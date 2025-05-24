@@ -1,3 +1,5 @@
+use std::primitive;
+
 use serde_json::{Map, Value};
 
 
@@ -10,6 +12,11 @@ const INDENT_SIZE: u16 = 4;
 pub struct Node {
     serde_node: Value, // forwards to serde node
     indent_level: u16,
+    primitives: Vec<(String, Value)>,
+    children: Vec<(String, Node)>,
+
+    // hidden_children:
+    hidden_children: Vec<u16>,
 }
 
 impl Node {
@@ -17,17 +24,22 @@ impl Node {
         if !matches!(val, Value::Object(_)) {
             return None
         }
+
+        let (primitives, children) = Node::parse(&val);
         Some(Self{
             serde_node: val,
             indent_level: indent_level,
+            primitives: primitives,
+            children: children,
+            hidden_children: Vec::new(),
         })
     }
 
-    pub fn parse(&self) -> (
+    pub fn parse(serde_node: &Value) -> (
         Vec<(String, Value)>, // primitives
         Vec<(String, Node)>,  // nested nodes 
     ){
-        if let Value::Object(map) = &self.serde_node {
+        if let Value::Object(map) = &serde_node {
             // node primitives
             let mut primitives: Vec<(String, Value)> = Vec::new();
             let mut children: Vec<(String, Node)> = Vec::new();
@@ -60,17 +72,14 @@ impl Node {
 
     pub fn pprint(&self) -> String {
         let mut result = String::new();
-        let (
-            primitive,
-            nested_children,
-        ) = self.parse();
+
 
         // open brace
         // result += &self.num_spaces(self.indent_level*INDENT_SIZE);
         result += "{\n";
 
         // print primitives first
-        for prim_attr in primitive.iter() {
+        for prim_attr in self.primitives.iter() {
             let (key, val) = prim_attr.clone();
             result += &self.num_spaces((self.indent_level+1)*INDENT_SIZE);
             result += &format!("\"{}\":{}", key, val.to_string());
@@ -78,7 +87,7 @@ impl Node {
         }
 
         // print children
-        for child in nested_children.iter() {
+        for (idx, child ) in self.children.iter().enumerate() {
             let (key, chld) = child;
             result += &self.num_spaces((self.indent_level+1)*INDENT_SIZE);
             result += &format!("\"{}\":", key);
