@@ -213,7 +213,13 @@ impl Controller {
             }
         }
         else {
-            state.cursor_y += n;
+            state.cursor_y = {
+                if cursor_pos + n > *num_renderable-1 {
+                    *num_renderable-1
+                } else {
+                    cursor_pos + n
+                }
+            };
         }
     }
 
