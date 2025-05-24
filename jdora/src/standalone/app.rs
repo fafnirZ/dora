@@ -27,7 +27,7 @@ impl App {
         &mut self,
         terminal: &mut Terminal<B>,
     ) -> Result<(), Box<dyn Error>> {
-        loop {
+       loop {
             let control = self.explorer_state.input_handler.next();
             if self.explorer_state.should_exit() {
                 return Ok(());

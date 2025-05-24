@@ -6,7 +6,7 @@ use ratatui::{Terminal, prelude::CrosstermBackend};
 use std::thread::panicking;
 use std::{io::LineWriter, panic};
 
-use crate::{library::exit::print_results, standalone::app::App};
+use crate::{standalone::app::App};
 
 fn restore_terminal_on_close_hook() {
     let original_panic_hook = panic::take_hook();
@@ -52,6 +52,4 @@ pub fn run_app(file_path: Option<String>) {
     // in normal end
     drop();
 
-    // print final results
-    print_results(&app.explorer_state);
 }
