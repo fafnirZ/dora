@@ -10,10 +10,6 @@ pub fn parse(data: &str) -> Node {
     return Node::new(v).unwrap();
 }
 
-// fn create_node(serda_val: Value) -> Node {
-
-// }
-
 
 
 #[cfg(test)]
