@@ -47,6 +47,9 @@ impl Controller {
             Control::ExtendedScrollDown => {
                 Controller::scroll_down(EXTENDED_SCROLL_SIZE, state);
             }
+            Control::Enter => {
+                // todo collapse or uncollapse
+            }
             
             _ => {}
         }

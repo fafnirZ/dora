@@ -10,7 +10,16 @@ use super::{input::InputHandler, internal::{node::Node, parser::parse_bytes}, mo
 // very primitive state right now
 // not optimised and not cached.
 pub struct ExplorerState{
-    pub node_state: Node,
+    pub root_node_state: Node,
+
+    // points to where the node we are currently in.
+    // will keep track of which child we traversed to
+    // in a nested dict.
+    // node this assumes that the children's sort order
+    // is deterministic
+    pub node_path: Vec<usize>, 
+
+    // line cursor
     pub cursor_y: u16,
     // todo view slice
     
@@ -37,7 +46,8 @@ impl ExplorerState {
         let node = parse_bytes(&contents);
 
         return Self {
-            node_state: node, 
+            root_node_state: node, 
+            node_path: Vec::new(),
             cursor_y: 0_u16,
             input_handler: InputHandler::new(),
             mode: Mode::Normal,

@@ -22,7 +22,7 @@ impl ExplorerUI {
 
 impl ExplorerUI {
     fn render_main(&self, area: Rect, buf: &mut Buffer, state: &mut <ExplorerUI as StatefulWidget>::State) {
-        let data = state.node_state.pprint();
+        let data = state.root_node_state.pprint();
         let contents: Vec<&str> = data.split("\n").collect();
 
         // dynamically break up the areas available into lines.
