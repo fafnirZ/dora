@@ -18,6 +18,8 @@ pub fn parse_bytes(data: &[u8]) -> Node {
 
 #[cfg(test)]
 mod tests {
+    use crate::library::internal::node_path::NodePath;
+
     // Note this useful idiom: importing names from outer (for mod tests) scope.
     use super::*;
 
@@ -50,6 +52,43 @@ mod tests {
         let mut n = parse(data);
         n.hidden_children.push(0);
         println!("{}", n.pprint());
+
+        assert!( 1 == 0 );
+    }
+    #[test]
+    fn test_c() {
+        let data = r#"
+        {
+            "name": "abc",
+            "hello": 1,
+            "nested": {
+                "attr": 2
+            }
+        }"#;
+        let mut n = parse(data);
+        let node_path = NodePath::new();
+        println!("{:?}", n.build_children_line_boundaries(0, &node_path));
+
+        assert!( 1 == 0 );
+    }
+
+
+
+    #[test]
+    fn test_d() {
+        let data = r#"
+        {
+            "name": "abc",
+            "hello": 1,
+            "nested": {
+                "attr": {
+                    "bbb": 100
+                }
+            }
+        }"#;
+        let mut n = parse(data);
+        let node_path = NodePath::new();
+        println!("{:?}", n.build_children_line_boundaries(0, &node_path));
 
         assert!( 1 == 0 );
     }

@@ -113,6 +113,7 @@ impl Node {
     }
 
     // calculate how many lines it this node will consume
+    // this just counts size of primitive and recursively adds up children offset lengths.
     pub fn calculate_num_lines(&self) -> u16 {
         
         // TODO handle hidden children
@@ -132,22 +133,32 @@ impl Node {
             v.push(
                 (
                     curr_node_path.clone(), 
-                    (current_line_pos, current_line_pos+self.calculate_num_lines())
+                    (current_line_pos, current_line_pos+self.calculate_num_lines()-1)
                 )
             );
             return v;
         }
 
         let mut v = Vec::new();
+        let open_bracket_offset = 1_u16;
+        let mut line_pos_offset = current_line_pos 
+            + (self.primitives.len() as u16)
+            + open_bracket_offset;
+
         for (idx, (_, child)) in self.children.iter().enumerate() {
             let new_node_path = curr_node_path.push_and_clone(idx);
-            let child_boundaries = child.build_children_line_boundaries(current_line_pos,&new_node_path); 
+            let child_boundaries = child.build_children_line_boundaries(
+                line_pos_offset, // update line position offsets
+                &new_node_path
+            ); 
             for child_boundary in child_boundaries {
                 v.push(child_boundary);
             }
+            let child_total_len = child.calculate_num_lines();
+            line_pos_offset += child_total_len;
         }
         v.push(
-            (curr_node_path.clone(), (current_line_pos, current_line_pos+self.calculate_num_lines()))
+            (curr_node_path.clone(), (current_line_pos, current_line_pos+(self.calculate_num_lines()-1)))
         );
         return v;
     }
