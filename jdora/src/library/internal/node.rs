@@ -92,7 +92,7 @@ impl Node {
             result += &self.num_spaces((self.indent_level+1)*INDENT_SIZE);
             result += &format!("\"{}\":", key);
             if self.hidden_children.contains(&(idx as u16)) {
-                result += "<hidden>\n"
+                result += &format!("<collapsed>({} lines)\n", chld.calculate_num_lines());
             } else {
                 result += &chld.pprint();
             }
