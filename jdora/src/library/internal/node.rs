@@ -111,13 +111,14 @@ impl Node {
     fn calculate_num_lines(&self) -> u16 {
         
         // TODO handle hidden children
+        let bracket_lines = 2_u16;
 
         let primitive_len = self.primitives.len() as u16;
         let children_len = self
             .children
             .iter()
             .fold(0 as u16, |acc, &(_, ref child)| acc + child.calculate_num_lines());
-        primitive_len+children_len
+        bracket_lines+primitive_len+children_len
     }
 }
 
