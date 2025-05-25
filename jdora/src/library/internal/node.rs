@@ -2,6 +2,8 @@ use std::primitive;
 
 use serde_json::{Map, Value};
 
+use super::node_path::NodePath;
+
 
 const INDENT_SIZE: u16 = 4;
 
@@ -124,11 +126,30 @@ impl Node {
         bracket_lines+primitive_len+children_len
     }
 
-    pub fn build_children_line_boundaries(&self, accum: mut &[(NodePath, (u16,u16))]) {
-        for (idx, child) in self.children().iter.enumerate() {
-            
-
+    pub fn build_children_line_boundaries(&self, current_line_pos: u16, curr_node_path: &NodePath) -> Vec<(NodePath, (u16,u16))>{
+        if self.children.len() == 0 { // is leaf node
+            let v = Vec::new();
+            v.push(
+                (
+                    curr_node_path.clone(), 
+                    (current_line_pos, current_line_pos+self.calculate_num_lines())
+                )
+            );
+            return v;
         }
+
+        let mut v = Vec::new();
+        for (idx, (_, child)) in self.children.iter().enumerate() {
+            let new_node_path = curr_node_path.push_and_clone(idx);
+            let child_boundaries = child.build_children_line_boundaries(current_line_pos,&new_node_path); 
+            for child_boundary in child_boundaries {
+                v.push(child_boundary);
+            }
+        }
+        v.push(
+            (curr_node_path.clone(), (current_line_pos, current_line_pos+self.calculate_num_lines()))
+        );
+        return v;
     }
 }
 
