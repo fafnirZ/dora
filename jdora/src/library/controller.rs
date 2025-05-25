@@ -2,7 +2,7 @@ use std::any::Any;
 
 use crossterm::cursor;
 
-use super::{control::Control, filter::ExactSubstringSearch, input::InputBuffer, mode::Mode, ExplorerState, };
+use super::{control::Control, filter::ExactSubstringSearch, input::InputBuffer, internal::node_path::NodePath, mode::Mode, ExplorerState };
 
 const EXTENDED_SCROLL_SIZE: u16 = 3;
 
@@ -93,12 +93,25 @@ impl Controller {
 impl Controller {
 
     fn scroll_down(n: u16, state: &mut ExplorerState) {
-        state.cursor_y += n
+        state.cursor_y += n;
 
-        
+        // this is currently NON performant
+        let res = state.root_node_state.build_children_line_boundaries(0, &NodePath::new());
+        for (np, (start,end)) in res {
+            if &state.cursor_y >= &start && &state.cursor_y < &end {
+                state.node_path = np;
+            }
+        }
     }
 
     fn scroll_up(n: u16, state: &mut ExplorerState) {
-       state.cursor_y -= n 
+       state.cursor_y -= n;
+        // this is currently NON performant
+        let res = state.root_node_state.build_children_line_boundaries(0, &NodePath::new());
+        for (np, (start,end)) in res {
+            if &state.cursor_y >= &start && &state.cursor_y < &end {
+                state.node_path = np;
+            }
+        }
     }
 }
