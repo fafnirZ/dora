@@ -128,7 +128,7 @@ impl Node {
 
     pub fn build_children_line_boundaries(&self, current_line_pos: u16, curr_node_path: &NodePath) -> Vec<(NodePath, (u16,u16))>{
         if self.children.len() == 0 { // is leaf node
-            let v = Vec::new();
+            let mut v = Vec::new();
             v.push(
                 (
                     curr_node_path.clone(), 
