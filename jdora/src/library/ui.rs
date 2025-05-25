@@ -34,6 +34,13 @@ impl ExplorerUI {
             .constraints(constraint_vec)
             .split(area); 
 
+        // rendering line
+        for (idx, line) in lines.iter().enumerate() {
+            let cur_content = contents[idx];
+
+            Paragraph::new(cur_content)
+                .render(*line, buf); 
+        }
     }
 }
 
