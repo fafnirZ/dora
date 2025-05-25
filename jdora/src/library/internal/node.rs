@@ -107,5 +107,17 @@ impl Node {
         " ".repeat(n as usize).to_string()
     }
 
+    // calculate how many lines it this node will consume
+    fn calculate_num_lines(&self) -> u16 {
+        
+        // TODO handle hidden children
+
+        let primitive_len = self.primitives.len() as u16;
+        let children_len = self
+            .children
+            .iter()
+            .fold(0 as u16, |acc, &(_, ref child)| acc + child.calculate_num_lines());
+        primitive_len+children_len
+    }
 }
 
