@@ -23,8 +23,9 @@ impl ExplorerUI {
 impl ExplorerUI {
     fn render_main(&self, area: Rect, buf: &mut Buffer, state: &mut <ExplorerUI as StatefulWidget>::State) {
         let data = state.node_state.pprint();
-        let contents: Vec<&str> = "\n".split(&data).collect();
+        let contents: Vec<&str> = data.split("\n").collect();
 
+        // dynamically break up the areas available into lines.
         let available_height = area.height;
         let constraint_vec: Vec<Constraint> = (0..available_height)
             .map(|_| Constraint::Length(1))
@@ -36,6 +37,9 @@ impl ExplorerUI {
 
         // rendering line
         for (idx, line) in lines.iter().enumerate() {
+            if idx > contents.len()-1 {
+                break;
+            }
             let cur_content = contents[idx];
 
             Paragraph::new(cur_content)
