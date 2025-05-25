@@ -126,7 +126,10 @@ impl Node {
             .fold(0 as u16, |acc, &(_, ref child)| acc + child.calculate_num_lines());
         bracket_lines+primitive_len+children_len
     }
-
+    
+    // TODO: need to think deeply
+    // about the maths and calculations
+    // for this function and the calculate_num_lines_function
     pub fn build_children_line_boundaries(&self, current_line_pos: u16, curr_node_path: &NodePath) -> Vec<(NodePath, (u16,u16))>{
         if self.children.len() == 0 { // is leaf node
             let mut v = Vec::new();
