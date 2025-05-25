@@ -88,15 +88,17 @@ impl Node {
 
         // print children
         for (idx, child ) in self.children.iter().enumerate() {
-            if self.hidden_children.contains(&(idx as u16)) {
-                continue;
-            }
             let (key, chld) = child;
             result += &self.num_spaces((self.indent_level+1)*INDENT_SIZE);
             result += &format!("\"{}\":", key);
-            result += &chld.pprint();
+            if self.hidden_children.contains(&(idx as u16)) {
+                result += "<hidden>\n"
+            } else {
+                result += &chld.pprint();
+            }
         }
 
+        // print closing bracket
         result += &self.num_spaces(self.indent_level*INDENT_SIZE);
         result += "}\n";
         
