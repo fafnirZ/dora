@@ -11,6 +11,8 @@ use super::{input::InputHandler, internal::{node::Node, parser::parse_bytes}, mo
 // not optimised and not cached.
 pub struct ExplorerState{
     pub node_state: Node,
+    pub cursor_y: u16,
+    // todo view slice
     
     pub input_handler: InputHandler,
     pub mode: Mode,
@@ -36,7 +38,7 @@ impl ExplorerState {
 
         return Self {
             node_state: node, 
-
+            cursor_y: 0_u16,
             input_handler: InputHandler::new(),
             mode: Mode::Normal,
             sig_user_input_exit: false,

@@ -42,8 +42,16 @@ impl ExplorerUI {
             }
             let cur_content = contents[idx];
 
-            Paragraph::new(cur_content)
-                .render(*line, buf); 
+            let mut para = Paragraph::new(cur_content);
+            
+            if (idx as u16) == state.cursor_y {
+                para = para.bg(
+            DARK_TEAL.to_ratatui_color_rgb()
+                );
+            }
+
+            para.render(*line, buf); 
+
         }
     }
 }
