@@ -9,6 +9,10 @@ pub fn parse(data: &str) -> Node {
     let v: Value = serde_json::from_str(data).unwrap();
     return Node::new(v, 0).unwrap();
 }
+pub fn parse_bytes(data: &[u8]) -> Node {
+    let v: Value = serde_json::from_slice(data).unwrap();
+    return Node::new(v, 0).unwrap();
+}
 
 
 

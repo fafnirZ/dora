@@ -20,6 +20,12 @@ pub const CELL_HEIGHT: u16 = 1;
 impl ExplorerUI {
 }
 
+impl ExplorerUI {
+    fn render_main(&self, area: Rect, buf: &mut Buffer, state: &mut <ExplorerUI as StatefulWidget>::State) {
+        
+    }
+}
+
 impl StatefulWidget for ExplorerUI {
     type State = ExplorerState;
 
@@ -33,6 +39,7 @@ impl StatefulWidget for ExplorerUI {
             Constraint::Fill(1),
             Constraint::Length(1),
         ]).areas(area);
-
+        
+        self.render_main(area, buf, state);
     }
 }
