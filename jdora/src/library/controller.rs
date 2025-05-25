@@ -94,6 +94,8 @@ impl Controller {
 
     fn scroll_down(n: u16, state: &mut ExplorerState) {
         state.cursor_y += n
+
+        
     }
 
     fn scroll_up(n: u16, state: &mut ExplorerState) {

@@ -12,7 +12,8 @@ const INDENT_SIZE: u16 = 4;
 pub struct Node {
     serde_node: Value, // forwards to serde node
     indent_level: u16,
-    primitives: Vec<(String, Value)>,
+    primitives: Vec<(String, Value)>, // primitive attributes
+    // NOTE i understand I don't handle lists well....at all right now...
     children: Vec<(String, Node)>,
 
     // hidden_children:
@@ -110,7 +111,7 @@ impl Node {
     }
 
     // calculate how many lines it this node will consume
-    fn calculate_num_lines(&self) -> u16 {
+    pub fn calculate_num_lines(&self) -> u16 {
         
         // TODO handle hidden children
         let bracket_lines = 2_u16;
@@ -121,6 +122,13 @@ impl Node {
             .iter()
             .fold(0 as u16, |acc, &(_, ref child)| acc + child.calculate_num_lines());
         bracket_lines+primitive_len+children_len
+    }
+
+    pub fn build_children_line_boundaries(&self, accum: mut &[(NodePath, (u16,u16))]) {
+        for (idx, child) in self.children().iter.enumerate() {
+            
+
+        }
     }
 }
 

@@ -4,7 +4,7 @@ use google_cloud_storage::client::Client;
 use ratatui::layout::Rect;
 use tui_input::Input;
 
-use super::{input::InputHandler, internal::{node::Node, parser::parse_bytes}, mode::Mode, ui::CELL_HEIGHT};
+use super::{input::InputHandler, internal::{node::Node, node_path::NodePath, parser::parse_bytes}, mode::Mode, ui::CELL_HEIGHT};
 
 
 // very primitive state right now
@@ -17,7 +17,7 @@ pub struct ExplorerState{
     // in a nested dict.
     // node this assumes that the children's sort order
     // is deterministic
-    pub node_path: Vec<usize>, 
+    pub node_path: NodePath, 
 
     // line cursor
     pub cursor_y: u16,
@@ -47,7 +47,7 @@ impl ExplorerState {
 
         return Self {
             root_node_state: node, 
-            node_path: Vec::new(),
+            node_path: NodePath::new(),
             cursor_y: 0_u16,
             input_handler: InputHandler::new(),
             mode: Mode::Normal,
@@ -57,6 +57,14 @@ impl ExplorerState {
 
     pub fn should_exit(&self) -> bool {
         self.sig_user_input_exit
+    }
+
+    pub fn recalculate_node_path(&mut self) {
+        let total_lines_renderable = self
+            .root_node_state
+            .calculate_num_lines();
+
+
     }
 
 }
