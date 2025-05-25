@@ -1,6 +1,8 @@
+use super::node::Node;
+
 #[derive(Clone, Debug)]
 pub struct NodePath {
-    path: Vec<usize>
+    pub path: Vec<usize>
 }
 
 impl NodePath {
@@ -21,4 +23,6 @@ impl NodePath {
 
         return Self::new_with_path(_p);
     }
+
+
 }

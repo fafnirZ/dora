@@ -14,9 +14,9 @@ const INDENT_SIZE: u16 = 4;
 pub struct Node {
     serde_node: Value, // forwards to serde node
     indent_level: u16,
-    primitives: Vec<(String, Value)>, // primitive attributes
+    pub primitives: Vec<(String, Value)>, // primitive attributes
     // NOTE i understand I don't handle lists well....at all right now...
-    children: Vec<(String, Node)>,
+    pub children: Vec<(String, Node)>,
 
     // hidden_children:
     pub hidden_children: Vec<u16>,

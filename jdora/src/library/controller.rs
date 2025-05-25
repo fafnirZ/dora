@@ -49,6 +49,23 @@ impl Controller {
             }
             Control::Enter => {
                 // todo collapse or uncollapse
+                let np = &state.node_path;
+                let node = {
+                    let mut _n = &state.root_node_state;
+                    for idx in &state.node_path.path {
+                        for (_idx, (_, child)) in _n.children.iter().enumerate() {
+                            if _idx == *idx {
+                                _n = child;
+                                break;
+                            }
+                        }
+                    }
+                    _n
+                };
+
+                // todo given you know which node you're currently pointed to
+                // figure out if cursor is within a boundary of a nested node
+                // then collapse if necessary
             }
             
             _ => {}
