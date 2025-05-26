@@ -49,7 +49,7 @@ impl Controller {
             }
             Control::Enter => {
                 // todo collapse or uncollapse
-                let np = &state.node_path;
+                // let np = &state.node_path;
                 // let node = {
                 //     let mut _n = &state.root_node_state;
                 //     for idx in &state.node_path.path {

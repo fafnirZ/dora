@@ -12,14 +12,16 @@ use super::{input::InputHandler, internal::{node::Node, node_path::NodePath, par
 pub struct ExplorerState{
     pub root_node_state: Node,
 
-    // points to where the node we are currently in.
-    // will keep track of which child we traversed to
-    // in a nested dict.
-    // node this assumes that the children's sort order
-    // is deterministic
-    pub node_path: NodePath, 
+    pub root_node_structure: Vec<(String, NodePath)>,
 
-    // line cursor
+    // // points to where the node we are currently in.
+    // // will keep track of which child we traversed to
+    // // in a nested dict.
+    // // node this assumes that the children's sort order
+    // // is deterministic
+    // pub node_path: NodePath, 
+
+    // line cursor (relative?)
     pub cursor_y: u16,
     // todo view slice
     
@@ -46,8 +48,8 @@ impl ExplorerState {
         let node = parse_bytes(&contents);
 
         return Self {
+            root_node_structure: node.get_structures(),
             root_node_state: node, 
-            node_path: NodePath::new(),
             cursor_y: 0_u16,
             input_handler: InputHandler::new(),
             mode: Mode::Normal,
@@ -59,12 +61,12 @@ impl ExplorerState {
         self.sig_user_input_exit
     }
 
-    pub fn recalculate_node_path(&mut self) {
-        let total_lines_renderable = self
-            .root_node_state
-            .calculate_num_lines();
+    // pub fn recalculate_node_path(&mut self) {
+    //     let total_lines_renderable = self
+    //         .root_node_state
+    //         .calculate_num_lines();
 
 
-    }
+    // }
 
 }

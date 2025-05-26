@@ -119,7 +119,7 @@ impl Node {
                 self.num_spaces((self.indent_level+1)*INDENT_SIZE),
                 key.clone(),
             );
-            if self.hidden_children.contains(&(idx as u16)) {
+            if self.hidden_children.contains(&(idx as u16)) { // TODO rework hidden children
                 let res = format!("{} <collapsed>({} lines)\n", current_node_owned_formatted_string, chld.calculate_num_lines());
                 result.push(
                     (
