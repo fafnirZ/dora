@@ -161,11 +161,12 @@ impl Node {
 
     pub fn pprint(&self) -> String {
         let mut result = String::new();
-        for (str, _) in self.get_structures() {
+        for (str, _) in self.get_structures() { // unoptimised.
             result += &str;
         }
         result
     }
+
 
     fn num_spaces(&self, n: u16) -> String {
         " ".repeat(n as usize).to_string()

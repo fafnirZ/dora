@@ -2,7 +2,7 @@ use std::ffi::OsStr;
 
 use ratatui::{buffer::Buffer, layout::{Constraint, Direction, Layout, Rect}, style::{Color, Stylize}, widgets::{Paragraph, StatefulWidget, Widget}};
 
-use super::{colours::*, ExplorerState};
+use super::{colours::*, internal::node_path::NodePath, ExplorerState};
 
 pub struct ExplorerUI {}
 
@@ -22,7 +22,13 @@ impl ExplorerUI {
 
 impl ExplorerUI {
     fn render_main(&self, area: Rect, buf: &mut Buffer, state: &mut <ExplorerUI as StatefulWidget>::State) {
-        let data = state.root_node_state.pprint();
+        let data = {
+            let mut result = String::new();
+            for (str, _ ) in &state.root_node_structure {
+                result += &str;
+            }
+            result
+        };
         let contents: Vec<&str> = data.split("\n").collect();
 
         // dynamically break up the areas available into lines.
@@ -54,7 +60,19 @@ impl ExplorerUI {
 
         }
     }
+
+    fn render_bottom_banner(&self, area: Rect, buf: &mut Buffer, state: &mut <ExplorerUI as StatefulWidget>::State) {
+        let cursor_y = &state.cursor_y; // todo need absolute cursor in future
+        let node_paths: Vec<NodePath> = state.root_node_structure
+            .clone()
+            .into_iter()
+            .map(|(_, node_path)| node_path)
+            .collect();
+
+        let node_path = &node_paths[*cursor_y as usize];
+    }
 }
+
 
 impl StatefulWidget for ExplorerUI {
     type State = ExplorerState;
