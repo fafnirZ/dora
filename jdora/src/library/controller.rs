@@ -2,6 +2,8 @@ use std::any::Any;
 
 use crossterm::cursor;
 
+use crate::library::internal::node::try_resolve_node_path_mut;
+
 use super::{control::Control, filter::ExactSubstringSearch, input::InputBuffer, internal::{node::try_resolve_node_path, node_path::NodePath}, mode::Mode, ExplorerState };
 
 const EXTENDED_SCROLL_SIZE: u16 = 3;
@@ -57,29 +59,20 @@ impl Controller {
                     .collect();
         
                 let node_path = &node_paths[*(cursor_y) as usize];
-
+                
+                // resolves parent node
                 let parent_node_path = node_path.parent(); 
-                let resolved_node = try_resolve_node_path(&state.root_node_state, &parent_node_path).unwrap();
 
-                println!("{:?}", resolved_node)
-                // todo collapse or uncollapse
-                // let np = &state.node_path;
-                // let node = {
-                //     let mut _n = &state.root_node_state;
-                //     for idx in &state.node_path.path {
-                //         for (_idx, (_, child)) in _n.children.iter().enumerate() {
-                //             if _idx == *idx {
-                //                 _n = child;
-                //                 break;
-                //             }
-                //         }
-                //     }
-                //     _n
-                // };
+                // need to resolve a mutable reference to the node path.
+                // because we need to mutate that reference directly
+                let resolved_node = try_resolve_node_path_mut(&mut state.root_node_state, &parent_node_path).unwrap(); 
+                
+                // get node leaf
+                let node_path_leaf = node_path.leaf().unwrap(); // will break, oh well figure out later
 
-                // todo given you know which node you're currently pointed to
-                // figure out if cursor is within a boundary of a nested node
-                // then collapse if necessary
+                resolved_node.toggle_hide_child(&node_path_leaf);
+                
+                
             }
             
             _ => {}

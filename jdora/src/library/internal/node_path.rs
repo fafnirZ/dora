@@ -58,5 +58,11 @@ impl NodePath {
         NodePath::new_with_path(new_path)
     }
 
+    pub fn leaf(&self) -> Option<NodePathKey> {
+        let mut path_shadow = self.path.clone();
+        
+        path_shadow.pop()
+    }
+
 
 }

@@ -209,6 +209,32 @@ impl Node {
             }
         }
     }
+    pub fn get_child_mut(&mut self, key: &NodePathKey) -> Option<&mut Node> {
+        match key {
+            NodePathKey::DictKey(k) => {
+                for child in &mut self.children {
+                    let (key, node) = child;
+                    if *key == *k {
+                        return Some(node);
+                    }
+                }
+                None
+            }
+            _ => {
+                // not implemented
+                panic!("not implemented");
+            }
+        }
+    }
+
+
+    pub fn toggle_hide_child(&mut self, child: &NodePathKey) {
+        if let Some(idx) = self.hidden_children.iter().position(|item| item==child) {
+            self.hidden_children.remove(idx);
+        } else {
+            self.hidden_children.push(child.clone());
+        }
+    }
 }
 
 
@@ -217,6 +243,19 @@ pub fn try_resolve_node_path<'a>(root_node: &'a Node, node_path: &NodePath) -> O
     let mut cur_node = root_node;
     for path_key in &node_path.path {
         if let Some(new_node) = cur_node.get_child(&path_key) {
+            cur_node = new_node
+        } else {
+            return None
+        }
+    }
+
+    Some(cur_node)
+}
+
+pub fn try_resolve_node_path_mut<'a>(root_node: &'a mut Node, node_path: &NodePath) -> Option<&'a mut Node> {
+    let mut cur_node = root_node;
+    for path_key in &node_path.path {
+        if let Some(new_node) = cur_node.get_child_mut(&path_key) {
             cur_node = new_node
         } else {
             return None
