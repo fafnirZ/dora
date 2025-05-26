@@ -3,15 +3,15 @@ use std::any::Any;
 // parse json into nodes
 use serde_json::{Result, Value};
 
-use super::node::Node;
+use super::{node::Node, node_path::NodePath};
 
 pub fn parse(data: &str) -> Node {
     let v: Value = serde_json::from_str(data).unwrap();
-    return Node::new(v, 0).unwrap();
+    return Node::new(v, NodePath::new()).unwrap();
 }
 pub fn parse_bytes(data: &[u8]) -> Node {
     let v: Value = serde_json::from_slice(data).unwrap();
-    return Node::new(v, 0).unwrap();
+    return Node::new(v, NodePath::new()).unwrap();
 }
 
 
@@ -34,7 +34,7 @@ mod tests {
             }
         }"#;
         let n = parse(data);
-        println!("{}", n.pprint());
+        println!("{:?}", n.get_structures());
 
         assert!( 1 == 0 );
     }
@@ -51,67 +51,67 @@ mod tests {
         }"#;
         let mut n = parse(data);
         n.hidden_children.push(0);
-        println!("{}", n.pprint());
+        println!("{:?}", n.get_structures());
 
         assert!( 1 == 0 );
     }
-    #[test]
-    fn test_c() {
-        let data = r#"
-        {
-            "name": "abc",
-            "hello": 1,
-            "nested": {
-                "attr": 2
-            }
-        }"#;
-        let mut n = parse(data);
-        let node_path = NodePath::new();
-        println!("{:?}", n.build_children_line_boundaries(0, &node_path));
+    // #[test]
+    // fn test_c() {
+    //     let data = r#"
+    //     {
+    //         "name": "abc",
+    //         "hello": 1,
+    //         "nested": {
+    //             "attr": 2
+    //         }
+    //     }"#;
+    //     let mut n = parse(data);
+    //     let node_path = NodePath::new();
+    //     println!("{:?}", n.build_children_line_boundaries(0, &node_path));
 
-        assert!( 1 == 0 );
-    }
+    //     assert!( 1 == 0 );
+    // }
 
 
 
-    #[test]
-    fn test_d() {
-        let data = r#"
-        {
-            "name": "abc",
-            "hello": 1,
-            "nested": {
-                "attr": {
-                    "bbb": 100
-                }
-            }
-        }"#;
-        let mut n = parse(data);
-        let node_path = NodePath::new();
-        println!("{:?}", n.build_children_line_boundaries(0, &node_path));
+    // #[test]
+    // fn test_d() {
+    //     let data = r#"
+    //     {
+    //         "name": "abc",
+    //         "hello": 1,
+    //         "nested": {
+    //             "attr": {
+    //                 "bbb": 100
+    //             }
+    //         }
+    //     }"#;
+    //     let mut n = parse(data);
+    //     let node_path = NodePath::new();
+    //     println!("{:?}", n.build_children_line_boundaries(0, &node_path));
 
-        assert!( 1 == 0 );
-    }
+    //     assert!( 1 == 0 );
+    // }
 
-    #[test]
-    fn test_e() {
-        let data = r#"
-        {
-            "name": "abc",
-            "hello": 1,
-            "nested": {
-                "attr": {
-                    "bbb": 100
-                }
-            },
-            "another_nested": {
-                "b": "bbb"
-            }
-        }"#;
-        let mut n = parse(data);
-        let node_path = NodePath::new();
-        println!("{:?}", n.build_children_line_boundaries(0, &node_path));
+    // #[test]
+    // fn test_e() {
+    //     let data = r#"
+    //     {
+    //         "name": "abc",
+    //         "hello": 1,
+    //         "nested": {
+    //             "attr": {
+    //                 "bbb": 100
+    //             }
+    //         },
+    //         "another_nested": {
+    //             "b": "bbb"
+    //         }
+    //     }"#;
+    //     let mut n = parse(data);
+    //     let node_path = NodePath::new();
+    //     println!("{:?}", n.build_children_line_boundaries(0, &node_path));
 
-        assert!( 1 == 0 );
-    }
+    //     assert!( 1 == 0 );
+    // }
 }

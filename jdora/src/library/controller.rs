@@ -50,18 +50,18 @@ impl Controller {
             Control::Enter => {
                 // todo collapse or uncollapse
                 let np = &state.node_path;
-                let node = {
-                    let mut _n = &state.root_node_state;
-                    for idx in &state.node_path.path {
-                        for (_idx, (_, child)) in _n.children.iter().enumerate() {
-                            if _idx == *idx {
-                                _n = child;
-                                break;
-                            }
-                        }
-                    }
-                    _n
-                };
+                // let node = {
+                //     let mut _n = &state.root_node_state;
+                //     for idx in &state.node_path.path {
+                //         for (_idx, (_, child)) in _n.children.iter().enumerate() {
+                //             if _idx == *idx {
+                //                 _n = child;
+                //                 break;
+                //             }
+                //         }
+                //     }
+                //     _n
+                // };
 
                 // todo given you know which node you're currently pointed to
                 // figure out if cursor is within a boundary of a nested node
@@ -112,23 +112,23 @@ impl Controller {
     fn scroll_down(n: u16, state: &mut ExplorerState) {
         state.cursor_y += n;
 
-        // this is currently NON performant
-        let res = state.root_node_state.build_children_line_boundaries(0, &NodePath::new());
-        for (np, (start,end)) in res {
-            if &state.cursor_y >= &start && &state.cursor_y < &end {
-                state.node_path = np;
-            }
-        }
+        // // this is currently NON performant
+        // let res = state.root_node_state.build_children_line_boundaries(0, &NodePath::new());
+        // for (np, (start,end)) in res {
+        //     if &state.cursor_y >= &start && &state.cursor_y < &end {
+        //         state.node_path = np;
+        //     }
+        // }
     }
 
     fn scroll_up(n: u16, state: &mut ExplorerState) {
        state.cursor_y -= n;
-        // this is currently NON performant
-        let res = state.root_node_state.build_children_line_boundaries(0, &NodePath::new());
-        for (np, (start,end)) in res {
-            if &state.cursor_y >= &start && &state.cursor_y < &end {
-                state.node_path = np;
-            }
-        }
+        // // this is currently NON performant
+        // let res = state.root_node_state.build_children_line_boundaries(0, &NodePath::new());
+        // for (np, (start,end)) in res {
+        //     if &state.cursor_y >= &start && &state.cursor_y < &end {
+        //         state.node_path = np;
+        //     }
+        // }
     }
 }
