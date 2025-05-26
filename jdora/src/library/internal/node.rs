@@ -140,13 +140,14 @@ impl Node {
                         self.node_path.push_and_clone(NodePathKey::DictKey(key.clone()))
                     )
                 );
+                // recursively call children get_structures.
+                let children_structures = chld.get_structures();
+                for res in children_structures {
+                    result.push(res);
+                }
             }
 
-            // recursively call children get_structures.
-            let children_structures = chld.get_structures();
-            for res in children_structures {
-                result.push(res);
-            }
+
         } 
 
         // print closing bracket

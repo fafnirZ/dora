@@ -70,9 +70,11 @@ impl Controller {
                 // get node leaf
                 let node_path_leaf = node_path.leaf().unwrap(); // will break, oh well figure out later
 
+                // toggle collapse
                 resolved_node.toggle_hide_child(&node_path_leaf);
-                
-                
+
+                // re calculate structures.
+                state.root_node_structure = state.root_node_state.get_structures(); 
             }
             
             _ => {}
