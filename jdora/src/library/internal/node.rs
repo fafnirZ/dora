@@ -86,14 +86,17 @@ impl Node {
     pub fn get_structures(&self) -> Vec<(String, NodePath)> {
         let mut result: Vec<(String, NodePath)> = Vec::new();
 
-        // open brace
-        let open_bracket_str = "{\n".to_string();
-        result.push(
-            (
-                open_bracket_str, // this belongs to this node.
-                self.node_path.clone()
-            )
-        );
+        // NOTE: only do this for root nodepath
+        if self.indent_level == 0 {
+            // open brace
+            let open_bracket_str = "{\n".to_string();
+            result.push(
+                (
+                    open_bracket_str, // this belongs to this node.
+                    self.node_path.clone()
+                )
+            );
+        }
 
         // print primitives first
         for prim_attr in self.primitives.iter() {
@@ -123,7 +126,7 @@ impl Node {
                 let res = format!("{} <collapsed>({} lines)\n", current_node_owned_formatted_string, chld.calculate_num_lines());
                 result.push(
                     (
-                        current_node_owned_formatted_string,
+                        res,
                         self.node_path.push_and_clone(NodePathKey::DictKey(key.clone()))
                     )
                 );
@@ -131,7 +134,7 @@ impl Node {
                 let res = format!("{} {{\n", current_node_owned_formatted_string);
                 result.push(
                     (
-                        current_node_owned_formatted_string,
+                        res,
                         self.node_path.push_and_clone(NodePathKey::DictKey(key.clone()))
                     )
                 );
