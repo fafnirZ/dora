@@ -158,42 +158,14 @@ impl Node {
         
         result
     }
-    // pub fn pprint(&self) -> String {
-    //     let mut result = String::new();
 
-
-    //     // open brace
-    //     // result += &self.num_spaces(self.indent_level*INDENT_SIZE);
-    //     result += "{\n";
-
-    //     // print primitives first
-    //     for prim_attr in self.primitives.iter() {
-    //         let (key, val) = prim_attr.clone();
-    //         result += &self.num_spaces((self.indent_level+1)*INDENT_SIZE);
-    //         result += &format!("\"{}\":{}", key, val.to_string());
-    //         result += ",\n"
-    //     }
-
-    //     // print children
-    //     for (idx, child ) in self.children.iter().enumerate() {
-    //         let (key, chld) = child;
-    //         result += &self.num_spaces((self.indent_level+1)*INDENT_SIZE);
-    //         result += &format!("\"{}\":", key);
-    //         if self.hidden_children.contains(&(idx as u16)) {
-    //             result += &format!("<collapsed>({} lines)\n", chld.calculate_num_lines());
-    //         } else {
-    //             result += &chld.pprint();
-    //         }
-    //     }
-
-    //     // print closing bracket
-    //     result += &self.num_spaces(self.indent_level*INDENT_SIZE);
-    //     result += "}\n";
-        
-    //     result
-    // }
-
-
+    pub fn pprint(&self) -> String {
+        let mut result = String::new();
+        for (str, _) in self.get_structures() {
+            result += &str;
+        }
+        result
+    }
 
     fn num_spaces(&self, n: u16) -> String {
         " ".repeat(n as usize).to_string()
