@@ -18,7 +18,7 @@ pub fn parse_bytes(data: &[u8]) -> Node {
 
 #[cfg(test)]
 mod tests {
-    use crate::library::internal::node_path::NodePath;
+    use crate::library::internal::node_path::{NodePath, NodePathKey};
 
     // Note this useful idiom: importing names from outer (for mod tests) scope.
     use super::*;
@@ -51,7 +51,7 @@ mod tests {
             }
         }"#;
         let mut n = parse(data);
-        n.hidden_children.push(0);
+        n.hidden_children.push(NodePathKey::DictKey("nested".to_string()));
         println!("{:?}", n.get_structures());
         println!("{}", n.pprint());
 

@@ -1,6 +1,6 @@
 use super::node::Node;
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum NodePathKey {
     DictKey(String),
     ListIndex(usize),

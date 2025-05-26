@@ -21,7 +21,7 @@ pub struct Node {
     pub children: Vec<(String, Node)>,
 
     // hidden_children:
-    pub hidden_children: Vec<u16>,
+    pub hidden_children: Vec<NodePathKey>,
 }
 
 impl Node {
@@ -123,7 +123,8 @@ impl Node {
                 self.num_spaces((self.indent_level+1)*INDENT_SIZE),
                 key.clone(),
             );
-            if self.hidden_children.contains(&(idx as u16)) { // TODO rework hidden children
+            // TODO handle lists... its gonna be a nightmare
+            if self.hidden_children.contains(&NodePathKey::DictKey(key.clone())) { // TODO rework hidden children
                 let res = format!("{} <collapsed>({} lines)\n", current_node_owned_formatted_string, chld.calculate_num_lines());
                 result.push(
                     (
