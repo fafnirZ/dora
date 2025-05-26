@@ -1,3 +1,4 @@
+use core::panic;
 use std::primitive;
 
 use serde_json::{Map, Value};
@@ -189,44 +190,37 @@ impl Node {
             .fold(0 as u16, |acc, &(_, ref child)| acc + child.calculate_num_lines());
         bracket_lines+primitive_len+children_len
     }
-    
-    // // TODO: need to think deeply
-    // // about the maths and calculations
-    // // for this function and the calculate_num_lines_function
-    // pub fn build_children_line_boundaries(&self, current_line_pos: u16, curr_node_path: &NodePath) -> Vec<(NodePath, (u16,u16))>{
-    //     if self.children.len() == 0 { // is leaf node
-    //         let mut v = Vec::new();
-    //         v.push(
-    //             (
-    //                 curr_node_path.clone(), 
-    //                 (current_line_pos, current_line_pos+self.calculate_num_lines()-1)
-    //             )
-    //         );
-    //         return v;
-    //     }
 
-    //     let mut v = Vec::new();
-    //     let open_bracket_offset = 1_u16;
-    //     let mut line_pos_offset = current_line_pos 
-    //         + (self.primitives.len() as u16)
-    //         + open_bracket_offset;
-
-    //     for (idx, (_, child)) in self.children.iter().enumerate() {
-    //         let new_node_path = curr_node_path.push_and_clone(idx);
-    //         let child_boundaries = child.build_children_line_boundaries(
-    //             line_pos_offset, // update line position offsets
-    //             &new_node_path
-    //         ); 
-    //         for child_boundary in child_boundaries {
-    //             v.push(child_boundary);
-    //         }
-    //         let child_total_len = child.calculate_num_lines();
-    //         line_pos_offset += child_total_len;
-    //     }
-    //     v.push(
-    //         (curr_node_path.clone(), (current_line_pos, current_line_pos+(self.calculate_num_lines()-1)))
-    //     );
-    //     return v;
-    // }
+    pub fn get_child(&self, key: &NodePathKey) -> Option<&Node> {
+        match key {
+            NodePathKey::DictKey(k) => {
+                for child in &self.children {
+                    let (key, node) = child;
+                    if *key == *k {
+                        return Some(node);
+                    }
+                }
+                None
+            }
+            _ => {
+                // not implemented
+                panic!("not implemented");
+            }
+        }
+    }
 }
 
+
+
+pub fn try_resolve_node_path<'a>(root_node: &'a Node, node_path: &NodePath) -> Option<&'a Node> {
+    let mut cur_node = root_node;
+    for path_key in &node_path.path {
+        if let Some(new_node) = cur_node.get_child(&path_key) {
+            cur_node = new_node
+        } else {
+            return None
+        }
+    }
+
+    Some(cur_node)
+}
