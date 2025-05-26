@@ -253,6 +253,9 @@ pub fn try_resolve_node_path<'a>(root_node: &'a Node, node_path: &NodePath) -> O
     Some(cur_node)
 }
 
+// returns a mutable reference, this is more necesary when we want to 
+// update the state of the resolved path
+// the other one is more useful when we just wanna perform queries
 pub fn try_resolve_node_path_mut<'a>(root_node: &'a mut Node, node_path: &NodePath) -> Option<&'a mut Node> {
     let mut cur_node = root_node;
     for path_key in &node_path.path {

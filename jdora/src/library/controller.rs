@@ -65,13 +65,20 @@ impl Controller {
 
                 // need to resolve a mutable reference to the node path.
                 // because we need to mutate that reference directly
-                let resolved_node = try_resolve_node_path_mut(&mut state.root_node_state, &parent_node_path).unwrap(); 
+                let resolved_node = try_resolve_node_path_mut(&mut state.root_node_state, &parent_node_path);
+                if resolved_node.is_none() {
+                    return;
+                }
                 
                 // get node leaf
-                let node_path_leaf = node_path.leaf().unwrap(); // will break, oh well figure out later
+                let node_path_leaf = node_path.leaf(); 
+                if node_path_leaf.is_none() {
+                    return;
+                }
 
                 // toggle collapse
-                resolved_node.toggle_hide_child(&node_path_leaf);
+                // safe to unwrap
+                resolved_node.unwrap().toggle_hide_child(&node_path_leaf.unwrap());
 
                 // re calculate structures.
                 state.root_node_structure = state.root_node_state.get_structures(); 
