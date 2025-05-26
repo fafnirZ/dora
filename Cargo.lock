@@ -1516,6 +1516,22 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4a5f13b858c8d314ee3e8f639011f7ccefe71f97f96e50151fb991f267928e2c"
 
 [[package]]
+name = "jdora"
+version = "0.1.0"
+dependencies = [
+ "color-eyre",
+ "crossterm 0.28.1",
+ "directories",
+ "gcloud-storage",
+ "itertools 0.14.0",
+ "ratatui 0.29.0",
+ "serde_json",
+ "thiserror 2.0.12",
+ "tokio",
+ "tui-input",
+]
+
+[[package]]
 name = "jobserver"
 version = "0.1.33"
 source = "registry+https://github.com/rust-lang/crates.io-index"
