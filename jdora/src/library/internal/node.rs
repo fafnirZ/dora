@@ -125,7 +125,7 @@ impl Node {
             );
             // TODO handle lists... its gonna be a nightmare
             if self.hidden_children.contains(&NodePathKey::DictKey(key.clone())) { // TODO rework hidden children
-                let res = format!("{} <collapsed>({} lines)\n", current_node_owned_formatted_string, chld.calculate_num_lines());
+                let res = format!("{} <collapsed>({} lines) ▲\n", current_node_owned_formatted_string, chld.calculate_num_lines());
                 result.push(
                     (
                         res,
@@ -133,7 +133,7 @@ impl Node {
                     )
                 );
             } else {
-                let res = format!("{} {{\n", current_node_owned_formatted_string);
+                let res = format!("{} {{ ▼\n", current_node_owned_formatted_string);
                 result.push(
                     (
                         res,
