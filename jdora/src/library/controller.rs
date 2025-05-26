@@ -2,7 +2,7 @@ use std::any::Any;
 
 use crossterm::cursor;
 
-use super::{control::Control, filter::ExactSubstringSearch, input::InputBuffer, internal::node_path::NodePath, mode::Mode, ExplorerState };
+use super::{control::Control, filter::ExactSubstringSearch, input::InputBuffer, internal::{node::try_resolve_node_path, node_path::NodePath}, mode::Mode, ExplorerState };
 
 const EXTENDED_SCROLL_SIZE: u16 = 3;
 
@@ -48,6 +48,20 @@ impl Controller {
                 Controller::scroll_down(EXTENDED_SCROLL_SIZE, state);
             }
             Control::Enter => {
+
+                let cursor_y = &state.cursor_y; // todo make absolute cursor
+                let node_paths: Vec<NodePath> = state.root_node_structure
+                    .clone()
+                    .into_iter()
+                    .map(|(_, node_path)| node_path)
+                    .collect();
+        
+                let node_path = &node_paths[*(cursor_y) as usize];
+
+                let parent_node_path = node_path.parent(); 
+                let resolved_node = try_resolve_node_path(&state.root_node_state, &parent_node_path).unwrap();
+
+                println!("{:?}", resolved_node)
                 // todo collapse or uncollapse
                 // let np = &state.node_path;
                 // let node = {

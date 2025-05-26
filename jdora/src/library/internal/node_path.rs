@@ -47,4 +47,16 @@ impl NodePath {
         res.join("/")
     }
 
+    pub fn parent(&self) -> NodePath {
+        let mut new_path = self
+        .path
+        .clone();  
+        
+        // mutate clone
+        new_path.pop();
+
+        NodePath::new_with_path(new_path)
+    }
+
+
 }
