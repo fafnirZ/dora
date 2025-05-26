@@ -84,36 +84,77 @@ impl Node {
     /// for every line which will be sent to pprint
     /// associate the NodePath associated with this line.
     pub fn get_structures(&self) -> Vec<(String, NodePath)> {
-        let mut result = String::new();
-
+        let mut result: Vec<(String, NodePath)> = Vec::new();
 
         // open brace
-        // result += &self.num_spaces(self.indent_level*INDENT_SIZE);
-        result += "{\n";
+        let open_bracket_str = "{\n".to_string();
+        result.push(
+            (
+                open_bracket_str, // this belongs to this node.
+                self.node_path.clone()
+            )
+        );
 
         // print primitives first
         for prim_attr in self.primitives.iter() {
             let (key, val) = prim_attr.clone();
-            result += &self.num_spaces((self.indent_level+1)*INDENT_SIZE);
-            result += &format!("\"{}\":{}", key, val.to_string());
-            result += ",\n"
+            let formatted_str = format!(
+                "{}\"{}\":{},\n",
+                self.num_spaces((self.indent_level+1)*INDENT_SIZE) ,
+                key.clone(),
+                val.to_string(),
+            );
+            result.push(
+                (
+                    formatted_str,
+                    self.node_path.push_and_clone(NodePathKey::DictKey(key.clone()))
+                )
+            )
         }
 
-        // print children
         for (idx, child ) in self.children.iter().enumerate() {
             let (key, chld) = child;
-            result += &self.num_spaces((self.indent_level+1)*INDENT_SIZE);
-            result += &format!("\"{}\":", key);
+            let current_node_owned_formatted_string = format!(
+                "{}\"{}\":",
+                self.num_spaces((self.indent_level+1)*INDENT_SIZE),
+                key.clone(),
+            );
             if self.hidden_children.contains(&(idx as u16)) {
-                result += &format!("<collapsed>({} lines)\n", chld.calculate_num_lines());
+                let res = format!("{} <collapsed>({} lines)\n", current_node_owned_formatted_string, chld.calculate_num_lines());
+                result.push(
+                    (
+                        current_node_owned_formatted_string,
+                        self.node_path.push_and_clone(NodePathKey::DictKey(key.clone()))
+                    )
+                );
             } else {
-                result += &chld.pprint();
+                let res = format!("{} {{\n", current_node_owned_formatted_string);
+                result.push(
+                    (
+                        current_node_owned_formatted_string,
+                        self.node_path.push_and_clone(NodePathKey::DictKey(key.clone()))
+                    )
+                );
             }
-        }
+
+            // recursively call children get_structures.
+            let children_structures = chld.get_structures();
+            for res in children_structures {
+                result.push(res);
+            }
+        } 
 
         // print closing bracket
-        result += &self.num_spaces(self.indent_level*INDENT_SIZE);
-        result += "}\n";
+        let closing_bracket_str = format!(
+            "{}}}\n",
+            self.num_spaces(self.indent_level*INDENT_SIZE) 
+        );
+        result.push(
+            (
+                closing_bracket_str,
+                self.node_path.clone(),
+            )
+        );
         
         result
     }
