@@ -2,7 +2,7 @@ use std::ffi::OsStr;
 
 use ratatui::{buffer::Buffer, layout::{Constraint, Direction, Layout, Rect}, style::{Color, Stylize}, widgets::{Paragraph, StatefulWidget, Widget}};
 
-use super::{colours::*, internal::node_path::NodePath, ExplorerState};
+use super::{colours::*, internal::{node, node_path::NodePath}, ExplorerState};
 
 pub struct ExplorerUI {}
 
@@ -69,7 +69,11 @@ impl ExplorerUI {
             .map(|(_, node_path)| node_path)
             .collect();
 
-        let node_path = &node_paths[*cursor_y as usize];
+        let node_path = &node_paths[*(cursor_y) as usize];
+
+        Paragraph::new(node_path.to_string())
+            .bg(DARK_TEAL.to_ratatui_color_rgb())
+            .render(area, buf);
     }
 }
 
@@ -89,5 +93,6 @@ impl StatefulWidget for ExplorerUI {
         ]).areas(area);
         
         self.render_main(main, buf, state);
+        self.render_bottom_banner(bottom_banner, buf, state);
     }
 }
