@@ -11,19 +11,14 @@ use super::{input::InputHandler, internal::{node::Node, node_path::NodePath, par
 // not optimised and not cached.
 pub struct ExplorerState{
     pub root_node_state: Node,
-
     pub root_node_structure: Vec<(String, NodePath)>,
 
-    // // points to where the node we are currently in.
-    // // will keep track of which child we traversed to
-    // // in a nested dict.
-    // // node this assumes that the children's sort order
-    // // is deterministic
-    // pub node_path: NodePath, 
 
+    // viewslice
+    pub view_slice: [u16;2],
     // line cursor (relative?)
     pub cursor_y: u16,
-    // todo view slice
+    available_area: [u16;2],
     
     pub input_handler: InputHandler,
     pub mode: Mode,
@@ -50,6 +45,8 @@ impl ExplorerState {
         return Self {
             root_node_structure: node.get_structures(),
             root_node_state: node, 
+            view_slice: [0, 10],
+            available_area: [0,10],
             cursor_y: 0_u16,
             input_handler: InputHandler::new(),
             mode: Mode::Normal,
@@ -61,12 +58,26 @@ impl ExplorerState {
         self.sig_user_input_exit
     }
 
-    // pub fn recalculate_node_path(&mut self) {
-    //     let total_lines_renderable = self
-    //         .root_node_state
-    //         .calculate_num_lines();
 
+    pub fn update_table_area(&mut self, main_table_area: Rect) {
+        let [curr_height, curr_width] = &self.available_area;
+        if !(main_table_area.height == *curr_height && main_table_area.width == *curr_width) {
+            // update the table area
+            self.available_area = [main_table_area.height, main_table_area.width];
 
-    // }
+            self.recalculate_view_slice();
+        }
+    }
+
+    pub fn recalculate_renderable_rows(&self) -> u16 {
+        let [curr_height, _] = &self.available_area;
+        return *curr_height
+    }
+
+    pub fn recalculate_view_slice(&mut self) {
+        let [start, _] = &self.view_slice;
+        // let renderable_rows = self.recalculate_renderable_rows();
+        self.view_slice = [*start, start+self.recalculate_renderable_rows()];
+    }
 
 }

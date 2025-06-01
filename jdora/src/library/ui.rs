@@ -92,6 +92,7 @@ impl StatefulWidget for ExplorerUI {
             Constraint::Length(1),
         ]).areas(area);
         
+        state.update_table_area(main);
         self.render_main(main, buf, state);
         self.render_bottom_banner(bottom_banner, buf, state);
     }
