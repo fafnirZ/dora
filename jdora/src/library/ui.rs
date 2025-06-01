@@ -22,25 +22,30 @@ impl ExplorerUI {
 
 impl ExplorerUI {
     fn render_main(&self, area: Rect, buf: &mut Buffer, state: &mut <ExplorerUI as StatefulWidget>::State) {
-        let data = {
-            let mut result = String::new();
-            for (str, _ ) in &state.root_node_structure {
-                result += &str;
-            }
-            result
-        };
-        let contents: Vec<&str> = data.split("\n").collect();
+        let data = &state.root_node_state.pprint();
+        let [vs_start, vs_end] = &state.view_slice;
+        let contents: Vec<&str> = 
+            data
+            .split("\n")
+            .enumerate()
+            .filter(|(idx, _)| {
+                (*idx as u16) >= *vs_start
+                && (*idx as u16) < *vs_end
+            })
+            .map(|(_idx, val)| val)
+            .collect();
 
         // dynamically break up the areas available into lines.
         let available_height = area.height;
         let constraint_vec: Vec<Constraint> = (0..available_height)
             .map(|_| Constraint::Length(1))
             .collect();
-        let lines = Layout::default()
-            .direction(Direction::Vertical)
-            .constraints(constraint_vec)
-            .split(area); 
 
+        let lines = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints(constraint_vec)
+        .split(area); 
+    
         // rendering line
         for (idx, line) in lines.iter().enumerate() {
             if idx > contents.len()-1 {
