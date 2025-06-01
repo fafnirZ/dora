@@ -18,7 +18,7 @@ pub struct ExplorerState{
     pub view_slice: [u16;2],
     // line cursor (relative?)
     pub cursor_y: u16,
-    available_area: [u16;2],
+    pub available_area: [u16;2],
     
     pub input_handler: InputHandler,
     pub mode: Mode,
@@ -64,7 +64,6 @@ impl ExplorerState {
         if !(main_table_area.height == *curr_height && main_table_area.width == *curr_width) {
             // update the table area
             self.available_area = [main_table_area.height, main_table_area.width];
-
             self.recalculate_view_slice();
         }
     }
@@ -76,7 +75,6 @@ impl ExplorerState {
 
     pub fn recalculate_view_slice(&mut self) {
         let [start, _] = &self.view_slice;
-        // let renderable_rows = self.recalculate_renderable_rows();
         self.view_slice = [*start, start+self.recalculate_renderable_rows()];
     }
 

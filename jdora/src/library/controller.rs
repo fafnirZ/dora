@@ -125,26 +125,69 @@ impl Controller {
 
 impl Controller {
 
-    fn scroll_down(n: u16, state: &mut ExplorerState) {
-        state.cursor_y += n;
-
-        // // this is currently NON performant
-        // let res = state.root_node_state.build_children_line_boundaries(0, &NodePath::new());
-        // for (np, (start,end)) in res {
-        //     if &state.cursor_y >= &start && &state.cursor_y < &end {
-        //         state.node_path = np;
-        //     }
-        // }
+ fn scroll_down(n: u16, state: &mut ExplorerState) {
+        let cursor_pos = &state.cursor_y;
+        // let num_dents = &state.get_dents_auto().len();
+        let num_json_lines = &state.root_node_state.calculate_num_lines();
+        let num_renderable = &state.recalculate_renderable_rows();
+        // println!("{}", num_renderable);
+        if *cursor_pos == *num_renderable-1 {
+            let [start,end] = &state.view_slice;
+            if *end == (*num_json_lines as u16) {
+                // println!("{},{}", end, num_json_lines);
+                // println!("{:?}", &state.available_area);
+                // println!("{:?}", &state.view_slice);
+                return;
+            } else {
+                // slide down 1
+                state.view_slice = [
+                    *start+n,
+                    *end+n,
+                ]
+            }
+        }
+        else {
+            state.cursor_y = {
+                if cursor_pos + n > *num_renderable-1 {
+                    *num_renderable-1
+                } else {
+                    cursor_pos + n
+                }
+            };
+        }
     }
 
     fn scroll_up(n: u16, state: &mut ExplorerState) {
-       state.cursor_y -= n;
-        // // this is currently NON performant
-        // let res = state.root_node_state.build_children_line_boundaries(0, &NodePath::new());
-        // for (np, (start,end)) in res {
-        //     if &state.cursor_y >= &start && &state.cursor_y < &end {
-        //         state.node_path = np;
-        //     }
-        // }
+        let cursor_pos = &state.cursor_y;
+        if *cursor_pos == 0 {
+            let [start,_] = &state.view_slice;
+            if *start == 0 {
+                return;
+            } else {
+                // mutate to slide up n
+                // prevent overflow
+                let view_start = {
+                    if *start < n { // need to do this way in order to prevent u16 subtraction overflow
+                        0
+                    } else {
+                        start-n
+                    }
+                };
+                let num_renderable = &state.recalculate_renderable_rows();
+                let view_end = view_start + num_renderable; 
+                state.view_slice = [
+                    view_start,
+                    view_end,
+                ]
+            }
+        } else {
+            state.cursor_y = {
+                if *cursor_pos < n {
+                    0
+                } else {
+                    *cursor_pos - n
+                }
+            };
+        }
     }
 }
