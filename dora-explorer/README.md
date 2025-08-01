@@ -9,7 +9,7 @@ It provides local file navigation support as well as GCS File path selection sup
 to perform navigation with the dora explorer binary, paste the following function into your `~/.bashrc`
 
 ```
-cde() { cd $(de $@); }
+cde() { DORA_NOSELECT_FILE=1 cd $(de $@); }
 ```
 
 ## How to navigate the explorer

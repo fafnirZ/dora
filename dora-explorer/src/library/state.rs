@@ -33,6 +33,11 @@ pub struct ExplorerState{
     // when these gets flagged, it will exit.
     pub sig_user_input_exit: bool,
     pub sig_file_selected_exit: bool,
+
+
+    // global flags
+    // which configure behaviour
+    pub config_no_select_file: bool,
 }
 
 impl ExplorerState {
@@ -78,6 +83,7 @@ impl ExplorerState {
             sig_file_selected_exit: false,
             input_handler: InputHandler::new(),
             mode: Mode::Normal,
+            config_no_select_file: false,
         }
     }
 
@@ -89,6 +95,16 @@ impl ExplorerState {
             .into_iter()
             .filter(|entry | filter_dot_dent(&entry))
             .collect();
+
+        let should_select_files = {
+            match env::var("DORA_NOSELECT_FILE") {
+                Ok(val) => {
+                    // Use `&val` to get a `&str` from the `String`
+                    vec!["1", "True", "true"].contains(&val.as_str())
+                },
+                Err(_) => false,
+            }
+        };
 
         return Self {
             cwd: AnyPath::LocalPath(path.to_path_buf()), // cwd
@@ -104,6 +120,7 @@ impl ExplorerState {
             sig_file_selected_exit: false,
             input_handler: InputHandler::new(),
             mode: Mode::Normal,
+            config_no_select_file: should_select_files,
         }
     }
 
