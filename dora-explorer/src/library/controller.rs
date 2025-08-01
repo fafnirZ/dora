@@ -121,6 +121,11 @@ impl Controller {
                         }
                     },
                     FileType::File => {
+                        if state.config_no_select_file {
+                            // we don't want to select files in this mode
+                            // so we just return #75
+                            return
+                        }
                         // exit program and return file path
                         state.sig_file_selected_exit = true;
                     },
