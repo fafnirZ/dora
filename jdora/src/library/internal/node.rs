@@ -20,6 +20,22 @@ pub enum AnyNode {
     NestedNode(Node),
 }
 
+impl AnyNode {
+    pub fn calculate_num_lines(&self) -> u16 {
+        match self {
+            AnyNode::PrimitiveNode(_) => {
+                1 as u16
+            },
+            AnyNode::IterableNodes(nodes) => {
+                0 as u16 // TODO
+            },
+            AnyNode::NestedNode(node) => {
+                node.calculate_num_lines()
+            }
+        }
+    }
+}
+
 #[derive(Debug)]
 pub struct ParsedNodePacket {
     key: String, // key from json
@@ -244,7 +260,7 @@ impl Node {
         let children_len = self
             .children
             .iter()
-            .fold(0 as u16, |acc, &(_, ref child)| acc + child.calculate_num_lines());
+            .fold(0 as u16, |acc, packet| acc + packet.node.calculate_num_lines());
         bracket_lines+primitive_len+children_len
     }
 
