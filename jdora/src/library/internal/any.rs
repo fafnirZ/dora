@@ -1,11 +1,11 @@
 use serde_json::Value;
 
-use crate::library::internal::{node::Node, node_path::{NodePath, NodePathKey}};
+use crate::library::internal::{list_of_nodes::ListOfNodes, node::Node, node_path::{NodePath, NodePathKey}};
 
 #[derive(Debug)]
 pub enum AnyNode {
     PrimitiveNode(Value),
-    IterableNodes(Vec<Node>),
+    IterableNodes(ListOfNodes),
     NestedNode(Node),
 }
 
@@ -38,18 +38,17 @@ impl AnyNode {
                         )
                     }
                     Value::Array(_) => {
-                        // TODO 
-                        //     ParsedNodePacket{
-                        //         key: key.to_string(), 
-                        //         node: AnyNodeNode::new(
-                        //             val.clone(), 
-                        //             node_path.push_and_clone(
-                        //                 NodePathKey::DictKey(key.to_string())
-                        //             ),
-                        //             NodeType::IterableNodes,
-                        //         ),
-                        //     }
-                        // ) 
+                        children.push(
+                            ParsedNodePacket { 
+                                key: key.to_string(), 
+                                node: AnyNode::IterableNodes(ListOfNodes::new(
+                                    val.clone(),
+                                    node_path.push_and_clone(
+                                    NodePathKey::DictKey(key.to_string())
+                                    ),
+                                ))
+                            }
+                        )
                     }
                     _ => {
                         children.push(
