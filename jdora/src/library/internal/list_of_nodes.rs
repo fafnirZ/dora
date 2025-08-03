@@ -117,4 +117,11 @@ impl ListOfNodes {
     fn num_spaces(&self, n: u16) -> String {
         " ".repeat(n as usize).to_string()
     }
+    pub fn pprint(&self) -> String {
+        let mut result = String::new();
+        for (str, _) in self.get_structures() { // unoptimised.
+            result += &str;
+        }
+        result
+    }
 }

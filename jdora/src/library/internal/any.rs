@@ -1,3 +1,4 @@
+use google_cloud_storage::http::bucket_access_controls::list;
 use serde_json::Value;
 
 use crate::library::internal::{list_of_nodes::ListOfNodes, node::Node, node_path::{NodePath, NodePathKey}};
@@ -133,8 +134,8 @@ impl AnyNode {
             AnyNode::PrimitiveNode(_) => {
                 panic!("Cannot call this function on primitive.")
             }
-            AnyNode::IterableNodes(nodes) => {
-                //
+            AnyNode::IterableNodes(list_of_nodes) => {
+                curr_str+= &list_of_nodes.pprint();
             }
             AnyNode::NestedNode(node)  => {
                 curr_str += &node.pprint();
