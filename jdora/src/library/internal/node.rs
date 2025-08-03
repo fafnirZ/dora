@@ -3,7 +3,7 @@ use std::primitive;
 
 use serde_json::{Map, Value};
 
-use crate::library::internal::node;
+use crate::library::internal::{any::AnyNode, node};
 
 use super::node_path::{self, NodePath, NodePathKey};
 
@@ -13,78 +13,6 @@ const INDENT_SIZE: u16 = 4;
 // i only consider
 // Dictionaries as nodes.
 
-#[derive(Debug)]
-pub enum AnyNode {
-    PrimitiveNode(Value),
-    IterableNodes(Vec<Node>),
-    NestedNode(Node),
-}
-
-impl AnyNode {
-    pub fn calculate_num_lines(&self) -> u16 {
-        match self {
-            AnyNode::PrimitiveNode(_) => {
-                1 as u16
-            },
-            AnyNode::IterableNodes(nodes) => {
-                0 as u16 // TODO
-            },
-            AnyNode::NestedNode(node) => {
-                node.calculate_num_lines()
-            }
-        }
-    }
-
-    pub fn toggle_hide_child(&mut self, child: &NodePathKey) {
-        match self {
-            AnyNode::PrimitiveNode(_) => {
-                // do nothing
-            },
-            AnyNode::IterableNodes(nodes) => {
-                // do nothing for now
-            },
-            AnyNode::NestedNode(node) => {
-                if let Some(idx) = node.hidden_children.iter().position(|item| item==child) {
-                    node.hidden_children.remove(idx);
-                } else {
-                    node.hidden_children.push(child.clone());
-                }
-            }
-        }
-    }
-
-    pub fn get_structures(&self) -> Vec<(String, NodePath)> {
-        let mut structures: Vec<(String, NodePath)> = Vec::new();
-        match self {
-            AnyNode::PrimitiveNode(_) => {
-                panic!("Cannot call this function on primitive.")
-            }
-            AnyNode::IterableNodes(nodes) => {
-                // TODO
-            }
-            AnyNode::NestedNode(node) => {
-                structures.extend(node.get_structures());
-            }
-        }
-        structures
-    }
-
-    pub fn pprint(&self) -> String {
-        let mut curr_str = String::new();
-        match self {
-            AnyNode::PrimitiveNode(_) => {
-                panic!("Cannot call this function on primitive.")
-            }
-            AnyNode::IterableNodes(nodes) => {
-                //
-            }
-            AnyNode::NestedNode(node)  => {
-                curr_str += &node.pprint();
-            }
-        }
-        curr_str
-    }
-}
 
 #[derive(Debug)]
 pub struct ParsedNodePacket {
@@ -95,11 +23,8 @@ pub struct ParsedNodePacket {
 
 #[derive(Debug)]
 pub struct Node {
-    // serde_node: Value, // forwards to serde node
     pub node_path: NodePath,
     pub indent_level: u16,
-    // pub primitives: Vec<(String, Value)>, // primitive attributes
-    // NOTE i understand I don't handle lists well....at all right now...
     pub children: Vec<ParsedNodePacket>,
 
     // hidden_children:
@@ -108,10 +33,6 @@ pub struct Node {
 
 impl Node {
     pub fn new(val: Value, node_path: NodePath) -> Self {
-        // if !matches!(val, Value::Object(_)) {
-        //     return None
-        // }
-
         let children  = Node::parse(&val, &node_path);
         Self{
             // serde_node: val,
@@ -200,7 +121,9 @@ impl Node {
             let child_node = &node_packet.node;
 
             match child_node {
-                AnyNode::IterableNodes(nodes) => {}
+                AnyNode::IterableNodes(nodes) => {
+                    // do nothing here, its to be handled by AnyNode
+                }
                 AnyNode::NestedNode(node) => {
                     let current_node_owned_formatted_string = format!(
                         "{}\"{}\":",

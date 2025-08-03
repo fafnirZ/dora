@@ -2,7 +2,7 @@ use std::any::Any;
 
 use crossterm::cursor;
 
-use crate::library::internal::node::{try_resolve_node_path_mut, AnyNode};
+use crate::library::internal::node::{try_resolve_node_path_mut};
 
 use super::{control::Control, filter::ExactSubstringSearch, input::InputBuffer, internal::{node::try_resolve_node_path, node_path::NodePath}, mode::Mode, ExplorerState };
 

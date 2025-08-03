@@ -4,7 +4,8 @@ use google_cloud_storage::client::Client;
 use ratatui::layout::Rect;
 use tui_input::Input;
 
-use crate::library::internal::node::AnyNode;
+
+use crate::library::internal::any::AnyNode;
 
 use super::{input::InputHandler, internal::{node::Node, node_path::NodePath, parser::parse_bytes}, mode::Mode, ui::CELL_HEIGHT};
 
