@@ -12,70 +12,101 @@ const INDENT_SIZE: u16 = 4;
 // Dictionaries as nodes.
 
 #[derive(Debug)]
+pub enum NodeType {
+    PrimitiveNode,
+    IterableNodes,
+    ChildNode,
+}
+
+#[derive(Debug)]
+pub struct ParsedNodePacket {
+    key: String, // key from json
+    node: Node, // Node with type information
+}
+
+
+#[derive(Debug)]
 pub struct Node {
     // serde_node: Value, // forwards to serde node
     pub node_path: NodePath,
+    pub node_type: NodeType,
     pub indent_level: u16,
-    pub primitives: Vec<(String, Value)>, // primitive attributes
+    // pub primitives: Vec<(String, Value)>, // primitive attributes
     // NOTE i understand I don't handle lists well....at all right now...
-    pub children: Vec<(String, Node)>,
+    pub children: Vec<ParsedNodePacket>,
 
     // hidden_children:
     pub hidden_children: Vec<NodePathKey>,
 }
 
 impl Node {
-    pub fn new(val: Value, node_path: NodePath) -> Option<Self> {
-        if !matches!(val, Value::Object(_)) {
-            return None
-        }
+    pub fn new(val: Value, node_path: NodePath, node_type: NodeType) -> Self {
+        // if !matches!(val, Value::Object(_)) {
+        //     return None
+        // }
 
-        let (primitives, children) = Node::parse(&val, &node_path);
+        let children  = Node::parse(&val, &node_path);
         Some(Self{
             // serde_node: val,
             node_path: node_path.clone(),
+            node_type: node_type,
             indent_level: (node_path.path.len() as u16),
-            primitives: primitives,
             children: children,
             hidden_children: Vec::new(),
         })
     }
 
-    pub fn parse(serde_node: &Value, node_path: &NodePath) -> (
-        Vec<(String, Value)>, // primitives
-        Vec<(String, Node)>,  // nested nodes 
-    ){
+    pub fn parse(serde_node: &Value, node_path: &NodePath) -> Vec<ParsedNodePacket> {
         if let Value::Object(map) = &serde_node {
-            // node primitives
-            let mut primitives: Vec<(String, Value)> = Vec::new();
-            let mut children: Vec<(String, Node)> = Vec::new();
+            let mut children: Vec<ParsedNodePacket> = Vec::new();
 
             for (key, val) in map.iter() {
                 match val {
                     Value::Object(_) => {
                         children.push(
-                            (
-                                key.to_string(), 
-                                Node::new(
+                            ParsedNodePacket{
+                                key: key.to_string(), 
+                                node: Node::new(
                                     val.clone(), 
                                     node_path.push_and_clone(
                                         NodePathKey::DictKey(key.to_string())
-                                    )
-                                ).unwrap()
-                            )
+                                    ),
+                                    NodeType::ChildNode,
+                                ),
+                            }
                         )
                     }
+                    Value::Array(_) => {
+                        children.push(
+                            ParsedNodePacket{
+                                key: key.to_string(), 
+                                node: Node::new(
+                                    val.clone(), 
+                                    node_path.push_and_clone(
+                                        NodePathKey::DictKey(key.to_string())
+                                    ),
+                                    NodeType::IterableNodes,
+                                ),
+                            }
+                        ) 
+                    }
                     _ => {
-                        primitives.push(
-                            (key.to_string(), val.clone())
+                        children.push(
+                            ParsedNodePacket{
+                                key: key.to_string(), 
+                                node: Node::new(
+                                    val.clone(), 
+                                    node_path.push_and_clone(
+                                        NodePathKey::DictKey(key.to_string())
+                                    ),
+                                    NodeType::PrimitiveNode,
+                                ),
+                            }
                         )
                     }
                 }
             }
-            return (
-                primitives,
-                children,
-            )
+            return children
         } else {
             panic!("parse failed? node is not an object")
         }

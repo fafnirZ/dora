@@ -96,4 +96,27 @@ mod tests {
         println!("{}", n.pprint());
         assert!( 1 == 0 );
     }
+
+    #[test]
+    fn test_f() {
+        let data = r#"
+        {
+            "name": "abc",
+            "hello": 1,
+            "nested": [
+                {
+                    "attr": {
+                        "bbb": 100
+                    }
+                }
+            ],
+            "another_nested": {
+                "b": "bbb"
+            }
+        }"#;
+        let mut n = parse(data);
+        println!("{:?}", n.get_structures());
+        println!("{}", n.pprint());
+        assert!( 1 == 0 );
+    }
 }
