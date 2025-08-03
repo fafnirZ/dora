@@ -88,14 +88,53 @@ impl ListOfNodes {
 
                 }
                 AnyNode::NestedNode(_) => {
-                    let res = format!("{}{{ ▼\n", self.num_spaces((2+self.indent_level)*INDENT_SIZE));
+                    let res = format!("{}{{ ▼\n", self.num_spaces((1+self.indent_level)*INDENT_SIZE));
                     results.push(
                         (
                             res,
                             self.node_path.push_and_clone(NodePathKey::DictKey(key.clone()))
                         )
                     );
-                    results.extend(child_node.get_structures())
+                    // results.extend(child_node.get_structures())
+                    let current_node_owned_formatted_string = format!(
+                        "{}\"{}\":",
+                        self.num_spaces((self.indent_level+2)*INDENT_SIZE),
+                        key.clone(),
+                    );
+                    // TODO handle lists... its gonna be a nightmare
+                    if self.hidden_children.contains(&NodePathKey::DictKey(key.clone())) { // TODO rework hidden children
+                        let res = format!("{} <collapsed>({} lines) ▲\n", current_node_owned_formatted_string, child_node.calculate_num_lines());
+                        results.push(
+                            (
+                                res,
+                                self.node_path.push_and_clone(NodePathKey::DictKey(key.clone()))
+                            )
+                        );
+                    } else {
+                        let res = format!("{} {{ ▼\n", current_node_owned_formatted_string);
+                        results.push(
+                            (
+                                res,
+                                self.node_path.push_and_clone(NodePathKey::DictKey(key.clone()))
+                            )
+                        );
+                        // recursively call children get_structures.
+                        let children_structures = child_node.get_structures();
+                        for res in children_structures {
+                            results.push(res);
+                        }
+                    }
+                    // print closing bracket
+                    let closing_bracket_str = format!(
+                        "{}}}\n",
+                        self.num_spaces((1+self.indent_level)*INDENT_SIZE) 
+                    );
+                    results.push(
+                        (
+                            closing_bracket_str,
+                            self.node_path.clone(),
+                        )
+                    );
                 } // NOOP 
                 AnyNode::PrimitiveNode(_) => {
                     results.extend(child_node.get_structures())
