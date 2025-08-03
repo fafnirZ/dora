@@ -78,7 +78,9 @@ impl Controller {
 
                 // toggle collapse
                 // safe to unwrap
-                resolved_node.unwrap().toggle_hide_child(&node_path_leaf.unwrap());
+                resolved_node
+                    .unwrap()
+                    .toggle_hide_child(&node_path_leaf.unwrap());
 
                 // re calculate structures.
                 state.root_node_structure = state.root_node_state.get_structures(); 

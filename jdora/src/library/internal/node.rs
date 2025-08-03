@@ -354,18 +354,28 @@ pub fn try_resolve_node_path<'a>(root_node: &'a AnyNode, node_path: &NodePath) -
     }
 }
 
-// // returns a mutable reference, this is more necesary when we want to 
-// // update the state of the resolved path
-// // the other one is more useful when we just wanna perform queries
-// pub fn try_resolve_node_path_mut<'a>(root_node: &'a mut Node, node_path: &NodePath) -> Option<&'a mut AnyNode> {
-//     let mut cur_node = root_node;
-//     for path_key in &node_path.path {
-//         if let Some(new_node) = cur_node.get_child_mut(&path_key) {
-//             cur_node = new_node
-//         } else {
-//             return None
-//         }
-//     }
-
-//     Some(cur_node)
-// }
+// returns a mutable reference, this is more necesary when we want to 
+// update the state of the resolved path
+// the other one is more useful when we just wanna perform queries
+pub fn try_resolve_node_path_mut<'a>(root_node: &'a mut AnyNode, node_path: &NodePath) -> Option<&'a mut AnyNode> {
+    let mut cur_any_node = root_node;
+    match cur_any_node {
+        AnyNode::PrimitiveNode(_) => {
+            panic!("root node is a primitive????")
+        },
+        AnyNode::IterableNodes(nodes) => {
+            // pass   
+            None
+        },
+        AnyNode::NestedNode(cur_node) => {
+            for path_key in &node_path.path {
+                if let Some(new_node) = cur_node.get_child_mut(&path_key) {
+                    return Some(new_node)
+                } else {
+                    return None
+                }
+            }
+            None
+        }
+    }
+}
