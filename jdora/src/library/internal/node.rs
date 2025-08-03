@@ -3,6 +3,8 @@ use std::primitive;
 
 use serde_json::{Map, Value};
 
+use crate::library::internal::node;
+
 use super::node_path::{self, NodePath, NodePathKey};
 
 
@@ -12,16 +14,16 @@ const INDENT_SIZE: u16 = 4;
 // Dictionaries as nodes.
 
 #[derive(Debug)]
-pub enum NodeType {
-    PrimitiveNode,
-    IterableNodes,
-    ChildNode,
+pub enum AnyNode {
+    PrimitiveNode(Value),
+    IterableNodes(Vec<Node>),
+    NestedNode(Node),
 }
 
 #[derive(Debug)]
 pub struct ParsedNodePacket {
     key: String, // key from json
-    node: Node, // Node with type information
+    node: AnyNode, // Node with type information
 }
 
 
@@ -29,7 +31,6 @@ pub struct ParsedNodePacket {
 pub struct Node {
     // serde_node: Value, // forwards to serde node
     pub node_path: NodePath,
-    pub node_type: NodeType,
     pub indent_level: u16,
     // pub primitives: Vec<(String, Value)>, // primitive attributes
     // NOTE i understand I don't handle lists well....at all right now...
@@ -40,20 +41,19 @@ pub struct Node {
 }
 
 impl Node {
-    pub fn new(val: Value, node_path: NodePath, node_type: NodeType) -> Self {
+    pub fn new(val: Value, node_path: NodePath) -> Self {
         // if !matches!(val, Value::Object(_)) {
         //     return None
         // }
 
         let children  = Node::parse(&val, &node_path);
-        Some(Self{
+        Self{
             // serde_node: val,
             node_path: node_path.clone(),
-            node_type: node_type,
             indent_level: (node_path.path.len() as u16),
             children: children,
             hidden_children: Vec::new(),
-        })
+        }
     }
 
     pub fn parse(serde_node: &Value, node_path: &NodePath) -> Vec<ParsedNodePacket> {
@@ -66,41 +66,34 @@ impl Node {
                         children.push(
                             ParsedNodePacket{
                                 key: key.to_string(), 
-                                node: Node::new(
+                                node: AnyNode::NestedNode(Node::new(
                                     val.clone(), 
                                     node_path.push_and_clone(
                                         NodePathKey::DictKey(key.to_string())
                                     ),
-                                    NodeType::ChildNode,
-                                ),
+                                )),
                             }
                         )
                     }
                     Value::Array(_) => {
-                        children.push(
-                            ParsedNodePacket{
-                                key: key.to_string(), 
-                                node: Node::new(
-                                    val.clone(), 
-                                    node_path.push_and_clone(
-                                        NodePathKey::DictKey(key.to_string())
-                                    ),
-                                    NodeType::IterableNodes,
-                                ),
-                            }
-                        ) 
+                        // TODO 
+                        //     ParsedNodePacket{
+                        //         key: key.to_string(), 
+                        //         node: AnyNodeNode::new(
+                        //             val.clone(), 
+                        //             node_path.push_and_clone(
+                        //                 NodePathKey::DictKey(key.to_string())
+                        //             ),
+                        //             NodeType::IterableNodes,
+                        //         ),
+                        //     }
+                        // ) 
                     }
                     _ => {
                         children.push(
                             ParsedNodePacket{
                                 key: key.to_string(), 
-                                node: Node::new(
-                                    val.clone(), 
-                                    node_path.push_and_clone(
-                                        NodePathKey::DictKey(key.to_string())
-                                    ),
-                                    NodeType::PrimitiveNode,
-                                ),
+                                node: AnyNode::PrimitiveNode(val.clone()),
                             }
                         )
                     }
@@ -131,24 +124,31 @@ impl Node {
         }
 
         // print primitives first
-        for prim_attr in self.primitives.iter() {
-            let (key, val) = prim_attr.clone();
-            let formatted_str = format!(
-                "{}\"{}\":{},\n",
-                self.num_spaces((self.indent_level+1)*INDENT_SIZE) ,
-                key.clone(),
-                val.to_string(),
-            );
-            result.push(
-                (
-                    formatted_str,
-                    self.node_path.push_and_clone(NodePathKey::DictKey(key.clone()))
+        for prim_attr in self.primitives().iter() {
+            let key = prim_attr.key.clone();
+            if let AnyNode::PrimitiveNode(value) = prim_attr.node {
+                let formatted_str = format!(
+                    "{}\"{}\":{},\n",
+                    self.num_spaces((self.indent_level+1)*INDENT_SIZE),
+                    key.clone(),
+                    value.to_string(),
+                );
+                result.push(
+                    (
+                        formatted_str,
+                        self.node_path.push_and_clone(NodePathKey::DictKey(key.clone()))
+                    )
                 )
-            )
+            } else {
+                panic!("should be unreachable...")
+            }
         }
-
-        for (idx, child ) in self.children.iter().enumerate() {
-            let (key, chld) = child;
+        
+        // handling more complex
+        // nested cases
+        for (idx, node_packet) in self.children.iter().enumerate() {
+            let key = node_packet.key;
+            let node = node_packet.node;
             let current_node_owned_formatted_string = format!(
                 "{}\"{}\":",
                 self.num_spaces((self.indent_level+1)*INDENT_SIZE),
@@ -216,7 +216,7 @@ impl Node {
         // TODO handle hidden children
         let bracket_lines = 2_u16;
 
-        let primitive_len = self.primitives.len() as u16;
+        let primitive_len = self.primitives().len() as u16;
         let children_len = self
             .children
             .iter()
@@ -224,11 +224,12 @@ impl Node {
         bracket_lines+primitive_len+children_len
     }
 
-    pub fn get_child(&self, key: &NodePathKey) -> Option<&Node> {
+    pub fn get_child(&self, key: &NodePathKey) -> Option<&AnyNode> {
         match key {
             NodePathKey::DictKey(k) => {
-                for child in &self.children {
-                    let (key, node) = child;
+                for node_packet in &self.children {
+                    let key = node_packet.key;
+                    let node = node_packet.node;
                     if *key == *k {
                         return Some(node);
                     }
@@ -241,11 +242,12 @@ impl Node {
             }
         }
     }
-    pub fn get_child_mut(&mut self, key: &NodePathKey) -> Option<&mut Node> {
+    pub fn get_child_mut(&mut self, key: &NodePathKey) -> Option<&mut AnyNode> {
         match key {
             NodePathKey::DictKey(k) => {
-                for child in &mut self.children {
-                    let (key, node) = child;
+                for node_packet in self.children.iter_mut() {
+                    let key = node_packet.key;
+                    let node = node_packet.node;
                     if *key == *k {
                         return Some(node);
                     }
@@ -257,6 +259,23 @@ impl Node {
                 panic!("not implemented");
             }
         }
+    }
+
+    pub fn primitives(&self) -> Vec<&ParsedNodePacket> {
+        return self.children.iter()
+                .filter(|p| 
+                    matches!(p.node, AnyNode::PrimitiveNode(_))
+                )
+                .map(|val| val)
+                .collect();
+    }
+    pub fn nested_nodes(&self) -> Vec<&ParsedNodePacket> {
+        return self.children.iter()
+                .filter(|p| 
+                    matches!(p.node,AnyNode::NestedNode(_))
+                )
+                .map(|val| val)
+                .collect();
     }
 
 
@@ -267,6 +286,7 @@ impl Node {
             self.hidden_children.push(child.clone());
         }
     }
+
 }
 
 
