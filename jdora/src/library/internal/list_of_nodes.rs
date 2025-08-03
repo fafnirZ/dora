@@ -170,4 +170,19 @@ impl ListOfNodes {
         }
         result
     }
+
+        // calculate how many lines it this node will consume
+    // this just counts size of primitive and recursively adds up children offset lengths.
+    pub fn calculate_num_lines(&self) -> u16 {
+        
+        // TODO handle hidden children
+        let bracket_lines = 2_u16;
+
+        // let primitive_len = self.primitives().len() as u16;
+        let children_len = self
+            .children
+            .iter()
+            .fold(0 as u16, |acc, packet| acc + packet.node.calculate_num_lines());
+        bracket_lines+children_len
+    }
 }

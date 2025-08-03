@@ -192,12 +192,11 @@ impl Node {
         // TODO handle hidden children
         let bracket_lines = 2_u16;
 
-        let primitive_len = self.primitives().len() as u16;
         let children_len = self
             .children
             .iter()
             .fold(0 as u16, |acc, packet| acc + packet.node.calculate_num_lines());
-        bracket_lines+primitive_len+children_len
+        bracket_lines+children_len
     }
 
     pub fn get_child(&self, key: &NodePathKey) -> Option<&AnyNode> {

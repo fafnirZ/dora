@@ -85,7 +85,7 @@ impl AnyNode {
                 1 as u16
             },
             AnyNode::IterableNodes(nodes) => {
-                0 as u16 // TODO
+                nodes.calculate_num_lines()
             },
             AnyNode::NestedNode(node) => {
                 node.calculate_num_lines()
@@ -100,6 +100,11 @@ impl AnyNode {
             },
             AnyNode::IterableNodes(nodes) => {
                 // do nothing for now
+                if let Some(idx) = nodes.hidden_children.iter().position(|item| item==child) {
+                    nodes.hidden_children.remove(idx);
+                } else {
+                    nodes.hidden_children.push(child.clone());
+                }
             },
             AnyNode::NestedNode(node) => {
                 if let Some(idx) = node.hidden_children.iter().position(|item| item==child) {
