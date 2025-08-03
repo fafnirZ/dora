@@ -176,14 +176,14 @@ impl Node {
             //     }
             // }
 
-            let key = node_packet.key;
-            let child_node = node_packet.node;
+            let key = &node_packet.key;
+            let child_node = &node_packet.node;
 
             match child_node {
                 AnyNode::IterableNodes(nodes) => {}
                 AnyNode::NestedNode(node) => {}
                 AnyNode::PrimitiveNode(value) => {
-                    let result = self.get_structures_primitive(key.clone(), value);
+                    let result = self.get_structures_primitive(key.clone(), value.clone());
                     results.push(result);
                 }
             }
