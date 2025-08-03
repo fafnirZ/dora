@@ -115,11 +115,9 @@ impl AnyNode {
         let mut structures: Vec<(String, NodePath)> = Vec::new();
         match self {
             AnyNode::PrimitiveNode(_) => {
-                panic!("Cannot call this function on primitive.")
             }
-            AnyNode::IterableNodes(nodes) => {
-                
-                
+            AnyNode::IterableNodes(list_of_nodes) => {
+                structures.extend(list_of_nodes.get_structures()) 
             }
             AnyNode::NestedNode(node) => {
                 structures.extend(node.get_structures());
@@ -127,6 +125,7 @@ impl AnyNode {
         }
         structures
     }
+
 
     pub fn pprint(&self) -> String {
         let mut curr_str = String::new();
