@@ -190,65 +190,48 @@ impl Node {
             );
         }
 
-        // // print primitives first
-        // for prim_attr in self.primitives().iter() {
-        //     let key = prim_attr.key.clone();
-        //     if let AnyNode::PrimitiveNode(value) = prim_attr.node {
-        //         let formatted_str = format!(
-        //             "{}\"{}\":{},\n",
-        //             self.num_spaces((self.indent_level+1)*INDENT_SIZE),
-        //             key.clone(),
-        //             value.to_string(),
-        //         );
-        //         result.push(
-        //             (
-        //                 formatted_str,
-        //                 self.node_path.push_and_clone(NodePathKey::DictKey(key.clone()))
-        //             )
-        //         )
-        //     } else {
-        //         panic!("should be unreachable...")
-        //     }
-        // }
         
         // handling more complex
         // nested cases
         for (idx, node_packet) in self.children.iter().enumerate() {
-            // let current_node_owned_formatted_string = format!(
-            //     "{}\"{}\":",
-            //     self.num_spaces((self.indent_level+1)*INDENT_SIZE),
-            //     key.clone(),
-            // );
-            // // TODO handle lists... its gonna be a nightmare
-            // if self.hidden_children.contains(&NodePathKey::DictKey(key.clone())) { // TODO rework hidden children
-            //     let res = format!("{} <collapsed>({} lines) ▲\n", current_node_owned_formatted_string, child_node.calculate_num_lines());
-            //     result.push(
-            //         (
-            //             res,
-            //             self.node_path.push_and_clone(NodePathKey::DictKey(key.clone()))
-            //         )
-            //     );
-            // } else {
-            //     let res = format!("{} {{ ▼\n", current_node_owned_formatted_string);
-            //     result.push(
-            //         (
-            //             res,
-            //             self.node_path.push_and_clone(NodePathKey::DictKey(key.clone()))
-            //         )
-            //     );
-            //     // recursively call children get_structures.
-            //     let children_structures = child_node.get_structures();
-            //     for res in children_structures {
-            //         result.push(res);
-            //     }
-            // }
+
 
             let key = &node_packet.key;
             let child_node = &node_packet.node;
 
             match child_node {
                 AnyNode::IterableNodes(nodes) => {}
-                AnyNode::NestedNode(node) => {}
+                AnyNode::NestedNode(node) => {
+                    let current_node_owned_formatted_string = format!(
+                        "{}\"{}\":",
+                        self.num_spaces((self.indent_level+1)*INDENT_SIZE),
+                        key.clone(),
+                    );
+                    // TODO handle lists... its gonna be a nightmare
+                    if self.hidden_children.contains(&NodePathKey::DictKey(key.clone())) { // TODO rework hidden children
+                        let res = format!("{} <collapsed>({} lines) ▲\n", current_node_owned_formatted_string, child_node.calculate_num_lines());
+                        results.push(
+                            (
+                                res,
+                                self.node_path.push_and_clone(NodePathKey::DictKey(key.clone()))
+                            )
+                        );
+                    } else {
+                        let res = format!("{} {{ ▼\n", current_node_owned_formatted_string);
+                        results.push(
+                            (
+                                res,
+                                self.node_path.push_and_clone(NodePathKey::DictKey(key.clone()))
+                            )
+                        );
+                        // recursively call children get_structures.
+                        let children_structures = child_node.get_structures();
+                        for res in children_structures {
+                            results.push(res);
+                        }
+                    }
+
+                }
                 AnyNode::PrimitiveNode(value) => {
                     let result = self.get_structures_primitive(key.clone(), value.clone());
                     results.push(result);
