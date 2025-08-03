@@ -61,8 +61,6 @@ impl Node {
         // handling more complex
         // nested cases
         for (idx, node_packet) in self.children.iter().enumerate() {
-
-
             let key = &node_packet.key;
             let child_node = &node_packet.node;
 

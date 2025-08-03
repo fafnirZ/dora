@@ -88,6 +88,13 @@ impl ListOfNodes {
 
                 }
                 AnyNode::NestedNode(_) => {
+                    let res = format!("{}{{ ▼\n", self.num_spaces((2+self.indent_level)*INDENT_SIZE));
+                    results.push(
+                        (
+                            res,
+                            self.node_path.push_and_clone(NodePathKey::DictKey(key.clone()))
+                        )
+                    );
                     results.extend(child_node.get_structures())
                 } // NOOP 
                 AnyNode::PrimitiveNode(_) => {
