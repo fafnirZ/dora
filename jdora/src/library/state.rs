@@ -4,13 +4,15 @@ use google_cloud_storage::client::Client;
 use ratatui::layout::Rect;
 use tui_input::Input;
 
+use crate::library::internal::node::AnyNode;
+
 use super::{input::InputHandler, internal::{node::Node, node_path::NodePath, parser::parse_bytes}, mode::Mode, ui::CELL_HEIGHT};
 
 
 // very primitive state right now
 // not optimised and not cached.
 pub struct ExplorerState{
-    pub root_node_state: Node,
+    pub root_node_state: AnyNode,
     pub root_node_structure: Vec<(String, NodePath)>,
 
 
@@ -40,7 +42,7 @@ impl ExplorerState {
         file.read_to_end(&mut contents)
             .unwrap();
 
-        let node = parse_bytes(&contents);
+        let node = AnyNode::NestedNode(parse_bytes(&contents)); // TODO: handle if the root node state was a list...
 
         return Self {
             root_node_structure: node.get_structures(),

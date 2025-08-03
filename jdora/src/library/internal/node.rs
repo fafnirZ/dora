@@ -34,6 +34,56 @@ impl AnyNode {
             }
         }
     }
+
+    pub fn toggle_hide_child(&mut self, child: &NodePathKey) {
+        match self {
+            AnyNode::PrimitiveNode(_) => {
+                // do nothing
+            },
+            AnyNode::IterableNodes(nodes) => {
+                // do nothing for now
+            },
+            AnyNode::NestedNode(node) => {
+                if let Some(idx) = node.hidden_children.iter().position(|item| item==child) {
+                    node.hidden_children.remove(idx);
+                } else {
+                    node.hidden_children.push(child.clone());
+                }
+            }
+        }
+    }
+
+    pub fn get_structures(&self) -> Vec<(String, NodePath)> {
+        let mut structures: Vec<(String, NodePath)> = Vec::new();
+        match self {
+            AnyNode::PrimitiveNode(_) => {
+                panic!("Cannot call this function on primitive.")
+            }
+            AnyNode::IterableNodes(nodes) => {
+                // TODO
+            }
+            AnyNode::NestedNode(node) => {
+                structures.extend(node.get_structures());
+            }
+        }
+        structures
+    }
+
+    pub fn pprint(&self) -> String {
+        let mut curr_str = String::new();
+        match self {
+            AnyNode::PrimitiveNode(_) => {
+                panic!("Cannot call this function on primitive.")
+            }
+            AnyNode::IterableNodes(nodes) => {
+                //
+            }
+            AnyNode::NestedNode(node)  => {
+                curr_str += &node.pprint();
+            }
+        }
+        curr_str
+    }
 }
 
 #[derive(Debug)]
@@ -125,6 +175,7 @@ impl Node {
     /// for every line which will be sent to pprint
     /// associate the NodePath associated with this line.
     pub fn get_structures(&self) -> Vec<(String, NodePath)> {
+
         let mut results: Vec<(String, NodePath)> = Vec::new();
 
         // NOTE: only do this for root nodepath
@@ -319,20 +370,21 @@ impl Node {
     }
 
 
-    pub fn toggle_hide_child(&mut self, child: &NodePathKey) {
-        if let Some(idx) = self.hidden_children.iter().position(|item| item==child) {
-            self.hidden_children.remove(idx);
-        } else {
-            self.hidden_children.push(child.clone());
-        }
-    }
+
+    // pub fn toggle_hide_child(&mut self, child: &NodePathKey) {
+    //     if let Some(idx) = self.hidden_children.iter().position(|item| item==child) {
+    //         self.hidden_children.remove(idx);
+    //     } else {
+    //         self.hidden_children.push(child.clone());
+    //     }
+    // }
 
 }
 
 
 
 pub fn try_resolve_node_path<'a>(root_node: &'a AnyNode, node_path: &NodePath) -> Option<&'a AnyNode> {
-    let mut cur_any_node = root_node;
+    let cur_any_node = root_node;
     match cur_any_node {
         AnyNode::PrimitiveNode(_) => {
             panic!("root node is a primitive????")
@@ -358,7 +410,7 @@ pub fn try_resolve_node_path<'a>(root_node: &'a AnyNode, node_path: &NodePath) -
 // update the state of the resolved path
 // the other one is more useful when we just wanna perform queries
 pub fn try_resolve_node_path_mut<'a>(root_node: &'a mut AnyNode, node_path: &NodePath) -> Option<&'a mut AnyNode> {
-    let mut cur_any_node = root_node;
+    let cur_any_node = root_node;
     match cur_any_node {
         AnyNode::PrimitiveNode(_) => {
             panic!("root node is a primitive????")
