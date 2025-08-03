@@ -3,12 +3,11 @@ use std::primitive;
 
 use serde_json::{Map, Value};
 
-use crate::library::internal::{any::{AnyNode, ParsedNodePacket}, node};
+use crate::library::internal::{any::{AnyNode, ParsedNodePacket}, constants::INDENT_SIZE, node};
 
 use super::node_path::{self, NodePath, NodePathKey};
 
 
-const INDENT_SIZE: u16 = 4;
 
 // i only consider
 // Dictionaries as nodes.
