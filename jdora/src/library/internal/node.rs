@@ -3,7 +3,7 @@ use std::primitive;
 
 use serde_json::{Map, Value};
 
-use crate::library::internal::{any::AnyNode, node};
+use crate::library::internal::{any::{AnyNode, ParsedNodePacket}, node};
 
 use super::node_path::{self, NodePath, NodePathKey};
 
@@ -13,12 +13,6 @@ const INDENT_SIZE: u16 = 4;
 // i only consider
 // Dictionaries as nodes.
 
-
-#[derive(Debug)]
-pub struct ParsedNodePacket {
-    key: String, // key from json
-    node: AnyNode, // Node with type information
-}
 
 
 #[derive(Debug)]
@@ -33,7 +27,7 @@ pub struct Node {
 
 impl Node {
     pub fn new(val: Value, node_path: NodePath) -> Self {
-        let children  = Node::parse(&val, &node_path);
+        let children  = AnyNode::parse(&val, &node_path);
         Self{
             // serde_node: val,
             node_path: node_path.clone(),
@@ -43,54 +37,7 @@ impl Node {
         }
     }
 
-    pub fn parse(serde_node: &Value, node_path: &NodePath) -> Vec<ParsedNodePacket> {
-        if let Value::Object(map) = &serde_node {
-            let mut children: Vec<ParsedNodePacket> = Vec::new();
-
-            for (key, val) in map.iter() {
-                match val {
-                    Value::Object(_) => {
-                        children.push(
-                            ParsedNodePacket{
-                                key: key.to_string(), 
-                                node: AnyNode::NestedNode(Node::new(
-                                    val.clone(), 
-                                    node_path.push_and_clone(
-                                        NodePathKey::DictKey(key.to_string())
-                                    ),
-                                )),
-                            }
-                        )
-                    }
-                    Value::Array(_) => {
-                        // TODO 
-                        //     ParsedNodePacket{
-                        //         key: key.to_string(), 
-                        //         node: AnyNodeNode::new(
-                        //             val.clone(), 
-                        //             node_path.push_and_clone(
-                        //                 NodePathKey::DictKey(key.to_string())
-                        //             ),
-                        //             NodeType::IterableNodes,
-                        //         ),
-                        //     }
-                        // ) 
-                    }
-                    _ => {
-                        children.push(
-                            ParsedNodePacket{
-                                key: key.to_string(), 
-                                node: AnyNode::PrimitiveNode(val.clone()),
-                            }
-                        )
-                    }
-                }
-            }
-            return children
-        } else {
-            panic!("parse failed? node is not an object")
-        }
-    }
+    
 
     ///
     /// for every line which will be sent to pprint

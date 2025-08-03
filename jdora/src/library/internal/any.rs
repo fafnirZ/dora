@@ -12,8 +12,8 @@ pub enum AnyNode {
 
 #[derive(Debug)]
 pub struct ParsedNodePacket {
-    key: String, // key from json
-    node: AnyNode, // Node with type information
+    pub key: String, // key from json
+    pub node: AnyNode, // Node with type information
 }
 
 
