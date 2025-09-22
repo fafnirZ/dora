@@ -14,7 +14,7 @@ like dora...the explorer, exploring data files like csv/parquet/xlsx in the term
 ![](./assets/cde.gif)
 
 ## JDora
-![todo]()
+![](./assets/jdora.gif)
 
 ## References
 Code structure and functionality heavily inspired from https://github.com/YS-L/csvlens
