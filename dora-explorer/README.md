@@ -1,4 +1,6 @@
 # Dora Explorer
+![broken](../assets/cde.gif)
+
 `dora-explorer` i.e. `de` is a TUI file navigator built on top of ratatui.
 
 It provides a **read only** experience for quick navigation over a file system. Such that you don't ever have to worry about accidentally deleting files when performing quick navigations.
