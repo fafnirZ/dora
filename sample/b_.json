@@ -1,0 +1,19 @@
+{
+    "name": "abc",
+    "hello": 1,
+    "nested": [
+        {
+            "attr": {
+                "bbb": 1
+            }
+        },
+        {
+            "attr": {
+                "bbb": 2
+            }
+        }
+    ],
+    "another_nested": {
+        "b": "bbb"
+    }
+}

@@ -7,11 +7,11 @@ use super::{node::Node, node_path::NodePath};
 
 pub fn parse(data: &str) -> Node {
     let v: Value = serde_json::from_str(data).unwrap();
-    return Node::new(v, NodePath::new()).unwrap();
+    return Node::new(v, NodePath::new());
 }
 pub fn parse_bytes(data: &[u8]) -> Node {
     let v: Value = serde_json::from_slice(data).unwrap();
-    return Node::new(v, NodePath::new()).unwrap();
+    return Node::new(v, NodePath::new());
 }
 
 
@@ -87,6 +87,29 @@ mod tests {
                     "bbb": 100
                 }
             },
+            "another_nested": {
+                "b": "bbb"
+            }
+        }"#;
+        let mut n = parse(data);
+        println!("{:?}", n.get_structures());
+        println!("{}", n.pprint());
+        assert!( 1 == 0 );
+    }
+
+    #[test]
+    fn test_f() {
+        let data = r#"
+        {
+            "name": "abc",
+            "hello": 1,
+            "nested": [
+                {
+                    "attr": {
+                        "bbb": 100
+                    }
+                }
+            ],
             "another_nested": {
                 "b": "bbb"
             }
